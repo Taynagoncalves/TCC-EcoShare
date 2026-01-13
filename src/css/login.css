@@ -1,0 +1,131 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background-color: #ffffff;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
+  text-align: center;
+  width: 320px;
+}
+
+/* LOGO */
+.logo {
+  width: 120px;
+  margin-bottom: 8px;
+}
+
+/* TÍTULOS */
+h1 {
+  color: #347142;
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+h2 {
+  color: #347142;
+  font-size: 22px;
+  margin-bottom: 18px;
+}
+
+/* FORMULÁRIO */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-form input {
+  border: none;
+  border-bottom: 1px solid #cfcfcf;
+  padding: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.login-form input:focus {
+  border-bottom: 1px solid #347142;
+}
+
+/* BOTÕES */
+.btn {
+  background-color: #347142;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn:hover {
+  background-color: #2b5f37;
+}
+
+.entrar {
+  margin-top: 10px;
+}
+
+.criar {
+  margin-top: 10px;
+}
+
+/* LINK */
+.forgot {
+  font-size: 12px;
+  color: #777;
+  text-decoration: none;
+  margin-top: 4px;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}
+
+/* TEXTO FINAL */
+.footer-text {
+  margin-top: 22px;
+  font-size: 13px;
+  color: #347142;
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    width: 90%;
+  }
+
+  .logo {
+    width: 100px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .login-form input {
+    font-size: 16px;
+  }
+
+  .btn {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .footer-text {
+    font-size: 12px;
+    margin-top: 18px;
+  }
+}
