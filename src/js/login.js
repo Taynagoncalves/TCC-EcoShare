@@ -13,3 +13,8 @@ function toggleSenha(id, icon) {
 function irParaCadastro() {
   window.location.href = "cadastro.html";
 }
+const forgotPassword = document.getElementById("forgotPassword");
+
+forgotPassword.addEventListener("click", () => {
+  window.location.href = "esqueci-senha.html";
+});

@@ -1,0 +1,90 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  height: 100vh;
+  background: #ffffff;
+}
+
+/* CONTAINER CENTRAL */
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+  padding: 20px;
+}
+
+/* LOGO */
+.logo {
+  width: 160px;
+  display: block;
+  margin: 0 auto 10px auto;
+}
+
+/* TEXTO */
+.descricao {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+/* INPUT */
+input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: 10px 5px;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 30px;
+}
+
+input:focus {
+  border-bottom-color: #347142;
+}
+
+/* BOTÃO */
+button {
+  width: 100%;
+  background: #347142;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .logo {
+    width: 130px;
+  }
+
+  .descricao {
+    font-size: 13px;
+  }
+}
+/* MENSAGEM */
+.mensagem {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ESCONDER */
+.hidden {
+  display: none;
+}

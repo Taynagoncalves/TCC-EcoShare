@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Redefinir Senha</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/esqueci-senha.css">
+</head>
+<body>
+<main class="container">
+
+  <img src="../imagens/logo.png" alt="Logo" class="logo">
+
+  <!-- FORMULÁRIO -->
+  <form id="formEmail">
+    <p class="descricao">
+      Digite seu e-mail para redefinir sua senha
+    </p>
+
+    <input
+      type="email"
+      placeholder="Digite seu e-mail"
+      required
+    >
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <!-- MENSAGEM DE CONFIRMAÇÃO -->
+  <div id="mensagem" class="mensagem hidden">
+    <p>
+      Se o endereço informado estiver cadastrado em nosso sistema,
+      você receberá em alguns minutos um link para redefinir sua senha.
+      <br><br>
+      Confira sua caixa de entrada e, se necessário,
+      verifique também a pasta de spam ou lixo eletrônico.
+    </p>
+  </div>
+
+</main>
+
+<script src="../js/esqueci-senha.js"></script>
