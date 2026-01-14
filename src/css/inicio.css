@@ -6,49 +6,75 @@
 }
 
 body {
-  background-color: #ffffff;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: #ffffff;
+  overflow: hidden;
 }
 
-.inicio-container {
+/* ===== ANIMAÇÕES ===== */
+@keyframes splashIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -55%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -60%) scale(1);
+  }
+}
+
+@keyframes splashOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -60%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -65%) scale(1.05);
+  }
+}
+
+/* ===== CONTEÚDO ===== */
+.center-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
   text-align: center;
+
+  animation: splashIn 1.2s ease-out forwards;
+}
+
+/* quando for sair */
+.center-container.exit {
+  animation: splashOut 0.8s ease-in forwards;
 }
 
 /* LOGO */
 .logo {
-  width: 220px;
-  margin-bottom: 6px;
-}
-
-/* TÍTULO */
-h1 {
-  color: #347142;
-  font-size: 42px;
-  margin-bottom: 6px;
+  width: 180px;
+  display: block;
+  margin: 0 auto;
 }
 
 /* TEXTO */
 .slogan {
+  margin: 0;
+  margin-top: -24px; /* compensa espaço da imagem */
   color: #347142;
   font-size: 18px;
-  line-height: 1.4;
-  margin-top: -8px; /* aproxima do título */
+  font-weight: 600;
+  line-height: 1.3;
 }
 
+/* MOBILE */
 @media (max-width: 480px) {
   .logo {
-    width: 160px;
-  }
-
-  h1 {
-    font-size: 32px;
+    width: 130px;
   }
 
   .slogan {
     font-size: 16px;
-    margin-top: -6px;
+    margin-top: -20px;
   }
 }

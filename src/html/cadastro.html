@@ -8,34 +8,44 @@
 </head>
 <body>
 
-  <div class="cadastro-container">
 
-    <img src="../imagens/logo.png" alt="EcoShare" class="logo">
+  <header class="top-logo">
+    <img src="../imagens/logo.png" alt="EcoShare">
+  </header>
 
-    <h1>Cadastro</h1>
+  <main class="center-container">
+    <h2>Cadastro</h2>
 
     <form class="cadastro-form">
 
       <input type="text" placeholder="Nome Completo" required>
       <input type="email" placeholder="Email" required>
-      <input type="date" placeholder="Data de Nascimento" required>
-      <input type="password" placeholder="Senha" required>
-      <input type="password" placeholder="Confirmar Senha" required>
+      <input type="date" required>
+
+      <div class="password-group">
+        <input type="password" id="senha" placeholder="Senha" required>
+        <img src="../icons/olhofechado.png" onclick="toggleSenha('senha', this)">
+      </div>
+
+      <div class="password-group">
+        <input type="password" id="confirmarSenha" placeholder="Confirmar Senha" required>
+        <img src="../icons/olhofechado.png" onclick="toggleSenha('confirmarSenha', this)">
+      </div>
+
       <input type="text" placeholder="CEP" required>
       <input type="text" placeholder="Endereço" required>
       <input type="text" placeholder="Número" required>
       <input type="text" placeholder="Complemento (ex: bloco, ap.)">
 
-      <button type="submit" class="btn">Criar Conta</button>
-
+      <button type="submit">Criar Conta</button>
     </form>
 
     <p class="footer-text">
       Ajude o planeta e receba benefícios ao doar<br>
       materiais recicláveis.
     </p>
+  </main>
 
-  </div>
-
+  <script src="../js/cadastro.js"></script>
 </body>
 </html>

@@ -8,28 +8,45 @@
 </head>
 <body>
 
-  <div class="login-container">
 
-    <img src="../imagens/logo.png" alt="EcoShare" class="logo">
+  <header class="top-logo">
+    <img src="../imagens/logo.png" alt="EcoShare">
+  </header>
 
+
+  <main class="center-container">
     <h1>Login</h1>
 
     <form class="login-form">
-      <input type="email" placeholder="Email" required>
-      <input type="password" placeholder="Senha" required>
 
-      <button type="submit" class="btn entrar">Entrar</button>
+      <input type="email" placeholder="Email" required>
+
+
+      <div class="password-group">
+        <input type="password" id="senhaLogin" placeholder="Senha" required>
+        <img
+          src="../icons/olhofechado.png"
+          onclick="toggleSenha('senhaLogin', this)"
+          alt="Mostrar senha"
+        >
+      </div>
+
+      <button type="submit">Entrar</button>
 
       <a href="#" class="forgot">Esqueci minha senha</a>
 
-      <button type="button" class="btn criar">Criar Conta</button>
+      <button type="button" class="secondary" onclick="irParaCadastro()">
+  Criar Conta
+</button>
+
+
     </form>
 
     <p class="footer-text">
       Acesse sua conta e contribua com um mundo mais sustentável!
     </p>
+  </main>
 
-  </div>
-
+  <script src="../js/login.js"></script>
 </body>
 </html>
