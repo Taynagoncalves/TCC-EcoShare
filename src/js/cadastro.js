@@ -1,4 +1,4 @@
-// 👁️ Mostrar / ocultar senha
+//mostrar e ocultar senha
 function toggleSenha(id, icon) {
   const input = document.getElementById(id);
   if (!input) return;
@@ -11,6 +11,12 @@ function toggleSenha(id, icon) {
     icon.src = "../icons/olhofechado.png";
   }
 }
+// Bloquear números no campo nome
+const inputNome = document.querySelector('input[name="nome"]');
+
+inputNome.addEventListener('input', () => {
+  inputNome.value = inputNome.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
+});
 
 document.querySelector('form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -45,7 +51,7 @@ document.querySelector('form').addEventListener('submit', async (e) => {
       return;
     }
 
-    // ✅ ALERT BONITO DE SUCESSO
+ 
     Swal.fire({
       icon: 'success',
       title: 'Cadastro realizado!',
