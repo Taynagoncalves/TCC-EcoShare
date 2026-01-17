@@ -1,3 +1,4 @@
+// 👁️ Mostrar / ocultar senha
 function toggleSenha(id, icon) {
   const input = document.getElementById(id);
 
@@ -10,34 +11,47 @@ function toggleSenha(id, icon) {
   }
 }
 
-// ✅ CORREÇÃO AQUI
+// 🔁 Ir para cadastro
 function irParaCadastro() {
   window.location.href = "/cadastro";
 }
 
-document.getElementById("forgotPassword").addEventListener("click", () => {
-  window.location.href = "/esqueci-senha";
-});
+// 🔑 Esqueci minha senha
+const forgotPassword = document.getElementById("forgotPassword");
+if (forgotPassword) {
+  forgotPassword.addEventListener("click", () => {
+    window.location.href = "/esqueci-senha";
+  });
+}
 
-document.querySelector('form').addEventListener('submit', async (e) => {
+// ✅ LOGIN
+const formLogin = document.getElementById("formLogin");
+
+formLogin.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = e.target[0].value;
-  const senha = e.target[1].value;
+  const email = formLogin.email.value.trim();
+  const senha = formLogin.senha.value;
 
-  const res = await fetch('/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
+  if (!email || !senha) {
+    alert("Preencha todos os campos.");
+    return;
+  }
+
+  const res = await fetch("/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ email, senha })
   });
 
   const json = await res.json();
 
   if (!res.ok) {
-    alert(json.error);
+    alert(json.error || "Email ou senha inválidos.");
     return;
   }
 
+  // ✅ Login OK → ir para Home
   window.location.href = "/telahome";
 });

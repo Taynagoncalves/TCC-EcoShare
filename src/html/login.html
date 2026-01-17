@@ -17,26 +17,41 @@
   <main class="center-container">
     <h1>Login</h1>
  
-    <form class="login-form">
+    <form class="login-form" id="formLogin">
 
-      <input type="email" placeholder="Email" required>
+  <input
+    type="email"
+    name="email"
+    placeholder="Email"
+    required
+  >
 
+  <div class="password-group">
+    <input
+      type="password"
+      name="senha"
+      id="senhaLogin"
+      placeholder="Senha"
+      required
+    >
+    <img
+      src="../icons/olhofechado.png"
+      onclick="toggleSenha('senhaLogin', this)"
+      alt="Mostrar senha"
+    >
+  </div>
 
-      <div class="password-group">
-        <input type="password" id="senhaLogin" placeholder="Senha" required>
-        <img
-          src="../icons/olhofechado.png"
-          onclick="toggleSenha('senhaLogin', this)"
-          alt="Mostrar senha"
-        >
-      </div>
+  <button type="submit">Entrar</button>
 
-      <button type="submit">Entrar</button>
+  <a href="/esqueci-senha" class="forgot-password">
+    Esqueci minha senha
+  </a>
 
-     <a href="/esqueci-senha" class="forgot-password">Esqueci minha senha</a>
+  <button type="button" onclick="irParaCadastro()">
+    Criar Conta
+  </button>
 
-
-<button type="button" onclick="irParaCadastro()">Criar Conta</button>
+</form>
 
 <script>
   document.getElementById('forgotPassword').onclick = () => {

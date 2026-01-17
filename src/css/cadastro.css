@@ -6,127 +6,93 @@
 }
 
 body {
-  height: 100vh;
+  min-height: 100vh;
   background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* LOGO NO TOPO */
 .top-logo {
-  position: absolute;
-  top: 40px;
-  width: 100%;
-  text-align: center;
+  margin-top: 40px;
 }
 
 .top-logo img {
-  width: 160px;
+  width: 200px;
 }
 
-.top-logo h1 {
-  color: #347142;
-  font-size: 28px;
-  margin-top: 6px;
-}
-
-/* CONTEÚDO CENTRAL */
+/* CONTAINER CENTRAL */
 .center-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 360px;
+  width: 100%;
+  max-width: 420px;
+  margin-top: 30px;
+  padding: 0 20px;
   text-align: center;
 }
 
 .center-container h2 {
-  color: #347142;
-  font-size: 24px;
-  margin-bottom: 28px;
+  color: #2e7d32;
+  margin-bottom: 25px;
 }
 
 /* FORMULÁRIO */
 .cadastro-form {
   display: flex;
   flex-direction: column;
-  gap: 4px; /*  MAIS ESPAÇO ENTRE OS CAMPOS */
+  gap: 15px;
 }
 
+/* INPUTS */
 .cadastro-form input {
   width: 100%;
+  padding: 10px 5px;
   border: none;
   border-bottom: 1px solid #ccc;
-  padding: 12px 0; /* MAIS ALTURA */
   font-size: 14px;
   outline: none;
-  background: transparent;
 }
 
 .cadastro-form input:focus {
-  border-bottom: 1px solid #347142;
+  border-bottom-color: #2e7d32;
 }
 
-/* GRUPO SENHA */
+/* GRUPO DE SENHA COM OLHO */
 .password-group {
-  position: relative;
-  width: 100%;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
 }
 
 .password-group input {
-  padding: 12px 32px 12px 0;
+  border: none;
+  flex: 1;
 }
 
 .password-group img {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
   width: 22px;
   cursor: pointer;
 }
 
 /* BOTÃO */
-button {
-  margin-top: 22px;
-  background: #347142;
-  color: #ffffff;
+.cadastro-form button {
+  margin-top: 25px;
+  padding: 12px;
+  background: #2e7d32;
+  color: #fff;
   border: none;
-  padding: 14px;
   border-radius: 6px;
+  font-size: 15px;
   cursor: pointer;
-  font-size: 14px;
 }
 
-button:hover {
-  background: #2b5f37;
+.cadastro-form button:hover {
+  background: #256628;
 }
 
 /* TEXTO FINAL */
 .footer-text {
-  margin-top: 26px;
+  margin-top: 25px;
   font-size: 13px;
-  color: #347142;
-  line-height: 1.4;
-}
-
-/* 📱 RESPONSIVO */
-@media (max-width: 480px) {
-  .top-logo img {
-    width: 120px;
-  }
-
-  .center-container {
-    width: 90%;
-  }
-
-  .cadastro-form input {
-    font-size: 16px;
-  }
-
-  button {
-    font-size: 16px;
-  }
-
-  .footer-text {
-    font-size: 12px;
-  }
+  color: #2e7d32;
 }
