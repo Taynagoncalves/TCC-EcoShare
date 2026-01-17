@@ -13,6 +13,6 @@ form.addEventListener("submit", function (e) {
   // após 5 segundos (opcional)
   setTimeout(() => {
     // aqui você pode redirecionar se quiser
-    // window.location.href = "login.html";
+    window.location.href = "login.html";
   }, 5000);
 });
