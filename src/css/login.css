@@ -98,18 +98,18 @@ button.secondary {
 }
 
 .forgot-password {
-  margin-top: 12px;
-  font-size: 13px;
-  color: #347142;
-  opacity: 0.7;                 /* deixa transparente */
-  text-decoration: underline;  /* traço embaixo */
+  margin-top: 15px;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(46, 125, 50, 0.7); /* verde transparente */
   cursor: pointer;
-  transition: opacity 0.3s ease;
+  text-decoration: underline;
+  transition: color 0.3s ease;
 }
 
-/* efeito ao passar o mouse */
 .forgot-password:hover {
-  opacity: 1;
+  color: rgba(46, 125, 50, 1); /* verde forte no hover */
 }
 
 /* TEXTO FINAL */

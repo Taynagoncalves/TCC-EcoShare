@@ -33,15 +33,20 @@
 
       <button type="submit">Entrar</button>
 
-      <p class="forgot-password" id="forgotPassword">
-  Esqueci minha senha
-</p>
+     <a href="/esqueci-senha" class="forgot-password">Esqueci minha senha</a>
 
 
-      <button type="button" class="secondary" onclick="irParaCadastro()">
-  Criar Conta
-</button>
+<button type="button" onclick="irParaCadastro()">Criar Conta</button>
 
+<script>
+  document.getElementById('forgotPassword').onclick = () => {
+    window.location.href = '/esqueci-senha';
+  };
+
+  function irParaCadastro() {
+    window.location.href = '/cadastro';
+  }
+</script>
 
     </form>
 

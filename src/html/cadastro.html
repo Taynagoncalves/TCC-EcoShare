@@ -18,27 +18,30 @@
 
     <form class="cadastro-form">
 
-      <input type="text" placeholder="Nome Completo" required>
-      <input type="email" placeholder="Email" required>
-      <input type="date" required>
+  <input type="text" name="nome" placeholder="Nome Completo" required>
 
-      <div class="password-group">
-        <input type="password" id="senha" placeholder="Senha" required>
-        <img src="../icons/olhofechado.png" onclick="toggleSenha('senha', this)">
-      </div>
+  <input type="email" name="email" placeholder="Email" required>
 
-      <div class="password-group">
-        <input type="password" id="confirmarSenha" placeholder="Confirmar Senha" required>
-        <img src="../icons/olhofechado.png" onclick="toggleSenha('confirmarSenha', this)">
-      </div>
+  <input type="date" name="data_nascimento" required>
 
-      <input type="text" placeholder="CEP" required>
-      <input type="text" placeholder="Endereço" required>
-      <input type="text" placeholder="Número" required>
-      <input type="text" placeholder="Complemento (ex: bloco, ap.)">
+  <div class="password-group">
+    <input type="password" name="senha" id="senha" placeholder="Senha" required>
+    <img src="../icons/olhofechado.png" onclick="toggleSenha('senha', this)">
+  </div>
 
-      <button type="submit">Criar Conta</button>
-    </form>
+  <div class="password-group">
+    <input type="password" id="confirmarSenha" placeholder="Confirmar Senha" required>
+    <img src="../icons/olhofechado.png" onclick="toggleSenha('confirmarSenha', this)">
+  </div>
+
+  <input type="text" name="cep" placeholder="CEP" required>
+  <input type="text" name="endereco" placeholder="Endereço" required>
+  <input type="text" name="numero" placeholder="Número" required>
+  <input type="text" name="complemento" placeholder="Complemento (ex: bloco, ap.)">
+
+  <button type="submit">Criar Conta</button>
+</form>
+
 
     <p class="footer-text">
       Ajude o planeta e receba benefícios ao doar<br>
@@ -46,6 +49,8 @@
     </p>
   </main>
 
-  <script src="../js/cadastro.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../js/cadastro.js"></script>
+
 </body>
 </html>

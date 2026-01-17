@@ -10,13 +10,13 @@ function toggleSenha(id, icon) {
   }
 }
 
+// ✅ CORREÇÃO AQUI
 function irParaCadastro() {
-  window.location.href = "cadastro.html";
+  window.location.href = "/cadastro";
 }
-const forgotPassword = document.getElementById("forgotPassword");
 
-forgotPassword.addEventListener("click", () => {
-  window.location.href = "esqueci-senha.html";
+document.getElementById("forgotPassword").addEventListener("click", () => {
+  window.location.href = "/esqueci-senha";
 });
 
 document.querySelector('form').addEventListener('submit', async (e) => {
@@ -25,7 +25,7 @@ document.querySelector('form').addEventListener('submit', async (e) => {
   const email = e.target[0].value;
   const senha = e.target[1].value;
 
-  const res = await fetch('http://localhost:3000/login', {
+  const res = await fetch('/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -34,51 +34,10 @@ document.querySelector('form').addEventListener('submit', async (e) => {
 
   const json = await res.json();
 
-  if (res.ok) {
-    window.location.href = 'telahome.html';
-  } else {
+  if (!res.ok) {
     alert(json.error);
+    return;
   }
-});
-document.querySelector('form').addEventListener('submit', async (e) => {
-  e.preventDefault();
 
-  const email = e.target[0].value;
-  const senha = e.target[1].value;
-
-  const res = await fetch('http://localhost:3000/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ email, senha })
-  });
-
-  const json = await res.json();
-
-  if (res.ok) {
-    window.location.href = 'telahome.html';
-  } else {
-    alert(json.error);
-  }
-});
-document.querySelector('form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const email = e.target[0].value;
-  const senha = e.target[1].value;
-
-  const res = await fetch('http://localhost:3000/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ email, senha })
-  });
-
-  const json = await res.json();
-
-  if (res.ok) {
-    window.location.href = 'telahome.html';
-  } else {
-    alert(json.error);
-  }
+  window.location.href = "/telahome";
 });

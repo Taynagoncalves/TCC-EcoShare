@@ -18,12 +18,13 @@ module.exports = async (req, res) => {
 
     await db.execute(
       `INSERT INTO usuarios 
-      (nome, email, senha, data_nascimento, cep, endereco, numero, complemento)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+       (nome, email, senha, data_nascimento, cep, endereco, numero, complemento)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [nome, email, senhaHash, data_nascimento, cep, endereco, numero, complemento]
     );
 
     res.json({ message: 'Cadastro realizado com sucesso' });
+
   } catch (err) {
     res.status(400).json({ error: 'Email já cadastrado' });
   }

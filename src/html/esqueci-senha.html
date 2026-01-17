@@ -2,23 +2,27 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Redefinir Senha</title>
+  <title>EcoShare | Recuperar Senha</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CSS -->
   <link rel="stylesheet" href="../css/esqueci-senha.css">
 </head>
 <body>
+
 <main class="container">
 
-  <img src="../imagens/logo.png" alt="Logo" class="logo">
+  <img src="../imagens/logo.png" alt="EcoShare" class="logo">
 
   <!-- FORMULÁRIO -->
   <form id="formEmail">
     <p class="descricao">
-      Digite seu e-mail para redefinir sua senha
+      Informe o endereço de e-mail associado à sua conta para receber as instruções de redefinição de senha.
     </p>
 
     <input
       type="email"
+      name="email"
       placeholder="Digite seu e-mail"
       required
     >
@@ -27,16 +31,29 @@
   </form>
 
   <!-- MENSAGEM DE CONFIRMAÇÃO -->
-  <div id="mensagem" class="mensagem hidden">
+  <div id="mensagem" class="hidden">
+    <p class="titulo">
+      Verifique seu e-mail
+    </p>
+
     <p>
-      Se o endereço informado estiver cadastrado em nosso sistema,
-      você receberá em alguns minutos um link para redefinir sua senha.
-      <br><br>
-      Confira sua caixa de entrada e, se necessário,
-      verifique também a pasta de spam ou lixo eletrônico.
+      Se o endereço informado estiver cadastrado em nossa plataforma,
+      você receberá em instantes um e-mail com as instruções para redefinir sua senha.
+    </p>
+
+    <p>
+      Caso não localize a mensagem, verifique também a pasta de spam ou lixo eletrônico.
+    </p>
+
+    <p>
+      Por motivos de segurança, o link enviado possui validade limitada.
     </p>
   </div>
 
 </main>
 
+<!-- JS -->
 <script src="../js/esqueci-senha.js"></script>
+
+</body>
+</html>
