@@ -39,7 +39,7 @@ app.post('/redefinir-senha', redefinirSenha);
 // ROTAS HTML
 // ==================
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src', 'html', 'login.html'));
+  res.sendFile(path.join(__dirname, 'src', 'html', 'inicio.html'));
 });
 
 app.get('/login', (req, res) => {

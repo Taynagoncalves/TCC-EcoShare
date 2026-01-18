@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Adicionar Doação</title>
+  <link rel="stylesheet" href="../css/adicionar-doacao.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>Adicionar Doação</h2>
+
+  <form>
+    <input type="text" placeholder="Nome do Material">
+
+    <div class="row">
+      <input type="number" placeholder="Quantidade">
+      <select>
+        <option value="">Selecione o tipo de Material</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <input type="text" placeholder="Horários Disponíveis">
+      <input type="text" placeholder="Dias da Semana">
+    </div>
+
+    <select>
+      <option value="">Selecione seu Bairro</option>
+    </select>
+
+    <textarea placeholder="Descrição (Opcional)"></textarea>
+
+    <label class="upload-box">
+      <input type="file" hidden>
+      <div class="upload-content">
+        <span class="icon">⬆</span>
+        <p>Adicione uma imagem do seu Material</p>
+      </div>
+    </label>
+
+    <button type="submit">Publicar Doação</button>
+  </form>
+</div>
+
+<footer>
+  <nav class="menu">
+    <img src="../icons/home.png" alt="Home">
+    <img src="../icons/cupom.png" alt="Resgate">
+    <img src="../icons/user.png" alt="Perfil">
+    <img src="../icons/config.png" alt="Configurações">
+  </nav>
+</footer>
+
+</body>
+</html>
