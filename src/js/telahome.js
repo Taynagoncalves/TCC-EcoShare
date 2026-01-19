@@ -39,14 +39,31 @@ async function carregarDoacoes() {
       const card = document.createElement('div');
       card.className = 'card';
 
-      card.innerHTML = `
-        <img src="/uploads/${d.imagem}" alt="Imagem da doação">
-        <h3>${d.nome_material}</h3>
-        <p><strong>Bairro:</strong> ${d.bairro}</p>
-        <p><strong>Material:</strong> ${d.tipo_material}</p>
-        <p><strong>Quantidade:</strong> ${d.quantidade}</p>
-        <button onclick="verDetalhes(${d.id})">Ver mais</button>
-      `;
+card.innerHTML = `
+  <div class="card-img-wrapper">
+    <img src="/uploads/${d.imagem}" alt="${d.nome_material}">
+  </div>
+
+  <div class="card-body">
+    <div class="card-header">
+      <h3 class="card-title">${d.nome_material}</h3>
+      <span class="badge-disponivel">Disponível</span>
+    </div>
+
+    <div class="card-info">
+      <p><strong>Bairro:</strong> ${d.bairro}</p>
+      <p><strong>Material:</strong> ${d.tipo_material}</p>
+      <p><strong>Quantidade:</strong> ${d.quantidade}</p>
+    </div>
+
+    <button class="btn-ver-mais" onclick="verDetalhes(${d.id})">
+      Ver mais
+    </button>
+  </div>
+`;
+
+
+
 
       lista.appendChild(card);
     });
@@ -64,3 +81,41 @@ function verDetalhes(id) {
 document.addEventListener('DOMContentLoaded', () => {
   carregarDoacoes();
 });
+async function verDetalhes(id) {
+  const res = await fetch(`/doacoes/${id}`);
+  const d = await res.json();
+
+  document.getElementById('detalheImagem').src = `/uploads/${d.imagem}`;
+  document.getElementById('detalheTitulo').innerText =
+    `${d.nome_material} - ${d.quantidade} Unidades`;
+
+  document.getElementById('detalheMaterial').innerText =
+    `Material: ${d.tipo_material}`;
+
+  document.getElementById('detalheBairro').innerText =
+    `Bairro: ${d.bairro}`;
+
+  document.getElementById('detalheUsuario').innerText =
+    `👤 ${d.usuario}`;
+
+  document.getElementById('detalheDias').innerText =
+    `Dias da semana: ${d.dias_semana}`;
+
+  document.getElementById('detalheHorario').innerText =
+    `Horário: ${d.horarios}`;
+
+  document.getElementById('detalheDescricao').innerText =
+    `Descrição: ${d.descricao}`;
+
+  document.getElementById('modalDetalhes').style.display = 'flex';
+}
+
+function fecharDetalhes() {
+  document.getElementById('modalDetalhes').style.display = 'none';
+}
+function reportarDoacao() {
+  alert(
+    'Sua denúncia será analisada.\n' +
+    'Obrigado por ajudar a manter a plataforma segura.'
+  );
+}

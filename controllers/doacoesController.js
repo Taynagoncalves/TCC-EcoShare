@@ -67,6 +67,9 @@ exports.listarDoacoes = async (req, res) => {
         d.nome_material,
         d.quantidade,
         d.tipo_material,
+        d.descricao,
+        d.dias_semana,
+        d.horarios,
         d.imagem,
         b.nome AS bairro
       FROM doacoes d
@@ -106,4 +109,27 @@ exports.minhasDoacoes = async (req, res) => {
     console.error(error);
     res.status(500).json({ erro: 'Erro ao buscar suas doações' });
   }
+};
+
+exports.detalhesDoacao = async (req, res) => {
+  const { id } = req.params;
+
+  const [rows] = await db.query(`
+    SELECT 
+      d.nome_material,
+      d.quantidade,
+      d.tipo_material,
+      d.descricao,
+      d.dias_semana,
+      d.horarios,
+      d.imagem,
+      u.nome AS usuario,
+      b.nome AS bairro
+    FROM doacoes d
+    JOIN usuarios u ON d.usuario_id = u.id
+    JOIN bairros b ON d.bairro_id = b.id
+    WHERE d.id = ?
+  `, [id]);
+
+  res.json(rows[0]);
 };

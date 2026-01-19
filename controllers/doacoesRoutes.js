@@ -12,6 +12,7 @@ router.post(
   upload.single('imagem'),
   doacoesController.criarDoacao
 );
+router.get('/doacoes/:id', doacoesController.detalhesDoacao);
 
 /* HOME */
 router.get(

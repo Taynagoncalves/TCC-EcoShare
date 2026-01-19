@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <title>EcoShare | Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- CSS -->
   <link rel="stylesheet" href="../css/telahome.css">
 </head>
 <body>
@@ -22,7 +20,9 @@
     placeholder="Buscar material..."
   >
 
-  <img src="../icons/notificacao.png" class="icon" alt="Notificações">
+  <div class="topo-acoes">
+    <img src="../icons/notificacao.png" class="icon" alt="Notificações">
+  </div>
 </header>
 
 <!-- =========================
@@ -41,7 +41,7 @@
      PUBLICAÇÕES
 ========================= -->
 <section class="publicacoes" id="listaPublicacoes">
-  <!-- Cards são inseridos via JS -->
+  <!-- Cards inseridos via JS -->
 </section>
 
 <!-- =========================
@@ -51,22 +51,57 @@
   <img src="../icons/adicionar.png" alt="Adicionar">
 </button>
 
-<!-- =========================
-     MODAL ADICIONAR DOAÇÃO
-========================= -->
+<!-- MODAL ADICIONAR DOAÇÃO -->
 <div class="modal-overlay" id="modalDoacao">
-  <div class="modal">
+  <div class="modal-doacao">
+
     <button class="close-modal" onclick="fecharModalDoacao()">✕</button>
 
-    <button class="modal-btn" onclick="irParaAdicionarDoacao()">
+    <button class="btn-modal-principal" onclick="irParaAdicionarDoacao()">
       Adicionar Doação
     </button>
 
-<button class="modal-btn outline" onclick="irParaMinhasDoacoes()">
-  Ver Minhas Doações
+    <button class="btn-modal-principal" onclick="irParaMinhasDoacoes()">
+      Ver Minhas Doações
+    </button>
+
+  </div>
+</div>
+
+
+<!-- =========================
+     MODAL VER MAIS
+========================= -->
+<div class="modal-overlay" id="modalDetalhes">
+  <div class="modal-detalhes">
+
+    <button class="close-modal" onclick="fecharDetalhes()">✕</button>
+
+    <img id="detalheImagem" class="detalhe-img" alt="Imagem da doação">
+
+    <h3 id="detalheTitulo" class="detalhe-titulo"></h3>
+
+    <div class="detalhe-info">
+      <p id="detalheBairro"></p>
+      <p id="detalheMaterial"></p>
+      <p id="detalheUsuario"></p>
+    </div>
+
+    <div class="detalhe-horarios">
+      <p id="detalheDias"></p>
+      <p id="detalheHorario"></p>
+    </div>
+
+    <p id="detalheDescricao" class="detalhe-descricao"></p>
+
+<button class="btn-coleta">Solicitar Coleta</button>
+
+<button class="btn-reportar" onclick="reportarDoacao()">
+  Reportar
 </button>
 
-    </button>
+<button class="btn-fechar" onclick="fecharDetalhes()">Fechar</button>
+
   </div>
 </div>
 
@@ -74,7 +109,7 @@
      MENU INFERIOR
 ========================= -->
 <nav class="menu">
-  <div class="menu-item">
+  <div class="menu-item ativo" onclick="location.href='/telahome'">
     <img src="../icons/home.png" alt="Home">
     <span>Home</span>
   </div>
@@ -89,7 +124,7 @@
     <span>Perfil</span>
   </div>
 
- <div class="menu-item" onclick="location.href='/configuracoes'">
+  <div class="menu-item" onclick="location.href='/configuracoes'">
     <img src="../icons/config.png" alt="Configurações">
     <span>Configurações</span>
   </div>
