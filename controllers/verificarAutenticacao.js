@@ -1,16 +1,20 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res) => {
+module.exports = (req, res, next) => {
   const token = req.cookies.token;
 
   if (!token) {
-    return res.status(401).json({ error: 'Não autenticado' });
+    return res.redirect('/login');
   }
 
   try {
-    jwt.verify(token, process.env.JWT_SECRET);
-    res.json({ autenticado: true });
-  } catch {
-    res.status(401).json({ error: 'Token inválido' });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // ISSO É O QUE FAZ "MINHAS PUBLICAÇÕES" FUNCIONAR
+    req.user = decoded;
+
+    next();
+  } catch (error) {
+    return res.redirect('/login');
   }
 };

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>EcoShare | Configurações</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/configuracoes.css">
+  <link rel="stylesheet" href="../css/telahome.css">
+</head>
+<body>
+
+<!-- TOPO -->
+<header class="topo">
+
+</header>
+
+<!-- CONTEÚDO -->
+<main class="config-container">
+  <h2>Configurações</h2>
+
+  <div class="config-item">
+    <span>Notificações</span>
+    <label class="switch">
+      <input type="checkbox" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="config-item clickable" onclick="irParaMinhasPublicacoes()">
+    <span>Minhas Publicações</span>
+  </div>
+
+  <div class="config-item">
+    <span>Histórico de Doações e Coleta</span>
+  </div>
+
+  <div class="config-item sair" onclick="deslogar()">
+    <span>Sair</span>
+  </div>
+</main>
+
+<!-- MENU INFERIOR -->
+<nav class="menu">
+  <div class="menu-item" onclick="location.href='/telahome'">
+    <img src="../icons/home.png">
+    <span>Home</span>
+  </div>
+
+  <div class="menu-item">
+    <img src="../icons/cupom.png">
+    <span>Resgate</span>
+  </div>
+
+  <div class="menu-item">
+    <img src="../icons/user.png">
+    <span>Perfil</span>
+  </div>
+
+  <div class="menu-item ativo">
+    <img src="../icons/config.png">
+    <span>Configurações</span>
+  </div>
+</nav>
+
+<script src="../js/configuracoes.js"></script>
+</body>
+</html>

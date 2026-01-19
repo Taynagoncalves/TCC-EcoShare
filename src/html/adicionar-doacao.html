@@ -2,55 +2,97 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Adicionar Doação</title>
+  <title>EcoShare | Adicionar Doação</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../css/adicionar-doacao.css">
 </head>
 <body>
 
-<div class="container">
+<header class="topo">
   <h2>Adicionar Doação</h2>
+</header>
 
-  <form>
-    <input type="text" placeholder="Nome do Material">
+<main class="container">
+  <form id="formDoacao" enctype="multipart/form-data">
 
+    <!-- NOME DO MATERIAL -->
+    <input
+      type="text"
+      name="nome_material"
+      placeholder="Nome do material"
+      required
+    >
+
+    <!-- QUANTIDADE E TIPO -->
     <div class="row">
-      <input type="number" placeholder="Quantidade">
-      <select>
-        <option value="">Selecione o tipo de Material</option>
+      <input
+        type="number"
+        name="quantidade"
+        placeholder="Quantidade"
+        required
+      >
+
+      <select name="tipo_material" required>
+        <option value="">Tipo de material</option>
+        <option value="metal">Metal</option>
+        <option value="papel">Papel</option>
+        <option value="plastico">Plástico</option>
+        <option value="vidro">Vidro</option>
+        <option value="outros">Outros</option>
       </select>
     </div>
 
+    <!-- DIAS E HORÁRIOS -->
     <div class="row">
-      <input type="text" placeholder="Horários Disponíveis">
-      <input type="text" placeholder="Dias da Semana">
+      <input
+        type="text"
+        name="dias_semana"
+        placeholder="Dias disponíveis (ex: Seg, Qua, Sex)"
+        required
+      >
+
+      <input
+        type="text"
+        name="horarios"
+        placeholder="Horários (ex: 08:00 às 12:00)"
+        required
+      >
     </div>
 
-    <select>
-      <option value="">Selecione seu Bairro</option>
+    <!-- BAIRRO -->
+    <select name="bairro_id" id="bairroSelect" required>
+      <option value="">Selecione seu bairro</option>
+      <!-- bairros virão do banco -->
     </select>
 
-    <textarea placeholder="Descrição (Opcional)"></textarea>
+    <!-- DESCRIÇÃO -->
+    <textarea
+      name="descricao"
+      placeholder="Descrição (opcional)"
+      rows="4"
+    ></textarea>
 
+    <!-- IMAGEM -->
     <label class="upload-box">
-      <input type="file" hidden>
+      <input type="file" name="imagem" accept="image/*" required hidden>
       <div class="upload-content">
-        <span class="icon">⬆</span>
-        <p>Adicione uma imagem do seu Material</p>
+        <span>📷</span>
+        <p>Adicionar imagem do material</p>
       </div>
     </label>
 
-    <button type="submit">Publicar Doação</button>
+    <!-- BOTÕES -->
+    <button type="submit" class="btn-publicar">
+      Publicar Doação
+    </button>
+
+    <button type="button" class="btn-sair" onclick="window.location.href='/telahome'">
+      Cancelar
+    </button>
+
   </form>
-</div>
+</main>
 
-<footer>
-  <nav class="menu">
-    <img src="../icons/home.png" alt="Home">
-    <img src="../icons/cupom.png" alt="Resgate">
-    <img src="../icons/user.png" alt="Perfil">
-    <img src="../icons/config.png" alt="Configurações">
-  </nav>
-</footer>
-
+<script src="../js/adicionar-doacao.js"></script>
 </body>
 </html>

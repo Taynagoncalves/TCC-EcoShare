@@ -1,4 +1,4 @@
-// 👁️ Mostrar / ocultar senha
+// Mostrar / ocultar senha
 function toggleSenha(id, icon) {
   const input = document.getElementById(id);
 
@@ -16,7 +16,7 @@ function irParaCadastro() {
   window.location.href = "/cadastro";
 }
 
-// 🔑 Esqueci minha senha
+//  Esqueci minha senha
 const forgotPassword = document.getElementById("forgotPassword");
 if (forgotPassword) {
   forgotPassword.addEventListener("click", () => {
@@ -24,7 +24,7 @@ if (forgotPassword) {
   });
 }
 
-// ✅ LOGIN
+// LOGIN
 const formLogin = document.getElementById("formLogin");
 
 formLogin.addEventListener("submit", async (e) => {
@@ -52,6 +52,6 @@ formLogin.addEventListener("submit", async (e) => {
     return;
   }
 
-  // ✅ Login OK → ir para Home
+  // Login OK ir para Home
   window.location.href = "/telahome";
 });

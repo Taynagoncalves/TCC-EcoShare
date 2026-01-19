@@ -13,7 +13,7 @@ body {
   align-items: center;
 }
 
-/* LOGO NO TOPO */
+/* logo */
 .top-logo {
   margin-top: 40px;
 }
@@ -22,7 +22,6 @@ body {
   width: 200px;
 }
 
-/* CONTAINER CENTRAL */
 .center-container {
   width: 100%;
   max-width: 420px;

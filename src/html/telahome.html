@@ -4,16 +4,30 @@
   <meta charset="UTF-8">
   <title>EcoShare | Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- CSS -->
   <link rel="stylesheet" href="../css/telahome.css">
 </head>
 <body>
 
+<!-- =========================
+     TOPO
+========================= -->
 <header class="topo">
-  <img src="../imagens/logo.png" class="logo">
-  <input type="text" placeholder="Buscar material..." class="search">
-  <img src="../icons/notificacao.png" class="icon">
+  <img src="../imagens/logo.png" class="logo" alt="EcoShare">
+
+  <input
+    type="text"
+    class="search"
+    placeholder="Buscar material..."
+  >
+
+  <img src="../icons/notificacao.png" class="icon" alt="Notificações">
 </header>
 
+<!-- =========================
+     FILTROS
+========================= -->
 <section class="filtros">
   <button>Plástico</button>
   <button>Papel</button>
@@ -23,21 +37,68 @@
   <button>Outros</button>
 </section>
 
+<!-- =========================
+     PUBLICAÇÕES
+========================= -->
 <section class="publicacoes" id="listaPublicacoes">
-  <!-- Cards aparecem aqui -->
+  <!-- Cards são inseridos via JS -->
 </section>
 
-<button class="btn-add" onclick="abrirAdicionarDoacao()">
-  <img src="../icons/adicionar.png">
+<!-- =========================
+     BOTÃO ADICIONAR
+========================= -->
+<button class="btn-add" onclick="abrirModalDoacao()">
+  <img src="../icons/adicionar.png" alt="Adicionar">
 </button>
 
+<!-- =========================
+     MODAL ADICIONAR DOAÇÃO
+========================= -->
+<div class="modal-overlay" id="modalDoacao">
+  <div class="modal">
+    <button class="close-modal" onclick="fecharModalDoacao()">✕</button>
+
+    <button class="modal-btn" onclick="irParaAdicionarDoacao()">
+      Adicionar Doação
+    </button>
+
+<button class="modal-btn outline" onclick="irParaMinhasDoacoes()">
+  Ver Minhas Doações
+</button>
+
+    </button>
+  </div>
+</div>
+
+<!-- =========================
+     MENU INFERIOR
+========================= -->
 <nav class="menu">
-  <img src="../icons/home.png">
-  <img src="../icons/cupom.png">
-  <img src="../icons/user.png">
-  <img src="../icons/config.png">
+  <div class="menu-item">
+    <img src="../icons/home.png" alt="Home">
+    <span>Home</span>
+  </div>
+
+  <div class="menu-item">
+    <img src="../icons/cupom.png" alt="Resgate">
+    <span>Resgate</span>
+  </div>
+
+  <div class="menu-item">
+    <img src="../icons/user.png" alt="Perfil">
+    <span>Perfil</span>
+  </div>
+
+ <div class="menu-item" onclick="location.href='/configuracoes'">
+    <img src="../icons/config.png" alt="Configurações">
+    <span>Configurações</span>
+  </div>
 </nav>
 
+<!-- =========================
+     JS
+========================= -->
 <script src="../js/telahome.js"></script>
+
 </body>
 </html>
