@@ -87,3 +87,15 @@ CREATE TABLE doacoes (
 
   FOREIGN KEY (bairro_id) REFERENCES bairros(id)
 );
+CREATE TABLE solicitacoes_coleta (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  doacao_id INT NOT NULL,
+  solicitante_id INT NOT NULL,
+  doador_id INT NOT NULL,
+  status ENUM('pendente', 'confirmada', 'recusada') DEFAULT 'pendente',
+  criada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (doacao_id) REFERENCES doacoes(id),
+  FOREIGN KEY (solicitante_id) REFERENCES usuarios(id),
+  FOREIGN KEY (doador_id) REFERENCES usuarios(id)
+);

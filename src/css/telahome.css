@@ -407,3 +407,125 @@ body {
   color: #1b5e20;
   cursor: pointer;
 }
+/* =========================
+   MODAL DENÚNCIA
+========================= */
+.modal-denuncia {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-denuncia-box {
+  background: #fff;
+  width: 90%;
+  max-width: 420px;
+  border-radius: 18px;
+  padding: 25px;
+  position: relative;
+  animation: aparecer .25s ease;
+}
+
+/* animação */
+@keyframes aparecer {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* botão fechar */
+.fechar-denuncia {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* header */
+.denuncia-header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.icone-alerta {
+  font-size: 32px;
+  display: block;
+}
+
+.denuncia-header h2 {
+  margin: 8px 0;
+  color: #d32f2f;
+}
+
+.denuncia-header p {
+  font-size: 14px;
+  color: #555;
+}
+
+/* textarea */
+#textoDenuncia {
+  width: 100%;
+  resize: none;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 15px;
+}
+
+#textoDenuncia:focus {
+  border-color: #d32f2f;
+}
+
+/* botão enviar */
+.btn-enviar-denuncia {
+  width: 100%;
+  padding: 12px;
+  background: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.btn-enviar-denuncia:hover {
+  background: #b71c1c;
+}
+/* =========================
+   ÍCONE DE NOTIFICAÇÃO
+========================= */
+.icon-notificacao {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  cursor: pointer;
+  position: relative;
+}
+
+/* bolinha de notificação */
+.icon-notificacao.tem-notificacao::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+}

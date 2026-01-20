@@ -5,7 +5,6 @@ exports.listarBairros = async (req, res) => {
     const [rows] = await db.query(
       'SELECT id, nome FROM bairros ORDER BY nome'
     );
-
     res.json(rows);
   } catch (error) {
     console.error(error);

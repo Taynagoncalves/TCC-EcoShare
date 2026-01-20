@@ -1,36 +1,42 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const db = require('../models/db');
+const bcrypt = require('bcryptjs');
 
 module.exports = async (req, res) => {
   const { email, senha } = req.body;
 
-  const [rows] = await db.execute(
-    'SELECT * FROM usuarios WHERE email = ?',
-    [email]
-  );
+  try {
+    const [rows] = await db.query(
+      'SELECT id, nome, senha FROM usuarios WHERE email = ?',
+      [email]
+    );
 
-  if (rows.length === 0) {
-    return res.status(401).json({ error: 'Usuário não encontrado' });
+    if (rows.length === 0) {
+      return res.status(401).json({ erro: 'Usuário não encontrado' });
+    }
+
+    const usuario = rows[0];
+    const senhaOk = await bcrypt.compare(senha, usuario.senha);
+
+    if (!senhaOk) {
+      return res.status(401).json({ erro: 'Senha incorreta' });
+    }
+
+    // 🔥 COOKIE CORRETO
+    res.cookie(
+      'usuario',
+      {
+        id: usuario.id,
+        nome: usuario.nome
+      },
+      {
+        httpOnly: true
+      }
+    );
+
+    res.json({ sucesso: true });
+
+  } catch (error) {
+    console.error('Erro login:', error);
+    res.status(500).json({ erro: 'Erro no login' });
   }
-
-  const usuario = rows[0];
-  const senhaValida = await bcrypt.compare(senha, usuario.senha);
-
-  if (!senhaValida) {
-    return res.status(401).json({ error: 'Senha incorreta' });
-  }
-
-  const token = jwt.sign(
-    { id: usuario.id, email: usuario.email },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' }
-  );
-
-  res.cookie('token', token, {
-    httpOnly: true,
-    maxAge: 3600000
-  });
-
-  res.json({ message: 'Login realizado com sucesso' });
 };

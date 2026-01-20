@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('./bairrosController');
+const bairrosController = require('./bairrosController');
 
-router.get('/bairros', controller.listarBairros);
+router.get('/bairros', bairrosController.listarBairros);
 
 module.exports = router;

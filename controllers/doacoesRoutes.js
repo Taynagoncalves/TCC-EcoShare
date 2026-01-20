@@ -12,19 +12,24 @@ router.post(
   upload.single('imagem'),
   doacoesController.criarDoacao
 );
-router.get('/doacoes/:id', doacoesController.detalhesDoacao);
 
 /* HOME */
-router.get(
-  '/doacoes',
-  doacoesController.listarDoacoes
-);
+router.get('/doacoes', doacoesController.listarDoacoes);
+
+/* DETALHES */
+router.get('/doacoes/:id', doacoesController.detalhesDoacao);
 
 /* MINHAS PUBLICAÇÕES */
 router.get(
   '/minhas-doacoes',
   verificarAutenticacao,
   doacoesController.minhasDoacoes
+);
+/* EXCLUIR DOAÇÃO */
+router.delete(
+  '/doacoes/:id',
+  verificarAutenticacao,
+  doacoesController.excluirDoacao
 );
 
 module.exports = router;

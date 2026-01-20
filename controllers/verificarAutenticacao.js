@@ -1,20 +1,24 @@
-const jwt = require('jsonwebtoken');
-
 module.exports = (req, res, next) => {
-  const token = req.cookies.token;
-
-  if (!token) {
-    return res.redirect('/login');
+  if (!req.cookies || !req.cookies.usuario) {
+    return res.status(401).json({ erro: 'Usuário não autenticado' });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const usuario = req.cookies.usuario;
 
-    // ISSO É O QUE FAZ "MINHAS PUBLICAÇÕES" FUNCIONAR
-    req.user = decoded;
+    if (!usuario.id) {
+      return res.status(401).json({ erro: 'Sessão inválida' });
+    }
+
+    // 🔥 deixa disponível para os controllers
+    req.usuario = {
+      id: usuario.id,
+      nome: usuario.nome
+    };
 
     next();
   } catch (error) {
-    return res.redirect('/login');
+    console.error('Erro autenticação:', error);
+    return res.status(401).json({ erro: 'Erro de autenticação' });
   }
 };
