@@ -14,20 +14,28 @@
 <header class="topo">
   <img src="../imagens/logo.png" class="logo" alt="EcoShare">
 
-  <input
-    type="text"
-    class="search"
-    placeholder="Buscar material..."
-  >
+<input
+  type="text"
+  id="campoBusca"
+  class="search"
+  placeholder="Buscar material..."
+>
 
-  <div class="topo-acoes">
-    <img 
+
+  <!-- 🔔 NOTIFICAÇÕES -->
+  <div class="notificacao-container">
+    <img
       src="../icons/notificacao.png"
       id="iconeNotificacao"
       class="icon-notificacao"
       alt="Notificações"
-      onclick="abrirSolicitacoes()"
     >
+
+    <div id="menuNotificacao" class="menu-notificacao">
+     <a href="/solicitacoes-coleta"> Solicitações de coleta</a>
+<a href="/coletas-andamento"> Coletas em andamento</a>
+
+    </div>
   </div>
 </header>
 
@@ -35,13 +43,15 @@
      FILTROS
 ========================= -->
 <section class="filtros">
-  <button>Plástico</button>
-  <button>Papel</button>
-  <button>Vidro</button>
-  <button>Eletrônico</button>
-  <button>Metal</button>
-  <button>Outros</button>
+  <button onclick="limparFiltro()">Todos</button>
+  <button onclick="filtrarPorMaterial('Plástico')">Plástico</button>
+  <button onclick="filtrarPorMaterial('Papel')">Papel</button>
+  <button onclick="filtrarPorMaterial('Vidro')">Vidro</button>
+  <button onclick="filtrarPorMaterial('Eletrônico')">Eletrônico</button>
+  <button onclick="filtrarPorMaterial('Metal')">Metal</button>
+  <button onclick="filtrarPorMaterial('Outros')">Outros</button>
 </section>
+
 
 <!-- =========================
      PUBLICAÇÕES
@@ -93,9 +103,8 @@
 
     <p id="detalheDescricao"></p>
 
-    <button onclick="solicitarColeta()">
-      Solicitar Coleta
-    </button>
+    <button onclick="solicitarColeta()">Solicitar Coleta</button>
+
 
     <button class="btn-reportar" onclick="abrirDenuncia()">
       Reportar

@@ -21,16 +21,17 @@ inputNome.addEventListener('input', () => {
 document.querySelector('form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const dados = {
-    nome: e.target.nome.value,
-    email: e.target.email.value,
-    data_nascimento: e.target.data_nascimento.value,
-    senha: e.target.senha.value,
-    cep: e.target.cep.value,
-    endereco: e.target.endereco.value,
-    numero: e.target.numero.value,
-    complemento: e.target.complemento.value
-  };
+const dados = {
+  nome: e.target.nome.value,
+  email: e.target.email.value,
+  telefone: e.target.telefone.value,
+  data_nascimento: e.target.data_nascimento.value,
+  senha: e.target.senha.value,
+  cep: e.target.cep.value,
+  endereco: e.target.endereco.value,
+  numero: e.target.numero.value,
+  complemento: e.target.complemento.value
+};
 
   try {
     const res = await fetch('/cadastro', {

@@ -1,4 +1,11 @@
 /* =========================
+   VARIÁVEIS GLOBAIS
+========================= */
+let todasDoacoes = [];
+let filtroAtivo = '';
+let doacaoAtualId = null;
+
+/* =========================
    MODAL ADICIONAR DOAÇÃO
 ========================= */
 function abrirModalDoacao() {
@@ -21,54 +28,15 @@ function irParaMinhasDoacoes() {
 }
 
 /* =========================
-   LISTAR DOAÇÕES NA HOME
+   LISTAR DOAÇÕES
 ========================= */
 async function carregarDoacoes() {
   try {
     const res = await fetch('/doacoes');
     if (!res.ok) throw new Error('Erro ao buscar doações');
 
-    const doacoes = await res.json();
-    const lista = document.getElementById('listaPublicacoes');
-    lista.innerHTML = '';
-
-    if (!doacoes || doacoes.length === 0) {
-      lista.innerHTML = '<p>Nenhuma doação cadastrada.</p>';
-      return;
-    }
-
-    doacoes.forEach(d => {
-      const card = document.createElement('div');
-      card.className = 'card';
-
-      card.innerHTML = `
-        <div class="card-img-wrapper">
-          <img 
-            src="${d.imagem ? `/uploads/${d.imagem}` : '/imagens/sem-imagem.png'}"
-            alt="${d.nome_material}"
-          >
-        </div>
-
-        <div class="card-body">
-          <div class="card-header">
-            <h3 class="card-title">${d.nome_material}</h3>
-            <span class="badge-disponivel">Disponível</span>
-          </div>
-
-          <div class="card-info">
-            <p><strong>Bairro:</strong> ${d.bairro}</p>
-            <p><strong>Material:</strong> ${d.tipo_material}</p>
-            <p><strong>Quantidade:</strong> ${d.quantidade}</p>
-          </div>
-
-          <button class="btn-ver-mais" onclick="verDetalhes(${d.id})">
-            Ver mais
-          </button>
-        </div>
-      `;
-
-      lista.appendChild(card);
-    });
+    todasDoacoes = await res.json();
+    renderizarDoacoes(todasDoacoes);
 
   } catch (error) {
     console.error('Erro ao carregar doações:', error);
@@ -76,14 +44,140 @@ async function carregarDoacoes() {
 }
 
 /* =========================
-   VER DETALHES (ÚNICA FUNÇÃO)
+   RENDERIZAR DOAÇÕES
 ========================= */
+function renderizarDoacoes(doacoes) {
+  const lista = document.getElementById('listaPublicacoes');
+  lista.innerHTML = '';
+
+  if (!doacoes || doacoes.length === 0) {
+    lista.innerHTML = '<p>Nenhuma doação encontrada.</p>';
+    return;
+  }
+
+  doacoes.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    card.innerHTML = `
+      <div class="card-img-wrapper">
+        <img 
+          src="${d.imagem ? `/uploads/${d.imagem}` : '/imagens/sem-imagem.png'}"
+          alt="${d.nome_material}"
+        >
+      </div>
+
+      <div class="card-body">
+        <div class="card-header">
+          <h3 class="card-title">${d.nome_material}</h3>
+          <span class="badge-disponivel">Disponível</span>
+        </div>
+
+        <div class="card-info">
+          <p><strong>Bairro:</strong> ${d.bairro}</p>
+          <p><strong>Material:</strong> ${d.tipo_material}</p>
+          <p><strong>Quantidade:</strong> ${d.quantidade}</p>
+        </div>
+
+        <button class="btn-ver-mais" onclick="verDetalhes(${d.id})">
+          Ver mais
+        </button>
+      </div>
+    `;
+
+    lista.appendChild(card);
+  });
+}
+
+/* busca sem numeros*/
+let debounceBusca;
+
+document.addEventListener('DOMContentLoaded', () => {
+  const campoBusca = document.getElementById('campoBusca');
+
+  if (campoBusca) {
+    campoBusca.addEventListener('input', (e) => {
+      let valor = e.target.value;
+
+      //remove números
+      valor = valor.replace(/[0-9]/g, '');
+      e.target.value = valor;
+
+      clearTimeout(debounceBusca);
+      debounceBusca = setTimeout(() => {
+        aplicarFiltros();
+      }, 300);
+    });
+  }
+});
+
+function normalizarTexto(texto) {
+  return texto
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
+
+
+/* filtros */
+function filtrarPorMaterial(material) {
+  filtroAtivo = normalizarTexto(material);
+  aplicarFiltros();
+  destacarFiltro(material);
+}
+
+
+function aplicarFiltros() {
+  const busca = document
+    .getElementById('campoBusca')
+    ?.value
+    .toLowerCase() || '';
+
+  const filtradas = todasDoacoes.filter(d => {
+const nome = normalizarTexto(d.nome_material);
+const tipo = normalizarTexto(d.tipo_material);
+
+
+    const correspondeBusca =
+      nome.includes(busca) || tipo.includes(busca);
+
+    const correspondeFiltro =
+  !filtroAtivo || tipo.includes(filtroAtivo);
+
+
+    return correspondeBusca && correspondeFiltro;
+  });
+
+  renderizarDoacoes(filtradas);
+}
+
+function destacarFiltro(material) {
+  document.querySelectorAll('.filtros button').forEach(btn => {
+    btn.classList.toggle(
+      'ativo',
+      normalizarTexto(btn.innerText) === normalizarTexto(material)
+    );
+  });
+}
+
+function limparFiltro() {
+  filtroAtivo = '';
+  document.getElementById('campoBusca').value = '';
+  aplicarFiltros();
+
+  document
+    .querySelectorAll('.filtros button')
+    .forEach(btn => btn.classList.remove('ativo'));
+}
+
+/* ver mais */
 async function verDetalhes(id) {
   try {
-    window.doacaoAtualId = id;
+    doacaoAtualId = id;
 
     const res = await fetch(`/doacoes/${id}`);
-    if (!res.ok) throw new Error('Doação não encontrada');
+    if (!res.ok) throw new Error();
 
     const d = await res.json();
 
@@ -113,23 +207,16 @@ async function verDetalhes(id) {
 
     document.getElementById('modalDetalhes').style.display = 'flex';
 
-  } catch (error) {
-    alert('Não foi possível abrir os detalhes desta doação.');
-    console.error(error);
+  } catch {
+    alert('Não foi possível abrir os detalhes.');
   }
 }
 
-/* =========================
-   FECHAR MODAL DETALHES
-========================= */
 function fecharDetalhes() {
-  const modal = document.getElementById('modalDetalhes');
-  if (modal) modal.style.display = 'none';
+  document.getElementById('modalDetalhes').style.display = 'none';
 }
 
-/* =========================
-   DENÚNCIA
-========================= */
+/* denuncia */
 function abrirDenuncia() {
   document.getElementById('modalDenuncia').style.display = 'flex';
 }
@@ -141,11 +228,7 @@ function fecharDenuncia() {
 
 async function enviarDenuncia() {
   const texto = document.getElementById('textoDenuncia').value.trim();
-
-  if (!texto) {
-    alert('Descreva o motivo da denúncia.');
-    return;
-  }
+  if (!texto) return alert('Descreva o motivo.');
 
   try {
     const res = await fetch('/denuncia', {
@@ -153,70 +236,85 @@ async function enviarDenuncia() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         mensagem: texto,
-        doacaoId: window.doacaoAtualId || null
+        doacaoId: doacaoAtualId
       })
     });
 
     if (!res.ok) throw new Error();
 
     fecharDenuncia();
-    alert(
-      'Denúncia enviada para análise.\n\n' +
-      'Agradecemos por ajudar a manter a EcoShare segura!'
-    );
+    alert('Denúncia enviada com sucesso!');
   } catch {
     alert('Erro ao enviar denúncia.');
   }
 }
+
+/* solicitar coleta */
 async function solicitarColeta() {
-  try {
-    const res = await fetch('/coletas/solicitar', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        doacao_id: window.doacaoAtualId // 🔥 usa o ID salvo
-      })
-    });
-
-    if (!res.ok) throw new Error();
-
-    alert('Solicitação de coleta enviada com sucesso!');
-    fecharDetalhes();
-
-  } catch {
-    alert('Erro ao solicitar coleta');
+  if (!doacaoAtualId) {
+    alert('Erro: doação não identificada.');
+    return;
   }
+
+  const res = await fetch('/coletas/solicitar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ doacao_id: doacaoAtualId })
+  });
+
+  if (!res.ok) {
+    const erro = await res.json();
+    alert(erro.erro || 'Erro ao solicitar coleta');
+    return;
+  }
+
+  alert('Solicitação enviada!');
 }
-/* =========================
-   NOTIFICAÇÕES
-========================= */
+
+/* notificacoes */
 async function carregarNotificacoes() {
   try {
     const res = await fetch('/coletas/recebidas');
     const solicitacoes = await res.json();
 
     const sino = document.getElementById('iconeNotificacao');
-
     if (solicitacoes.length > 0) {
       sino.classList.add('tem-notificacao');
     } else {
       sino.classList.remove('tem-notificacao');
     }
-
   } catch (error) {
-    console.error('Erro ao carregar notificações', error);
+    console.error(error);
   }
 }
 
 function abrirSolicitacoes() {
   window.location.href = '/solicitacoes-coleta';
 }
-
+/* =========================
+   MENU DE NOTIFICAÇÕES 🔔
+========================= */
 document.addEventListener('DOMContentLoaded', () => {
-  carregarNotificacoes();
+  const icone = document.getElementById('iconeNotificacao');
+  const menu = document.getElementById('menuNotificacao');
+
+  if (!icone || !menu) return;
+
+  icone.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menu.style.display =
+      menu.style.display === 'block' ? 'none' : 'block';
+  });
+
+  document.addEventListener('click', () => {
+    menu.style.display = 'none';
+  });
 });
 
 /* =========================
    INICIALIZAÇÃO
 ========================= */
-document.addEventListener('DOMContentLoaded', carregarDoacoes);
+document.addEventListener('DOMContentLoaded', () => {
+  carregarDoacoes();
+  carregarNotificacoes();
+});

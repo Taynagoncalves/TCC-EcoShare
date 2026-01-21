@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Coletas em Andamento | EcoShare</title>
+
+  <link rel="stylesheet" href="../css/coletas-andamento.css" />
+  <link rel="stylesheet" href="../css/telahome.css" />
+</head>
+<body>
+
+  <!-- 🔝 TOPO -->
+  <header class="topo">
+    <h1>Coletas em andamento</h1>
+
+     <div class="notificacao-container">
+    <img
+      src="../icons/notificacao.png"
+      id="iconeNotificacao"
+      class="icon-notificacao"
+      alt="Notificações"
+    >
+
+    <div id="menuNotificacao" class="menu-notificacao">
+     <a href="/solicitacoes-coleta"> Solicitações de coleta</a>
+<a href="/coletas-andamento"> Coletas em andamento</a>
+
+    </div>
+  </header>
+
+  <!-- 📦 LISTA DE COLETAS -->
+  <main>
+    <div id="lista-coletas" class="lista-coletas">
+      <!-- Cards entram via JS -->
+    </div>
+  </main>
+
+  <!-- ⬇️ MENU INFERIOR -->
+<nav class="menu">
+  <div class="menu-item ativo" onclick="location.href='/telahome'">
+    <img src="../icons/home.png">
+    <span>Home</span>
+  </div>
+
+  <div class="menu-item">
+    <img src="../icons/cupom.png">
+    <span>Resgate</span>
+  </div>
+
+  <div class="menu-item">
+    <img src="../icons/user.png">
+    <span>Perfil</span>
+  </div>
+
+  <div class="menu-item" onclick="location.href='/configuracoes'">
+    <img src="../icons/config.png">
+    <span>Configurações</span>
+  </div>
+</nav>
+
+ <script src="../js/coletas-andamento.js"></script>
+ <script src="../js/telahome.js"></script>
+</body>
+</html>

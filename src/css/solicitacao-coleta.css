@@ -62,3 +62,27 @@
   background: #d32f2f;
   color: #fff;
 }
+.acoes {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.acoes button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.acoes .confirmar {
+  background-color: #2e7d32;
+  color: white;
+}
+
+.acoes .recusar {
+  background-color: #d32f2f;
+  color: white;
+}

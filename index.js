@@ -84,6 +84,22 @@ app.get('/solicitacoes-coleta', (req, res) => {
     path.join(__dirname, 'src/html/solicitacao-coleta.html')
   );
 });
+app.get('/esqueci-senha', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src/html/esqueci-senha.html'));
+});
+app.get('/redefinir-senha', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src/html/redefinir-senha.html'));
+});
+app.get('/notificacao', (req, res) => {
+  res.sendFile(
+    path.join(__dirname, 'src/html/notificacao.html')
+  );
+});
+app.get('/coletas-andamento', (req, res) => {
+  res.sendFile(
+    path.join(__dirname, 'src/html/coletas-andamento.html')
+  );
+});
 
 
 /* =========================

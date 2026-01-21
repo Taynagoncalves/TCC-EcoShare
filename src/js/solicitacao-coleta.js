@@ -10,26 +10,40 @@ async function carregarSolicitacoes() {
       lista.innerHTML = '<p>Nenhuma solicitação pendente.</p>';
       return;
     }
+solicitacoes.forEach(s => {
 
-    solicitacoes.forEach(s => {
-      lista.innerHTML += `
-        <div class="card">
-          <img src="${s.imagem ? `/uploads/${s.imagem}` : '/imagens/sem-imagem.png'}">
+  lista.innerHTML += `
+    <div class="card">
+      <img 
+        src="${s.imagem ? `/uploads/${s.imagem}` : '/imagens/sem-imagem.png'}"
+        alt="Imagem da doação"
+      >
 
-          <h3>Solicitação de Coleta</h3>
-          <p>${s.nome_material} - ${s.quantidade} unidades</p>
+      <div class="card-info">
+        <h3>Solicitação de Coleta</h3>
 
-          <p><strong>Solicitante:</strong> ${s.solicitante}</p>
-          <p>📞 ${s.telefone}</p>
-          <p>✉️ ${s.email}</p>
+        <p><strong>Material:</strong> ${s.nome_material}</p>
+        <p><strong>Quantidade:</strong> ${s.quantidade}</p>
+        <p><strong>Solicitante:</strong> ${s.solicitante}</p>
 
-          <div class="acoes">
-            <button class="recusar" onclick="recusar(${s.id})">Recusar</button>
-            <button class="confirmar" onclick="confirmar(${s.id})">Confirmar</button>
-          </div>
-        </div>
-      `;
-    });
+        <!--  BOTÕES -->
+    <div class="acoes">
+  <button class="recusar"
+    onclick="recusar(${s.solicitacao_id})">
+    Recusar
+  </button>
+
+  <button class="confirmar"
+    onclick="confirmar(${s.solicitacao_id})">
+    Confirmar
+  </button>
+</div>
+
+      </div>
+    </div>
+  `;
+});
+
 
   } catch (error) {
     console.error('Erro ao carregar solicitações:', error);
@@ -37,12 +51,18 @@ async function carregarSolicitacoes() {
 }
 
 async function confirmar(id) {
-  await fetch(`/coletas/${id}/confirmar`, { method: 'PUT' });
+  await fetch(`/coletas/${id}/confirmar`, {
+    method: 'PUT'
+  });
+
   carregarSolicitacoes();
 }
 
 async function recusar(id) {
-  await fetch(`/coletas/${id}/recusar`, { method: 'PUT' });
+  await fetch(`/coletas/${id}/recusar`, {
+    method: 'PUT'
+  });
+
   carregarSolicitacoes();
 }
 

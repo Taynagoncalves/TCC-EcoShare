@@ -2,25 +2,28 @@ const bcrypt = require('bcryptjs');
 const db = require('../models/db');
 
 module.exports = async (req, res) => {
-  const {
-    nome,
-    email,
-    senha,
-    data_nascimento,
-    cep,
-    endereco,
-    numero,
-    complemento
-  } = req.body;
+const {
+  nome,
+  email,
+  telefone,
+  senha,
+  data_nascimento,
+  cep,
+  endereco,
+  numero,
+  complemento
+} = req.body;
+
 
   try {
     const senhaHash = await bcrypt.hash(senha, 10);
 
     await db.execute(
       `INSERT INTO usuarios 
-       (nome, email, senha, data_nascimento, cep, endereco, numero, complemento)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [nome, email, senhaHash, data_nascimento, cep, endereco, numero, complemento]
+(nome, email, telefone, senha, data_nascimento, cep, endereco, numero, complemento)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+`,
+      [nome, email, telefone, senhaHash, data_nascimento, cep, endereco, numero, complemento]
     );
 
     res.json({ message: 'Cadastro realizado com sucesso' });

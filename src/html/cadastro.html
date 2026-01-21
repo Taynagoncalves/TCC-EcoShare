@@ -8,7 +8,6 @@
 </head>
 <body>
 
-
   <header class="top-logo">
     <img src="../imagens/logo.png" alt="EcoShare">
   </header>
@@ -16,32 +15,40 @@
   <main class="center-container">
     <h2>Cadastro</h2>
 
-    <form class="cadastro-form">
+    <!-- 🔴 FORM PRECISA DE ID -->
+    <form id="formCadastro" class="cadastro-form">
 
-  <input type="text" name="nome" placeholder="Nome Completo" required>
+      <input type="text" name="nome" placeholder="Nome Completo" required>
 
-  <input type="email" name="email" placeholder="Email" required>
+      <input type="email" name="email" placeholder="Email" required>
 
-  <input type="date" name="data_nascimento" required>
+      <!-- 🔴 CAMPO TELEFONE / WHATSAPP -->
+      <input
+        type="text"
+        name="telefone"
+        placeholder="Telefone / WhatsApp"
+        required
+      >
 
-  <div class="password-group">
-    <input type="password" name="senha" id="senha" placeholder="Senha" required>
-    <img src="../icons/olhofechado.png" onclick="toggleSenha('senha', this)">
-  </div>
+      <input type="date" name="data_nascimento" required>
 
-  <div class="password-group">
-    <input type="password" id="confirmarSenha" placeholder="Confirmar Senha" required>
-    <img src="../icons/olhofechado.png" onclick="toggleSenha('confirmarSenha', this)">
-  </div>
+      <div class="password-group">
+        <input type="password" name="senha" id="senha" placeholder="Senha" required>
+        <img src="../icons/olhofechado.png" onclick="toggleSenha('senha', this)">
+      </div>
 
-  <input type="text" name="cep" placeholder="CEP" required>
-  <input type="text" name="endereco" placeholder="Endereço" required>
-  <input type="text" name="numero" placeholder="Número" required>
-  <input type="text" name="complemento" placeholder="Complemento (ex: bloco, ap.)">
+      <div class="password-group">
+        <input type="password" id="confirmarSenha" placeholder="Confirmar Senha" required>
+        <img src="../icons/olhofechado.png" onclick="toggleSenha('confirmarSenha', this)">
+      </div>
 
-  <button type="submit">Criar Conta</button>
-</form>
+      <input type="text" name="cep" placeholder="CEP" required>
+      <input type="text" name="endereco" placeholder="Endereço" required>
+      <input type="text" name="numero" placeholder="Número" required>
+      <input type="text" name="complemento" placeholder="Complemento (ex: bloco, ap.)">
 
+      <button type="submit">Criar Conta</button>
+    </form>
 
     <p class="footer-text">
       Ajude o planeta e receba benefícios ao doar<br>
@@ -50,7 +57,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../js/cadastro.js"></script>
+  <script src="../js/cadastro.js"></script>
 
 </body>
 </html>
