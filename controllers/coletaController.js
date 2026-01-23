@@ -167,18 +167,14 @@ exports.coletasEmAndamento = async (req, res) => {
 exports.concluirColeta = async (req, res) => {
   try {
     const solicitacaoId = Number(req.params.id);
-    const usuarioId = req.usuario?.id;
-
-    if (!usuarioId) {
-      return res.status(401).json({ erro: 'Usuário não autenticado' });
-    }
+    const usuarioId = req.usuario.id;
 
     if (!solicitacaoId) {
       return res.status(400).json({ erro: 'ID inválido' });
     }
 
     const [[solicitacao]] = await db.query(`
-      SELECT id, doador_id, status
+      SELECT id, doador_id, doacao_id, status
       FROM solicitacoes_coleta
       WHERE id = ?
     `, [solicitacaoId]);
@@ -199,16 +195,22 @@ exports.concluirColeta = async (req, res) => {
       });
     }
 
-    // concluir coleta
+    // ✅ concluir coleta
     await db.query(`
       UPDATE solicitacoes_coleta
       SET status = 'concluida'
       WHERE id = ?
     `, [solicitacaoId]);
 
-    // adicionar pontos ao doador
-    const PONTOS_POR_COLETA = 20;
+    // ✅ tornar doação indisponível
+    await db.query(`
+      UPDATE doacoes
+      SET status = 'indisponivel'
+      WHERE id = ?
+    `, [solicitacao.doacao_id]);
 
+    // ✅ adicionar pontos
+    const PONTOS_POR_COLETA = 20;
     await db.query(`
       UPDATE usuarios
       SET pontos = pontos + ?
@@ -219,11 +221,10 @@ exports.concluirColeta = async (req, res) => {
 
   } catch (err) {
     console.error('ERRO AO CONCLUIR COLETA:', err);
-    res.status(500).json({
-      erro: 'Erro interno ao concluir coleta'
-    });
+    res.status(500).json({ erro: 'Erro interno ao concluir coleta' });
   }
 };
+
 exports.cancelarColeta = async (req, res) => {
   try {
     const solicitacaoId = Number(req.params.id);

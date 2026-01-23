@@ -116,11 +116,12 @@ app.get('/coletas-andamento', (req, res) => {
 app.get('/resgate', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/resgate.html'));
 });
-
-app.get('/historico', (req, res) => {
+app.get('/historico', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/historico.html'));
 });
-
+app.get('/perfil', verificarAutenticacao, (req, res) => {
+  res.sendFile(path.join(__dirname, 'src/html/perfil.html'));
+});
 
 /* =========================
    SERVIDOR

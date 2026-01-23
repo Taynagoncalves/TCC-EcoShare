@@ -110,69 +110,32 @@ function cardSolicitante(c) {
 /* =========================
    CONCLUIR COLETA (DOADOR)
 ========================= */
-exports.concluirColeta = async (req, res) => {
+async function concluirColeta(id) {
+  if (!confirm('Deseja concluir esta coleta?')) return;
+
   try {
-    console.log('➡️ concluirColeta chamada');
+    const res = await fetch(`/coletas/concluir/${id}`, {
+      method: 'PUT'
+    });
 
-    const solicitacaoId = Number(req.params.id);
-    const usuario = req.usuario;
+    const data = await res.json();
 
-    console.log('ID Solicitação:', solicitacaoId);
-    console.log('Usuário logado:', usuario);
-
-    if (!usuario || !usuario.id) {
-      return res.status(401).json({ erro: 'Usuário não autenticado' });
+    if (!res.ok) {
+      alert(data.erro || 'Erro ao concluir coleta');
+      return;
     }
 
-    if (!solicitacaoId) {
-      return res.status(400).json({ erro: 'ID inválido' });
-    }
+    alert('Coleta concluída com sucesso!');
 
-    const [rows] = await db.query(
-      'SELECT id, doador_id, status FROM solicitacoes_coleta WHERE id = ?',
-      [solicitacaoId]
-    );
-
-    if (rows.length === 0) {
-      return res.status(404).json({ erro: 'Solicitação não encontrada' });
-    }
-
-    const solicitacao = rows[0];
-
-    if (solicitacao.doador_id !== usuario.id) {
-      return res.status(403).json({
-        erro: 'Apenas o doador pode concluir a coleta'
-      });
-    }
-
-    if (solicitacao.status !== 'confirmada') {
-      return res.status(400).json({
-        erro: 'A coleta ainda não está confirmada'
-      });
-    }
-
-    await db.query(
-      'UPDATE solicitacoes_coleta SET status = "concluida" WHERE id = ?',
-      [solicitacaoId]
-    );
-
-    // pontos (começa do zero e soma)
-    const PONTOS_POR_COLETA = 20;
-
-    await db.query(
-      'UPDATE usuarios SET pontos = pontos + ? WHERE id = ?',
-      [PONTOS_POR_COLETA, usuario.id]
-    );
-
-    console.log('✅ Coleta concluída com sucesso');
-
-    res.json({ sucesso: true });
+    // 👉 redireciona para o histórico
+    window.location.href = '/historico.html';
 
   } catch (err) {
-    console.error('🔥 ERRO REAL concluirColeta:', err);
-    res.status(500).json({ erro: 'Erro interno ao concluir coleta' });
+    console.error(err);
+    alert('Erro ao concluir coleta');
   }
-};
+}
+
 
 /* =========================
    UTILITÁRIOS

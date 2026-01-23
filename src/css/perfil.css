@@ -1,0 +1,76 @@
+.perfil-container {
+  max-width: 360px;
+  margin: 30px auto 80px;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.perfil-container h2 {
+  color: #0b6623;
+}
+
+.avatar {
+  position: relative;
+  margin: 20px auto;
+  width: 120px;
+}
+
+.avatar-img {
+  width: 120px;
+  border-radius: 50%;
+  border: 4px solid #0b6623;
+}
+
+.editar {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: #0b6623;
+  color: #fff;
+  padding: 4px 6px;
+  border-radius: 50%;
+}
+
+.pontos {
+  background: #0b6623;
+  color: #fff;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.dados {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dados input {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid #d0d0d0;
+  background-color: #f7f7f7;
+  color: #333;
+  outline: none;
+}
+
+.dados input:disabled {
+  opacity: 1;
+  color: #333;
+  cursor: default;
+}
+
+/* 🔹 linha dupla (telefone + data) */
+.linha-dupla {
+  display: flex;
+  gap: 10px;
+}
+
+.linha-dupla input {
+  flex: 1;
+}
