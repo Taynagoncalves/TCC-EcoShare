@@ -1,0 +1,76 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f7f7f7;
+}
+
+.topo {
+  background: #fff;
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.logo {
+  height: 200px;
+}
+
+.saldo span {
+  background: #1b5e20;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.conteudo {
+  padding: 20px;
+}
+
+.buscar {
+  width: 100%;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+}
+
+.lista-cupons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.cupom {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #2e7d32;
+}
+
+.cupom img {
+  height: 60px;
+  border-radius: 8px;
+}
+
+.cupom-info {
+  flex: 1;
+  margin-left: 15px;
+}
+
+.cupom-info h4 {
+  margin: 0;
+  color: #2e7d32;
+}
+
+.cupom button {
+  background: #2e7d32;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}

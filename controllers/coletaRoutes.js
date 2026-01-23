@@ -32,5 +32,21 @@ router.get(
   verificarAutenticacao,
   coletaController.coletasEmAndamento
 );
+router.put(
+  '/coletas/concluir/:id',
+  verificarAutenticacao,
+  coletaController.concluirColeta
+);
+router.put(
+  '/coletas/cancelar/:id',
+  verificarAutenticacao,
+  coletaController.cancelarColeta
+);
+router.get(
+  '/api/historico',
+  verificarAutenticacao,
+  coletaController.historico
+);
+
 
 module.exports = router;

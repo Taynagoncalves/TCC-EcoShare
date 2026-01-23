@@ -161,3 +161,128 @@ exports.coletasEmAndamento = async (req, res) => {
     res.status(500).json({ erro: 'Erro ao buscar coletas em andamento' });
   }
 };
+/* =========================
+   CONCLUIR COLETA
+========================= */
+exports.concluirColeta = async (req, res) => {
+  try {
+    const solicitacaoId = Number(req.params.id);
+    const usuarioId = req.usuario?.id;
+
+    if (!usuarioId) {
+      return res.status(401).json({ erro: 'Usuário não autenticado' });
+    }
+
+    if (!solicitacaoId) {
+      return res.status(400).json({ erro: 'ID inválido' });
+    }
+
+    const [[solicitacao]] = await db.query(`
+      SELECT id, doador_id, status
+      FROM solicitacoes_coleta
+      WHERE id = ?
+    `, [solicitacaoId]);
+
+    if (!solicitacao) {
+      return res.status(404).json({ erro: 'Solicitação não encontrada' });
+    }
+
+    if (solicitacao.doador_id !== usuarioId) {
+      return res.status(403).json({
+        erro: 'Apenas o doador pode concluir a coleta'
+      });
+    }
+
+    if (solicitacao.status !== 'confirmada') {
+      return res.status(400).json({
+        erro: 'A coleta ainda não está confirmada'
+      });
+    }
+
+    // concluir coleta
+    await db.query(`
+      UPDATE solicitacoes_coleta
+      SET status = 'concluida'
+      WHERE id = ?
+    `, [solicitacaoId]);
+
+    // adicionar pontos ao doador
+    const PONTOS_POR_COLETA = 20;
+
+    await db.query(`
+      UPDATE usuarios
+      SET pontos = pontos + ?
+      WHERE id = ?
+    `, [PONTOS_POR_COLETA, usuarioId]);
+
+    res.json({ sucesso: true });
+
+  } catch (err) {
+    console.error('ERRO AO CONCLUIR COLETA:', err);
+    res.status(500).json({
+      erro: 'Erro interno ao concluir coleta'
+    });
+  }
+};
+exports.cancelarColeta = async (req, res) => {
+  try {
+    const solicitacaoId = Number(req.params.id);
+    const usuarioId = req.usuario.id;
+
+    const [[solicitacao]] = await db.query(`
+      SELECT solicitante_id, status
+      FROM solicitacoes_coleta
+      WHERE id = ?
+    `, [solicitacaoId]);
+
+    if (!solicitacao) {
+      return res.status(404).json({ erro: 'Solicitação não encontrada' });
+    }
+
+    if (solicitacao.solicitante_id !== usuarioId) {
+      return res.status(403).json({
+        erro: 'Apenas o solicitante pode cancelar'
+      });
+    }
+
+    if (solicitacao.status !== 'pendente') {
+      return res.status(400).json({
+        erro: 'Só é possível cancelar solicitações pendentes'
+      });
+    }
+
+    await db.query(`
+      UPDATE solicitacoes_coleta
+      SET status = 'cancelada'
+      WHERE id = ?
+    `, [solicitacaoId]);
+
+    res.json({ sucesso: true });
+
+  } catch (err) {
+    console.error('ERRO AO CANCELAR COLETA:', err);
+    res.status(500).json({ erro: 'Erro ao cancelar coleta' });
+  }
+};
+exports.historico = async (req, res) => {
+  const usuarioId = req.usuario.id;
+
+  const [rows] = await db.query(`
+    SELECT
+      sc.id,
+      sc.status,
+      d.nome_material,
+      d.quantidade,
+      d.imagem,
+      sc.doador_id,
+      sc.solicitante_id
+    FROM solicitacoes_coleta sc
+    JOIN doacoes d ON d.id = sc.doacao_id
+    WHERE sc.status = 'concluida'
+      AND (sc.doador_id = ? OR sc.solicitante_id = ?)
+    ORDER BY sc.id DESC
+  `, [usuarioId, usuarioId]);
+
+  res.json(rows);
+};
+

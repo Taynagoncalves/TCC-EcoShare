@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>EcoShare | Resgate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/resgate.css">
+  <link rel="stylesheet" href="../css/telahome.css">
+</head>
+<body>
+
+<header class="topo">
+  <img src="../imagens/logo.png" class="logo">
+
+  <div class="saldo">
+    <span id="pontosUsuario">0 pts</span>
+    <p>Resgate aqui seus benefícios</p>
+  </div>
+</header>
+
+<main class="conteudo">
+
+  <input
+    type="text"
+    placeholder="Buscar loja parceira"
+    class="buscar"
+  >
+
+  <h3>Lojas Parceiras</h3>
+
+  <div id="listaCupons" class="lista-cupons">
+    <!-- Cards via JS -->
+  </div>
+
+</main>
+
+<nav class="menu">
+  <div class="menu-item" onclick="location.href='/telahome'">
+    <img src="../icons/home.png">
+    <span>Home</span>
+  </div>
+
+  <div class="menu-item ativo">
+    <img src="../icons/cupom.png">
+    <span>Resgate</span>
+  </div>
+
+  <div class="menu-item">
+    <img src="../icons/user.png">
+    <span>Perfil</span>
+  </div>
+
+  <div class="menu-item" onclick="location.href='/configuracoes'">
+    <img src="../icons/config.png">
+    <span>Configurações</span>
+  </div>
+</nav>
+
+<script src="../js/resgate.js"></script>
+<script src="../js/telahome.js"></script>
+</body>
+</html>

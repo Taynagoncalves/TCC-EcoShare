@@ -13,7 +13,7 @@ async function carregarColetas() {
     const container = document.getElementById('lista-coletas');
     container.innerHTML = '';
 
-    if (dados.length === 0) {
+    if (!dados || dados.length === 0) {
       container.innerHTML = '<p>Nenhuma coleta em andamento.</p>';
       return;
     }
@@ -32,7 +32,9 @@ async function carregarColetas() {
   }
 }
 
-// 🔹 CARD PARA QUEM É DOADOR (imagem 1)
+/* =========================
+   CARD — DOADOR
+========================= */
 function cardDoador(c) {
   const telefone = limparTelefone(c.solicitante_telefone);
 
@@ -50,11 +52,11 @@ function cardDoador(c) {
         <p><strong>Quem vai coletar:</strong> ${c.solicitante_nome}</p>
 
         <a 
-          href="https://wa.me/55${telefone}" 
+          href="https://wa.me/55${telefone}?text=${mensagemWhatsApp('doador', c)}"
           target="_blank"
           class="btn whatsapp"
         >
-          Fale com o Coletor
+          Falar com o Coletor
         </a>
 
         <button 
@@ -64,18 +66,21 @@ function cardDoador(c) {
           Concluir Coleta
         </button>
 
-        <button 
-          class="btn vermelho"
-          onclick="cancelarColeta(${c.solicitacao_id})"
-        >
-          Cancelar
-        </button>
+        <button
+  class="btn vermelho"
+  onclick="cancelarColeta(${c.solicitacao_id})"
+>
+  Cancelar Solicitação
+</button>
+
       </div>
     </div>
   `;
 }
 
-// 🔹 CARD PARA QUEM É SOLICITANTE (imagem 2)
+/* =========================
+   CARD — SOLICITANTE
+========================= */
 function cardSolicitante(c) {
   const telefone = limparTelefone(c.doador_telefone);
 
@@ -91,51 +96,140 @@ function cardSolicitante(c) {
         <h4>${c.nome_material} - ${c.quantidade} unidades</h4>
 
         <a 
-          href="https://wa.me/55${telefone}" 
+          href="https://wa.me/55${telefone}?text=${mensagemWhatsApp('solicitante', c)}"
           target="_blank"
           class="btn whatsapp"
         >
-          Fale com o Doador
+          Falar com o Doador
         </a>
       </div>
     </div>
   `;
 }
 
-// 🔹 Concluir coleta (doador)
-async function concluirColeta(id) {
-  if (!confirm('Deseja concluir esta coleta?')) return;
+/* =========================
+   CONCLUIR COLETA (DOADOR)
+========================= */
+exports.concluirColeta = async (req, res) => {
+  try {
+    console.log('➡️ concluirColeta chamada');
 
-  const res = await fetch(`/coletas/${id}/concluir`, {
-    method: 'PUT'
-  });
+    const solicitacaoId = Number(req.params.id);
+    const usuario = req.usuario;
 
-  if (!res.ok) {
-    alert('Erro ao concluir coleta');
-    return;
+    console.log('ID Solicitação:', solicitacaoId);
+    console.log('Usuário logado:', usuario);
+
+    if (!usuario || !usuario.id) {
+      return res.status(401).json({ erro: 'Usuário não autenticado' });
+    }
+
+    if (!solicitacaoId) {
+      return res.status(400).json({ erro: 'ID inválido' });
+    }
+
+    const [rows] = await db.query(
+      'SELECT id, doador_id, status FROM solicitacoes_coleta WHERE id = ?',
+      [solicitacaoId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ erro: 'Solicitação não encontrada' });
+    }
+
+    const solicitacao = rows[0];
+
+    if (solicitacao.doador_id !== usuario.id) {
+      return res.status(403).json({
+        erro: 'Apenas o doador pode concluir a coleta'
+      });
+    }
+
+    if (solicitacao.status !== 'confirmada') {
+      return res.status(400).json({
+        erro: 'A coleta ainda não está confirmada'
+      });
+    }
+
+    await db.query(
+      'UPDATE solicitacoes_coleta SET status = "concluida" WHERE id = ?',
+      [solicitacaoId]
+    );
+
+    // pontos (começa do zero e soma)
+    const PONTOS_POR_COLETA = 20;
+
+    await db.query(
+      'UPDATE usuarios SET pontos = pontos + ? WHERE id = ?',
+      [PONTOS_POR_COLETA, usuario.id]
+    );
+
+    console.log('✅ Coleta concluída com sucesso');
+
+    res.json({ sucesso: true });
+
+  } catch (err) {
+    console.error('🔥 ERRO REAL concluirColeta:', err);
+    res.status(500).json({ erro: 'Erro interno ao concluir coleta' });
   }
+};
 
-  carregarColetas();
-}
-
-// 🔹 Cancelar coleta (doador)
-async function cancelarColeta(id) {
-  if (!confirm('Deseja cancelar esta coleta?')) return;
-
-  const res = await fetch(`/coletas/${id}/cancelar`, {
-    method: 'PUT'
-  });
-
-  if (!res.ok) {
-    alert('Erro ao cancelar coleta');
-    return;
-  }
-
-  carregarColetas();
-}
-
-// 🔹 Remove caracteres inválidos do telefone (WhatsApp)
+/* =========================
+   UTILITÁRIOS
+========================= */
 function limparTelefone(telefone) {
   if (!telefone) return '';
   return telefone.replace(/\D/g, '');
+}
+
+function mensagemWhatsApp(tipo, c) {
+  let mensagem = '';
+  let nomeDestino = '';
+
+  if (tipo === 'doador') {
+    nomeDestino = c.solicitante_nome;
+    mensagem = `
+Olá, ${nomeDestino}
+
+Sou o responsável pela doação do seguinte material:
+
+Material: ${c.nome_material}
+Quantidade: ${c.quantidade} unidades
+
+A coleta foi confirmada e estou disponível para combinarmos os próximos passos.
+`;
+  }
+
+  if (tipo === 'solicitante') {
+    nomeDestino = c.doador_nome;
+    mensagem = `
+Olá, ${nomeDestino}
+
+Estou entrando em contato a respeito da solicitação de coleta do seguinte material:
+
+Material: ${c.nome_material}
+Quantidade: ${c.quantidade} unidades
+
+Fico à disposição para alinharmos os detalhes da retirada.
+`;
+  }
+
+  return encodeURIComponent(mensagem.trim());
+}
+async function cancelarColeta(id) {
+  if (!confirm('Deseja cancelar esta solicitação?')) return;
+
+  const res = await fetch(`/coletas/cancelar/${id}`, {
+    method: 'PUT'
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.erro || 'Erro ao cancelar');
+    return;
+  }
+
+  alert('Solicitação cancelada');
+  carregarColetas();
 }

@@ -41,19 +41,26 @@ app.post('/redefinir-senha', require('./controllers/redefinirSenha'));
 ========================= */
 app.use('/', require('./controllers/doacoesRoutes'));
 
-/* =========================
-   ROTAS DE DENÚNCIA
-========================= */
+/* ROTAS DE DENÚNCIA */
 app.use('/', require('./controllers/denunciaRoutes'));
 
 app.use('/', require('./controllers/bairrosRoutes'));
 app.use('/', require('./controllers/coletaRoutes'));
 
 /* =========================
+   🔥 NOVO — ROTAS DE USUÁRIO (PONTOS / RESGATE)
+========================= */
+app.use('/', require('./controllers/usuarioRoutes'));
+
+/* =========================
    ROTAS DE PÁGINAS (HTML)
 ========================= */
 app.get('/', (req, res) => {
-  res.redirect('/login');
+  res.redirect('/inicio');
+});
+
+app.get('/inicio', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src/html/inicio.html'));
 });
 
 app.get('/login', (req, res) => {
@@ -79,26 +86,39 @@ app.get('/minhas-publicacoes', verificarAutenticacao, (req, res) => {
 app.get('/configuracoes', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/configuracoes.html'));
 });
+
 app.get('/solicitacoes-coleta', (req, res) => {
   res.sendFile(
     path.join(__dirname, 'src/html/solicitacao-coleta.html')
   );
 });
+
 app.get('/esqueci-senha', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/esqueci-senha.html'));
 });
+
 app.get('/redefinir-senha', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/redefinir-senha.html'));
 });
+
 app.get('/notificacao', (req, res) => {
   res.sendFile(
     path.join(__dirname, 'src/html/notificacao.html')
   );
 });
+
 app.get('/coletas-andamento', (req, res) => {
   res.sendFile(
     path.join(__dirname, 'src/html/coletas-andamento.html')
   );
+});
+
+app.get('/resgate', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src/html/resgate.html'));
+});
+
+app.get('/historico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src/html/historico.html'));
 });
 
 

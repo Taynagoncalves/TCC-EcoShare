@@ -194,16 +194,16 @@ async function verDetalhes(id) {
       `Bairro: ${d.bairro || 'Não informado'}`;
 
     document.getElementById('detalheUsuario').innerText =
-      `👤 Doado por: ${d.usuario || 'Usuário não identificado'}`;
+      `Doado por: ${d.usuario || 'Usuário não identificado'}`;
 
     document.getElementById('detalheDias').innerText =
-      `📅 Dias: ${d.dias_semana || 'Não informado'}`;
+      ` Dias: ${d.dias_semana || 'Não informado'}`;
 
     document.getElementById('detalheHorario').innerText =
-      `⏰ Horário: ${d.horarios || 'Não informado'}`;
+      ` Horário: ${d.horarios || 'Não informado'}`;
 
     document.getElementById('detalheDescricao').innerText =
-      d.descricao || 'Sem descrição';
+       `Descricao: ${d.descricao || 'Sem descrição'}`;
 
     document.getElementById('modalDetalhes').style.display = 'flex';
 
@@ -228,7 +228,16 @@ function fecharDenuncia() {
 
 async function enviarDenuncia() {
   const texto = document.getElementById('textoDenuncia').value.trim();
-  if (!texto) return alert('Descreva o motivo.');
+
+  if (!texto) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Atenção',
+      text: 'Descreva o motivo da denúncia.',
+      confirmButtonText: 'Ok'
+    });
+    return;
+  }
 
   try {
     const res = await fetch('/denuncia', {
@@ -243,9 +252,21 @@ async function enviarDenuncia() {
     if (!res.ok) throw new Error();
 
     fecharDenuncia();
-    alert('Denúncia enviada com sucesso!');
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Denúncia enviada!',
+      text: 'Obrigado por ajudar a manter o EcoShare um ambiente seguro e responsável. Nossa equipe irá analisar a denúncia..',
+      confirmButtonText: 'Ok'
+    });
+
   } catch {
-    alert('Erro ao enviar denúncia.');
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Erro ao enviar denúncia. Tente novamente.',
+      confirmButtonText: 'Ok'
+    });
   }
 }
 
