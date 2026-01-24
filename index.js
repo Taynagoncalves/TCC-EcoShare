@@ -26,6 +26,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
    MIDDLEWARE AUTH
 ========================= */
 const verificarAutenticacao = require('./controllers/verificarAutenticacao');
+const verificarAdmin = require('./controllers/verificarAdmin');
 
 /* =========================
    ROTAS DE AUTENTICAÇÃO
@@ -37,20 +38,20 @@ app.post('/esqueci-senha', require('./controllers/esqueciSenha'));
 app.post('/redefinir-senha', require('./controllers/redefinirSenha'));
 
 /* =========================
-   ROTAS DE DOAÇÕES
+   ROTAS DE FUNCIONALIDADES
 ========================= */
 app.use('/', require('./controllers/doacoesRoutes'));
-
-/* ROTAS DE DENÚNCIA */
 app.use('/', require('./controllers/denunciaRoutes'));
-
 app.use('/', require('./controllers/bairrosRoutes'));
 app.use('/', require('./controllers/coletaRoutes'));
+app.use('/', require('./controllers/usuarioRoutes'));
+app.use('/', require('./controllers/resgateRoutes'));
+app.use('/', require('./controllers/lojasRoutes'));
 
 /* =========================
-   🔥 NOVO — ROTAS DE USUÁRIO (PONTOS / RESGATE)
+   🔐 ROTAS ADMIN — LOJAS PARCEIRAS
 ========================= */
-app.use('/', require('./controllers/usuarioRoutes'));
+app.use('/', require('./controllers/lojasRoutes'));
 
 /* =========================
    ROTAS DE PÁGINAS (HTML)
@@ -87,47 +88,76 @@ app.get('/configuracoes', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/configuracoes.html'));
 });
 
-app.get('/solicitacoes-coleta', (req, res) => {
+app.get('/solicitacoes-coleta', verificarAutenticacao, (req, res) => {
   res.sendFile(
     path.join(__dirname, 'src/html/solicitacao-coleta.html')
   );
 });
 
-app.get('/esqueci-senha', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src/html/esqueci-senha.html'));
-});
-
-app.get('/redefinir-senha', (req, res) => {
-  res.sendFile(path.join(__dirname, 'src/html/redefinir-senha.html'));
-});
-
-app.get('/notificacao', (req, res) => {
+app.get('/notificacao', verificarAutenticacao, (req, res) => {
   res.sendFile(
     path.join(__dirname, 'src/html/notificacao.html')
   );
 });
 
-app.get('/coletas-andamento', (req, res) => {
+app.get('/coletas-andamento', verificarAutenticacao, (req, res) => {
   res.sendFile(
     path.join(__dirname, 'src/html/coletas-andamento.html')
   );
 });
 
-app.get('/resgate', (req, res) => {
+app.get('/resgate', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/resgate.html'));
 });
+
 app.get('/historico', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/historico.html'));
 });
+
 app.get('/perfil', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/perfil.html'));
 });
 
-/* =========================
-   SERVIDOR
-========================= */
-const PORT = 8000;
+app.get('/admin-lojas', verificarAutenticacao, (req, res) => {
+  res.sendFile(path.join(__dirname, 'src/html/admin-lojas.html'));
+});
 
+/* =========================
+   🔐 PÁGINA ADMIN (HTML)
+========================= */
+app.get(
+  '/admin/lojas',
+  verificarAutenticacao,
+  verificarAdmin,
+  (req, res) => {
+    res.sendFile(
+      path.join(__dirname, 'src/html/admin-lojas.html')
+    );
+  }
+);
+
+app.get(
+  '/admin',
+  verificarAutenticacao,
+  verificarAdmin,
+  (req, res) => {
+    res.sendFile(
+      path.join(__dirname, 'src/html/admin-dashboard.html')
+    );
+  }
+);
+app.get('/usuario-logado', verificarAutenticacao, (req, res) => {
+  res.json({
+    id: req.usuario.id,
+    nome: req.usuario.nome,
+    tipo: req.usuario.tipo
+  });
+});
+
+/* =========================
+   SERVER
+========================= */
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
 });

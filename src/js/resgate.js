@@ -1,69 +1,73 @@
-document.addEventListener('DOMContentLoaded', carregarResgate);
-
 async function carregarResgate() {
-  // simulação (depois liga no backend)
-  
-  document.getElementById('pontosUsuario').innerText = `${pontos} pts`;
+  const lojasRes = await fetch('/admin/lojas');
+  const lojas = await lojasRes.json();
 
-  const cupons = [
-    {
-      id: 1,
-      loja: 'Avenidão Container',
-      desconto: '10% de desconto',
-      pontos: 80,
-      imagem: '../imagens/avenidao.png'
-    }
-  ];
+  const userRes = await fetch('/usuario-logado');
+  const usuario = await userRes.json();
+
+  document.getElementById('pontosUsuario').innerText =
+    `Seus pontos: ${usuario.pontos}`;
 
   const lista = document.getElementById('listaCupons');
   lista.innerHTML = '';
 
-  cupons.forEach(c => {
+  lojas.forEach(loja => {
     lista.innerHTML += `
       <div class="cupom">
-        <img src="${c.imagem}">
-        <div class="cupom-info">
-          <h4>${c.desconto}</h4>
-          <p>${c.loja}</p>
-        </div>
-        <button onclick="resgatar(${c.pontos})">
-          ${c.pontos} pontos<br>Resgatar
+        <h3>${loja.nome}</h3>
+        <p>${loja.descricao || ''}</p>
+        <p><strong>${loja.pontos} pontos</strong></p>
+        <button onclick="resgatar(${loja.id}, ${loja.pontos})">
+          Resgatar
         </button>
       </div>
     `;
   });
 }
-async function resgatar(custo) {
-  const confirmar = confirm(
-    `Deseja resgatar este cupom por ${custo} pontos?`
-  );
 
-  if (!confirmar) return;
+async function resgatar(lojaId, pontos) {
+  if (!confirm(`Deseja resgatar este cupom por ${pontos} pontos?`)) return;
 
-  const res = await fetch('/usuarios/debitar-pontos', {
+  const res = await fetch('/resgatar', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ custo })
+    body: JSON.stringify({ loja_id: lojaId })
   });
 
   const data = await res.json();
 
-  if (!res.ok) {
-    alert(data.erro);
-    return;
-  }
-
-  alert('Cupom resgatado com sucesso!');
-  carregarPontos();
+if (data.sucesso) {
+  alert(
+    `Cupom resgatado com sucesso!\n\nCódigo do cupom:\n${data.codigo}`
+  );
+  carregarResgate();
+} else {
+  alert(data.erro);
 }
 
+}
+async function carregarLojas() {
+  const res = await fetch('/api/lojas');
+  const lojas = await res.json();
 
-async function carregarPontos() {
-  const res = await fetch('/usuarios/pontos');
-  const data = await res.json();
+  const container = document.getElementById('lista-lojas');
+  container.innerHTML = '';
 
-  document.getElementById('pontosUsuario').innerText =
-    `${data.pontos} pts`;
+  lojas.forEach(loja => {
+    container.innerHTML += `
+      <div class="loja-card">
+        <img src="/uploads/${loja.imagem}" />
+        <h3>${loja.nome}</h3>
+        <p>${loja.descricao}</p>
+        <strong>${loja.pontos} pontos</strong>
+        <button onclick="resgatar(${loja.id})">
+          Resgatar
+        </button>
+      </div>
+    `;
+  });
 }
 
-document.addEventListener('DOMContentLoaded', carregarPontos);
+carregarLojas();
+
+carregarResgate();

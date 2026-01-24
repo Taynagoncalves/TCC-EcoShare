@@ -113,26 +113,17 @@ function cardSolicitante(c) {
 async function concluirColeta(id) {
   if (!confirm('Deseja concluir esta coleta?')) return;
 
-  try {
-    const res = await fetch(`/coletas/concluir/${id}`, {
-      method: 'PUT'
-    });
+  const res = await fetch(`/coletas/concluir/${id}`, {
+    method: 'PUT'
+  });
 
-    const data = await res.json();
+  const data = await res.json();
 
-    if (!res.ok) {
-      alert(data.erro || 'Erro ao concluir coleta');
-      return;
-    }
-
-    alert('Coleta concluída com sucesso!');
-
-    // 👉 redireciona para o histórico
-    window.location.href = '/historico.html';
-
-  } catch (err) {
-    console.error(err);
-    alert('Erro ao concluir coleta');
+  if (data.sucesso) {
+    alert(`Coleta concluída! Você ganhou ${data.pontos} pontos.`);
+    location.reload();
+  } else {
+    alert(data.erro || 'Erro ao concluir coleta');
   }
 }
 

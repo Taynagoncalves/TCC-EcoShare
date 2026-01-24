@@ -1,0 +1,79 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f4f6f5;
+}
+
+/* HEADER */
+.admin-header {
+  background: #347142;
+  color: #fff;
+  padding: 15px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-header img {
+  width: 40px;
+}
+
+.admin-header .admin-info a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+/* CONTEÚDO */
+.admin-container {
+  padding: 40px;
+}
+
+.admin-container h1 {
+  color: #347142;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+/* CARDS */
+.cards-admin {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #333;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card h3 {
+  color: #347142;
+  margin-bottom: 10px;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}

@@ -49,3 +49,11 @@ exports.debitarPontos = async (req, res) => {
     res.status(500).json({ erro: 'Erro ao debitar pontos' });
   }
 };
+exports.me = (req, res) => {
+  res.json({
+    id: req.usuario.id,
+    nome: req.usuario.nome,
+    tipo: req.usuario.tipo,
+    pontos: req.usuario.pontos
+  });
+};

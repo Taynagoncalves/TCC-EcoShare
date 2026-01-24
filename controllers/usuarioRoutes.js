@@ -45,5 +45,10 @@ router.post(
   verificarAutenticacao,
   usuarioController.debitarPontos
 );
+router.get(
+  '/usuario/me',
+  verificarAutenticacao,
+  usuarioController.me
+);
 
 module.exports = router;

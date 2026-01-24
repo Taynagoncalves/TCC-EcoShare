@@ -166,62 +166,61 @@ exports.coletasEmAndamento = async (req, res) => {
 ========================= */
 exports.concluirColeta = async (req, res) => {
   try {
-    const solicitacaoId = Number(req.params.id);
+    const { id } = req.params; // id da solicitação
     const usuarioId = req.usuario.id;
 
-    if (!solicitacaoId) {
-      return res.status(400).json({ erro: 'ID inválido' });
-    }
-
-    const [[solicitacao]] = await db.query(`
-      SELECT id, doador_id, doacao_id, status
+    // 1️⃣ Buscar solicitação
+    const [[solicitacao]] = await db.query(
+      `
+      SELECT *
       FROM solicitacoes_coleta
       WHERE id = ?
-    `, [solicitacaoId]);
+      `,
+      [id]
+    );
 
     if (!solicitacao) {
       return res.status(404).json({ erro: 'Solicitação não encontrada' });
     }
 
+    // 2️⃣ Apenas o DOADOR pode concluir
     if (solicitacao.doador_id !== usuarioId) {
       return res.status(403).json({
         erro: 'Apenas o doador pode concluir a coleta'
       });
     }
 
-    if (solicitacao.status !== 'confirmada') {
-      return res.status(400).json({
-        erro: 'A coleta ainda não está confirmada'
-      });
-    }
+    // 3️⃣ Pontos FIXOS por doação
+    const PONTOS_POR_DOACAO = 20;
 
-    // ✅ concluir coleta
-    await db.query(`
+    // 4️⃣ Atualiza status para concluída
+    await db.query(
+      `
       UPDATE solicitacoes_coleta
       SET status = 'concluida'
       WHERE id = ?
-    `, [solicitacaoId]);
+      `,
+      [id]
+    );
 
-    // ✅ tornar doação indisponível
-    await db.query(`
-      UPDATE doacoes
-      SET status = 'indisponivel'
-      WHERE id = ?
-    `, [solicitacao.doacao_id]);
-
-    // ✅ adicionar pontos
-    const PONTOS_POR_COLETA = 20;
-    await db.query(`
+    // 5️⃣ Credita pontos ao DOADOR
+    await db.query(
+      `
       UPDATE usuarios
       SET pontos = pontos + ?
       WHERE id = ?
-    `, [PONTOS_POR_COLETA, usuarioId]);
+      `,
+      [PONTOS_POR_DOACAO, solicitacao.doador_id]
+    );
 
-    res.json({ sucesso: true });
+    res.json({
+      sucesso: true,
+      pontos: PONTOS_POR_DOACAO
+    });
 
   } catch (err) {
-    console.error('ERRO AO CONCLUIR COLETA:', err);
-    res.status(500).json({ erro: 'Erro interno ao concluir coleta' });
+    console.error('Erro ao concluir coleta:', err);
+    res.status(500).json({ erro: 'Erro ao concluir coleta' });
   }
 };
 

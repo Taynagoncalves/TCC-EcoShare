@@ -9,30 +9,32 @@
 </head>
 <body>
 
-<header class="topo">
-  <img src="../imagens/logo.png" class="logo">
-
-  <div class="saldo">
-    <span id="pontosUsuario">0 pts</span>
-    <p>Resgate aqui seus benefícios</p>
+<div class="topo">
+  <div class="logo">
+    <img src="../imagens/logo.png" />
+    
   </div>
-</header>
 
-<main class="conteudo">
+  <div class="saldo" id="saldoPontos">0 pts</div>
+</div>
+
+<div class="conteudo">
+  <div class="titulo">Resgate aqui seus Benefícios</div>
 
   <input
     type="text"
-    placeholder="Buscar loja parceira"
     class="buscar"
-  >
+    placeholder="Buscar loja parceira"
+    oninput="filtrarLojas(this.value)"
+  />
 
-  <h3>Lojas Parceiras</h3>
+  <div class="lista-cupons" id="listaCupons"></div>
+</div>
 
-  <div id="listaCupons" class="lista-cupons">
-    <!-- Cards via JS -->
-  </div>
 
 </main>
+<div id="lista-lojas"></div>
+
 
 <nav class="menu">
   <div class="menu-item ativo" onclick="location.href='/telahome'">

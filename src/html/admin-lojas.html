@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel Admin - Lojas</title>
+  <link rel="stylesheet" href="../css/admin-lojas.css" />
+</head>
+<body>
+
+<h2>Painel Admin — Lojas Parceiras</h2>
+
+<form id="formLoja" enctype="multipart/form-data">
+  <input type="text" name="nome" required />
+  <input type="text" name="descricao" />
+  <input type="number" name="pontos" required />
+
+  <!-- 🔥 IMPORTANTE -->
+  <input type="file" name="imagem" accept="image/*" />
+
+  <button type="submit">Cadastrar</button>
+</form>
+
+<hr />
+
+<div id="listaLojas"></div>
+
+<script src="/js/admin-lojas.js"></script>
+</body>
+</html>

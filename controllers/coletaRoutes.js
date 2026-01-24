@@ -47,6 +47,11 @@ router.get(
   verificarAutenticacao,
   coletaController.historico
 );
+router.put(
+  '/coletas/concluir/:id',
+  verificarAutenticacao,
+  coletaController.concluirColeta
+);;
 
 
 module.exports = router;
