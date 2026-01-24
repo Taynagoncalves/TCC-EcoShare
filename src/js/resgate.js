@@ -24,28 +24,32 @@ async function carregarResgate() {
     `;
   });
 }
+async function resgatar(lojaId) {
+  try {
+    const res = await fetch('/resgatar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ loja_id: lojaId })
+    });
 
-async function resgatar(lojaId, pontos) {
-  if (!confirm(`Deseja resgatar este cupom por ${pontos} pontos?`)) return;
+    const data = await res.json();
 
-  const res = await fetch('/resgatar', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ loja_id: lojaId })
-  });
+    if (!res.ok) {
+      alert(data.erro || 'Erro ao resgatar cupom');
+      return;
+    }
 
-  const data = await res.json();
+    alert(`Cupom resgatado com sucesso!\nCódigo: ${data.codigo}`);
 
-if (data.sucesso) {
-  alert(
-    `Cupom resgatado com sucesso!\n\nCódigo do cupom:\n${data.codigo}`
-  );
-  carregarResgate();
-} else {
-  alert(data.erro);
+  } catch (err) {
+    console.error(err);
+    alert('Erro inesperado ao resgatar cupom');
+  }
 }
 
-}
 async function carregarLojas() {
   const res = await fetch('/api/lojas');
   const lojas = await res.json();
