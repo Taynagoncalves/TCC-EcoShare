@@ -163,6 +163,16 @@ app.get(
     );
   }
 );
+app.get(
+  '/admin/doacoes',
+  verificarAutenticacao,
+  verificarAdmin,
+  (req, res) => {
+    res.sendFile(
+      path.join(__dirname, 'src/html/admin-doacoes.html')
+    );
+  }
+);
 
 /* =========================
    SERVER

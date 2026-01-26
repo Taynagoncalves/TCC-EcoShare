@@ -170,3 +170,46 @@ exports.excluirDoacao = async (req, res) => {
     res.status(500).json({ erro: 'Erro ao excluir doação' });
   }
 };
+/* =========================
+   ADMIN — LISTAR TODAS DOAÇÕES
+========================= */
+exports.listarTodasAdmin = async (req, res) => {
+  try {
+    const [doacoes] = await db.query(`
+      SELECT 
+        d.id,
+        d.nome_material,
+        d.quantidade,
+        d.status,
+        d.criada_em,
+        u.nome AS usuario_nome
+      FROM doacoes d
+      JOIN usuarios u ON u.id = d.usuario_id
+      ORDER BY d.criada_em DESC
+    `);
+
+    res.json(doacoes);
+  } catch (err) {
+    console.error('ERRO ADMIN DOAÇÕES:', err);
+    res.status(500).json({ erro: 'Erro ao listar doações' });
+  }
+};
+
+/* =========================
+   ADMIN — REMOVER DOAÇÃO
+========================= */
+exports.removerDoacaoAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await db.query(
+      `UPDATE doacoes SET status = 'removida' WHERE id = ?`,
+      [id]
+    );
+
+    res.json({ sucesso: true });
+  } catch (err) {
+    console.error('ERRO REMOVER DOAÇÃO:', err);
+    res.status(500).json({ erro: 'Erro ao remover doação' });
+  }
+};
