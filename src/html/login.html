@@ -8,60 +8,46 @@
 </head>
 <body>
 
-
   <header class="top-logo">
     <img src="../imagens/logo.png" alt="EcoShare">
   </header>
 
-
   <main class="center-container">
     <h1>Login</h1>
- 
+
     <form class="login-form" id="formLogin">
 
-  <input
-    type="email"
-    name="email"
-    placeholder="Email"
-    required
-  >
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        required
+      >
 
-  <div class="password-group">
-    <input
-      type="password"
-      name="senha"
-      id="senhaLogin"
-      placeholder="Senha"
-      required
-    >
-    <img
-      src="../icons/olhofechado.png"
-      onclick="toggleSenha('senhaLogin', this)"
-      alt="Mostrar senha"
-    >
-  </div>
+      <div class="password-group">
+        <input
+          type="password"
+          name="senha"
+          id="senhaLogin"
+          placeholder="Senha"
+          required
+        >
+        <img
+          src="../icons/olhofechado.png"
+          onclick="toggleSenha('senhaLogin', this)"
+          alt="Mostrar senha"
+        >
+      </div>
 
-  <button type="submit">Entrar</button>
+      <button type="submit">Entrar</button>
 
-  <a href="/esqueci-senha" class="forgot-password">
-    Esqueci minha senha
-  </a>
+      <a href="/esqueci-senha" class="forgot-password" id="forgotPassword">
+        Esqueci minha senha
+      </a>
 
-  <button type="button" onclick="irParaCadastro()">
-    Criar Conta
-  </button>
-
-</form>
-
-<script>
-  document.getElementById('forgotPassword').onclick = () => {
-    window.location.href = '/esqueci-senha';
-  };
-
-  function irParaCadastro() {
-    window.location.href = '/cadastro';
-  }
-</script>
+      <button type="button" onclick="irParaCadastro()">
+        Criar Conta
+      </button>
 
     </form>
 
@@ -70,6 +56,10 @@
     </p>
   </main>
 
+  <!-- ✅ SweetAlert -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- JS do login -->
   <script src="../js/login.js"></script>
 </body>
 </html>

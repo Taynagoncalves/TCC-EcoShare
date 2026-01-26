@@ -153,6 +153,16 @@ app.get('/usuario-logado', verificarAutenticacao, (req, res) => {
     tipo: req.usuario.tipo
   });
 });
+app.get(
+  '/admin/usuarios/painel',
+  verificarAutenticacao,
+  verificarAdmin,
+  (req, res) => {
+    res.sendFile(
+      path.join(__dirname, 'src/html/admin-usuarios.html')
+    );
+  }
+);
 
 /* =========================
    SERVER

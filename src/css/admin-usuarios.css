@@ -1,0 +1,85 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 30px;
+}
+
+h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.table-container {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #347142;
+  color: #fff;
+}
+
+th, td {
+  padding: 12px 14px;
+  text-align: left;
+}
+
+tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.badge.ativo {
+  background: #d4f5e2;
+  color: #1e7f4d;
+}
+
+.badge.bloqueado {
+  background: #ffd6d6;
+  color: #a40000;
+}
+
+.actions button {
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 6px;
+  font-size: 13px;
+}
+
+.btn-status {
+  background: #347142;
+  color: #fff;
+}
+
+.btn-tipo {
+  background: #555;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  th, td {
+    font-size: 13px;
+    padding: 10px;
+  }
+}

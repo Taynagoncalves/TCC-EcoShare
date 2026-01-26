@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="../css/telahome.css">
 </head>
 <body>
+<div id="spinner" class="spinner-overlay">
+  <div class="spinner"></div>
+</div>
 
 <!-- =========================
      TOPO
@@ -89,34 +92,44 @@
      MODAL VER MAIS
 ========================= -->
 <div class="modal-overlay" id="modalDetalhes">
-  <div class="modal-detalhes">
+  <div class="modal-detalhes moderno">
 
     <button class="close-modal" onclick="fecharDetalhes()">✕</button>
 
     <img id="detalheImagem" class="detalhe-img">
 
-    <h3 id="detalheTitulo"></h3>
+    <div class="detalhe-header">
+      <h3 id="detalheTitulo"></h3>
+      <span class="badge-disponivel">Disponível</span>
+    </div>
 
-    <p id="detalheBairro"></p>
-    <p id="detalheMaterial"></p>
-    <p id="detalheUsuario"></p>
+    <div class="detalhe-bloco">
+      <p id="detalheMaterial"></p>
+      <p id="detalheBairro"></p>
+      <p id="detalheUsuario"></p>
+    </div>
 
-    <p id="detalheDias"></p>
-    <p id="detalheHorario"></p>
+    <div class="detalhe-bloco destaque">
+      <p id="detalheDias"></p>
+      <p id="detalheHorario"></p>
+    </div>
 
-    <p id="detalheDescricao"></p>
+    <div class="detalhe-descricao">
+      <h4>Descrição</h4>
+      <p id="detalheDescricao"></p>
+    </div>
 
-    <button onclick="solicitarColeta()">Solicitar Coleta</button>
-
+    <button class="btn-coleta" onclick="solicitarColeta()">
+      Solicitar Coleta
+    </button>
 
     <button class="btn-reportar" onclick="abrirDenuncia()">
       Reportar
     </button>
 
-    <button class="btn-fechar" onclick="fecharDetalhes()">Fechar</button>
-
   </div>
 </div>
+
 
 <!-- =========================
      MODAL DENÚNCIA

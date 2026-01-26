@@ -204,14 +204,15 @@ exports.concluirColeta = async (req, res) => {
     );
 
     // 5️⃣ Credita pontos ao DOADOR
-    await db.query(
-      `
-      UPDATE usuarios
-      SET pontos = pontos + ?
-      WHERE id = ?
-      `,
-      [PONTOS_POR_DOACAO, solicitacao.doador_id]
-    );
+await db.query(
+  `
+  UPDATE usuarios
+  SET pontos = COALESCE(pontos, 0) + ?
+  WHERE id = ?
+  `,
+  [PONTOS_POR_DOACAO, solicitacao.doador_id]
+);
+
 
     res.json({
       sucesso: true,

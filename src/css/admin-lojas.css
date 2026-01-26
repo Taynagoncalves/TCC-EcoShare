@@ -1,37 +1,157 @@
-body {
-  font-family: Arial, sans-serif;
-  padding: 30px;
-  background: #f5f5f5;
+/* ===== RESET BÁSICO ===== */
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Arial, sans-serif;
 }
 
+/* ===== PÁGINA ===== */
+body {
+  background: #f4f6f5;
+  padding: 30px;
+  color: #333;
+}
+
+/* ===== TÍTULO ===== */
 h2 {
   color: #2e7d32;
-}
-
-form {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
   margin-bottom: 20px;
 }
 
-input, textarea, button {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
-}
-
-button {
-  background: #2e7d32;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.loja {
+/* ===== CONTAINER FORM ===== */
+form {
   background: #fff;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 8px;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  max-width: 700px;
+  margin-bottom: 40px;
+}
+
+/* ===== CAMPOS ===== */
+.form-group {
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2e7d32;
+  margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #c8e6c9;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #2e7d32;
+}
+
+/* ===== TEXTAREA ===== */
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ===== UPLOAD ===== */
+input[type="file"] {
+  margin-top: 6px;
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: #777;
+  margin-top: 4px;
+}
+
+/* ===== BOTÃO ===== */
+button[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* ===== LISTA DE LOJAS ===== */
+#listaLojas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* ===== CARD LOJA ===== */
+.loja-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  border: 2px solid #2e7d32;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.loja-card h3 {
+  color: #1b5e20;
+  margin-bottom: 6px;
+}
+
+.loja-card p {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.loja-card .label {
+  font-size: 12px;
+  color: #777;
+}
+
+/* ===== PONTOS ===== */
+.badge {
+  display: inline-block;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 20px;
+  margin-top: 6px;
+  width: fit-content;
+}
+
+/* ===== BOTÃO EXCLUIR ===== */
+.btn-excluir {
+  margin-top: 14px;
+  background: #c62828;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-excluir:hover {
+  background: #b71c1c;
 }

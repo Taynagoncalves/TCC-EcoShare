@@ -1,16 +1,15 @@
 // 🔹 Carrega automaticamente ao abrir a página
 document.addEventListener('DOMContentLoaded', carregarColetas);
-
 async function carregarColetas() {
   try {
     const res = await fetch('/coletas/andamento');
-
-    if (!res.ok) {
-      throw new Error('Erro ao buscar coletas');
-    }
+    if (!res.ok) throw new Error();
 
     const dados = await res.json();
     const container = document.getElementById('lista-coletas');
+
+    if (!container) return;
+
     container.innerHTML = '';
 
     if (!dados || dados.length === 0) {
@@ -19,16 +18,14 @@ async function carregarColetas() {
     }
 
     dados.forEach(c => {
-      if (c.papel === 'doador') {
-        container.innerHTML += cardDoador(c);
-      } else {
-        container.innerHTML += cardSolicitante(c);
-      }
+      container.innerHTML += c.papel === 'doador'
+        ? cardDoador(c)
+        : cardSolicitante(c);
     });
 
   } catch (err) {
     console.error(err);
-    alert('Erro ao carregar coletas em andamento');
+    alert('Erro ao carregar coletas');
   }
 }
 
@@ -110,22 +107,102 @@ function cardSolicitante(c) {
 /* =========================
    CONCLUIR COLETA (DOADOR)
 ========================= */
-async function concluirColeta(id) {
-  if (!confirm('Deseja concluir esta coleta?')) return;
+document.addEventListener('DOMContentLoaded', carregarColetas);
 
-  const res = await fetch(`/coletas/concluir/${id}`, {
-    method: 'PUT'
-  });
+async function carregarColetas() {
+  try {
+    const res = await fetch('/coletas/andamento', {
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error();
 
-  const data = await res.json();
+    const dados = await res.json();
+    const container = document.getElementById('lista-coletas');
+    if (!container) return;
 
-  if (data.sucesso) {
-    alert(`Coleta concluída! Você ganhou ${data.pontos} pontos.`);
-    location.reload();
-  } else {
-    alert(data.erro || 'Erro ao concluir coleta');
+    container.innerHTML = '';
+
+    if (!dados || dados.length === 0) {
+      container.innerHTML = '<p>Nenhuma coleta em andamento.</p>';
+      return;
+    }
+
+    dados.forEach(c => {
+      container.innerHTML += c.papel === 'doador'
+        ? cardDoador(c)
+        : cardSolicitante(c);
+    });
+
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao carregar coletas');
   }
 }
+
+async function concluirColeta(idSolicitacao) {
+  try {
+    const res = await fetch(`/coletas/concluir/${idSolicitacao}`, {
+      method: 'PUT',
+      credentials: 'include'
+    });
+
+    if (!res.ok) {
+      const erro = await res.json();
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: erro.erro || 'Erro ao concluir coleta',
+        confirmButtonColor: '#347142'
+      });
+      return;
+    }
+
+    const data = await res.json();
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Parabéns! 🎉',
+      html: `<strong>+${data.pontos} pontos</strong> adicionados à sua conta!`,
+      timer: 2200,
+      showConfirmButton: false
+    });
+
+    setTimeout(() => {
+      carregarColetas();
+    }, 2200);
+
+  } catch (err) {
+    console.error(err);
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Erro inesperado ao concluir coleta',
+      confirmButtonColor: '#347142'
+    });
+  }
+}
+
+/* =========================
+   FUNÇÕES AUXILIARES (MANTIDAS)
+========================= */
+
+function limparTelefone(telefone) {
+  if (!telefone) return '';
+  return telefone.replace(/\D/g, '');
+}
+
+function mensagemWhatsApp(tipo, c) {
+  let msg = '';
+  if (tipo === 'doador') {
+    msg = `Olá ${c.solicitante_nome}, referente à coleta do material ${c.nome_material}.`;
+  } else {
+    msg = `Olá ${c.doador_nome}, referente à coleta do material ${c.nome_material}.`;
+  }
+  return encodeURIComponent(msg);
+}
+
+
+
 
 
 /* =========================

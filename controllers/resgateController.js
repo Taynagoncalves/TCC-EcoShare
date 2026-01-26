@@ -1,130 +1,103 @@
 const db = require('../models/db');
 
-
-function gerarCodigoCupom(nomeLoja) {
-  const letra = nomeLoja.charAt(0).toUpperCase();
-  const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let random = '';
-
-  for (let i = 0; i < 5; i++) {
-    random += caracteres.charAt(
-      Math.floor(Math.random() * caracteres.length)
-    );
-  }
-
-  return letra + random;
-}
+/* =========================
+   RESGATAR CUPOM
+========================= */
 exports.resgatarCupom = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
-    const { loja_id } = req.body;
+    const loja_id = Number(req.body.loja_id);
 
-    if (!loja_id) {
+    /* 🔒 VALIDA ID DA LOJA */
+    if (!loja_id || isNaN(loja_id)) {
       return res.status(400).json({ erro: 'Loja inválida' });
     }
 
-    /* BUSCA USUÁRIO */
+    /* 🔹 BUSCA USUÁRIO */
     const [[usuario]] = await db.query(
       'SELECT pontos FROM usuarios WHERE id = ?',
       [usuarioId]
     );
 
     if (!usuario) {
-      return res.status(401).json({ erro: 'Usuário não encontrado' });
+      return res.status(404).json({ erro: 'Usuário não encontrado' });
     }
 
-    /* BUSCA LOJA */
+    /* 🔹 BUSCA LOJA */
     const [[loja]] = await db.query(
-      'SELECT * FROM lojas WHERE id = ?',
+      'SELECT pontos FROM lojas WHERE id = ?',
       [loja_id]
     );
 
-    if (!loja) {
-      return res.status(404).json({ erro: 'Loja não encontrada' });
+    if (!loja || loja.pontos == null) {
+      return res.status(400).json({
+        erro: 'Cupom inválido ou sem pontos definidos'
+      });
     }
 
-    /* VERIFICA PONTOS */
-    if (usuario.pontos < loja.pontos_necessarios) {
+    const pontosUsuario = Number(usuario.pontos);
+    const custo = Number(loja.pontos);
+
+    /* 🔒 BLOQUEIA CUSTO INVÁLIDO */
+    if (isNaN(custo) || custo <= 0) {
+      return res.status(400).json({
+        erro: 'Valor do cupom inválido'
+      });
+    }
+
+    /* ❌ BLOQUEIA SALDO INSUFICIENTE */
+    if (pontosUsuario < custo) {
       return res.status(400).json({
         erro: 'Pontos insuficientes para resgatar este cupom'
       });
     }
 
-    /* 🔒 VERIFICA SE JÁ RESGATOU */
-    const [[jaResgatou]] = await db.query(
-      'SELECT id FROM cupons_resgatados WHERE usuario_id = ? AND loja_id = ?',
+    /* 🔒 VERIFICA SE JÁ RESGATOU (ANTES DE TUDO) */
+    const [[existe]] = await db.query(
+      'SELECT id FROM resgates WHERE usuario_id = ? AND loja_id = ?',
       [usuarioId, loja_id]
     );
 
-    if (jaResgatou) {
+    if (existe) {
       return res.status(400).json({
         erro: 'Você já resgatou este cupom'
       });
     }
 
-    /* GERA CÓDIGO ÚNICO */
-    const prefixo = loja.nome.charAt(0).toUpperCase();
-    const codigo = `${prefixo}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-
-    /* SALVA CUPOM */
+    /* ✅ PRIMEIRO: DESCONTA OS PONTOS (SE ISSO FALHAR, PARA TUDO) */
     await db.query(
-      `INSERT INTO cupons_resgatados 
-       (usuario_id, loja_id, codigo)
-       VALUES (?, ?, ?)`,
-      [usuarioId, loja_id, codigo]
+      `
+      UPDATE usuarios
+      SET pontos = pontos - ?
+      WHERE id = ?
+      `,
+      [custo, usuarioId]
     );
 
-    /* DEBITA PONTOS */
+    /* 🔹 DEPOIS: REGISTRA O RESGATE */
+    const codigo = `CUPOM-${Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase()}`;
+
     await db.query(
-      'UPDATE usuarios SET pontos = pontos - ? WHERE id = ?',
-      [loja.pontos_necessarios, usuarioId]
+      `
+      INSERT INTO resgates (usuario_id, loja_id, pontos_usados, codigo, usado)
+      VALUES (?, ?, ?, ?, 0)
+      `,
+      [usuarioId, loja_id, custo, codigo]
     );
 
     return res.json({
       sucesso: true,
-      codigo
+      codigo,
+      pontos_restantes: pontosUsuario - custo
     });
 
-  } catch (erro) {
-    console.error('ERRO AO RESGATAR CUPOM:', erro);
+  } catch (err) {
+    console.error('ERRO RESGATE:', err);
     return res.status(500).json({
       erro: 'Erro interno ao resgatar cupom'
     });
-  }
-};
-exports.usarCupom = async (req, res) => {
-  try {
-    const { codigo } = req.body;
-
-    // 1️⃣ Buscar cupom
-    const [[cupom]] = await db.query(
-      'SELECT * FROM resgates WHERE codigo = ?',
-      [codigo]
-    );
-
-    if (!cupom) {
-      return res.status(404).json({ erro: 'Cupom não encontrado' });
-    }
-
-    // 2️⃣ Verificar se já foi usado
-    if (cupom.usado) {
-      return res.status(400).json({
-        erro: 'Este cupom já foi utilizado'
-      });
-    }
-
-    // 3️⃣ Marcar como usado
-    await db.query(
-      `UPDATE resgates
-       SET usado = TRUE, usado_em = NOW()
-       WHERE id = ?`,
-      [cupom.id]
-    );
-
-    res.json({ sucesso: true });
-
-  } catch (err) {
-    console.error('Erro ao usar cupom:', err);
-    res.status(500).json({ erro: 'Erro ao validar cupom' });
   }
 };

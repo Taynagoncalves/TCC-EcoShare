@@ -10,19 +10,56 @@
 <h2>Painel Admin — Lojas Parceiras</h2>
 
 <form id="formLoja" enctype="multipart/form-data">
-  <input type="text" name="nome" required />
-  <input type="text" name="descricao" />
-  <input type="number" name="pontos" required />
 
-  <!-- 🔥 IMPORTANTE -->
-  <input type="file" name="imagem" accept="image/*" />
+  <div class="form-group">
+    <label>Nome da loja</label>
+    <input
+      type="text"
+      name="nome"
+      placeholder="Ex: EcoMarket"
+      required
+    />
+  </div>
 
-  <button type="submit">Cadastrar</button>
+  <div class="form-group">
+    <label>Descrição da loja</label>
+    <input
+      type="text"
+      name="descricao"
+      placeholder="Ex: 10% de desconto em produtos sustentáveis"
+    />
+  </div>
+
+  <div class="form-group">
+    <label>Pontos necessários para resgatar o cupom</label>
+    <input
+      type="number"
+      name="pontos"
+      placeholder="Ex: 50"
+      required
+    />
+  </div>
+
+  <div class="form-group">
+    <label>Imagem da loja</label>
+    <input
+      type="file"
+      name="imagem"
+      accept="image/png, image/jpeg"
+    />
+    <div class="upload-hint">
+      PNG ou JPG • imagem quadrada recomendada
+    </div>
+  </div>
+
+  <button type="submit">Cadastrar loja</button>
+
 </form>
 
 <hr />
 
 <div id="listaLojas"></div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="/js/admin-lojas.js"></script>
 </body>

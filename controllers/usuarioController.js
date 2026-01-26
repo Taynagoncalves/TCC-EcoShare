@@ -69,15 +69,19 @@ exports.resgatarCupom = async (req, res) => {
       return res.status(400).json({ erro: 'Loja inválida' });
     }
 
-    // Usuário
+    // 🔹 Usuário
     const [[usuario]] = await db.query(
       'SELECT pontos FROM usuarios WHERE id = ?',
       [usuarioId]
     );
 
-    // Loja
+    if (!usuario) {
+      return res.status(404).json({ erro: 'Usuário não encontrado' });
+    }
+
+    // 🔹 Loja (coluna correta: pontos)
     const [[loja]] = await db.query(
-      'SELECT * FROM lojas WHERE id = ?',
+      'SELECT id, nome, pontos FROM lojas WHERE id = ?',
       [loja_id]
     );
 
@@ -85,15 +89,22 @@ exports.resgatarCupom = async (req, res) => {
       return res.status(404).json({ erro: 'Loja não encontrada' });
     }
 
-    if (usuario.pontos < loja.pontos_necessarios) {
+    const pontosUsuario = Number(usuario.pontos);
+    const custo = Number(loja.pontos); // ✅ CERTO
+
+    if (isNaN(custo) || custo <= 0) {
+      return res.status(400).json({ erro: 'Cupom com valor inválido' });
+    }
+
+    if (pontosUsuario < custo) {
       return res.status(400).json({
         erro: 'Pontos insuficientes'
       });
     }
 
-    // Verifica se já resgatou
+    // 🔒 Verifica se já resgatou (tabela correta)
     const [[jaResgatou]] = await db.query(
-      'SELECT id FROM cupons_resgatados WHERE usuario_id = ? AND loja_id = ?',
+      'SELECT id FROM resgates WHERE usuario_id = ? AND loja_id = ?',
       [usuarioId, loja_id]
     );
 
@@ -103,28 +114,88 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-    // Gera código
+    // ✅ PRIMEIRO: debita pontos (se falhar, nada acontece)
+    await db.query(
+      'UPDATE usuarios SET pontos = pontos - ? WHERE id = ?',
+      [custo, usuarioId]
+    );
+
+    // 🔹 Gera código
     const codigo =
       loja.nome.charAt(0).toUpperCase() +
       Math.random().toString(36).substring(2, 8).toUpperCase();
 
-    // Salva cupom
+    // ✅ DEPOIS: registra resgate
     await db.query(
-      `INSERT INTO cupons_resgatados (usuario_id, loja_id, codigo)
-       VALUES (?, ?, ?)`,
-      [usuarioId, loja_id, codigo]
+      `
+      INSERT INTO resgates (usuario_id, loja_id, pontos_usados, codigo, usado)
+      VALUES (?, ?, ?, ?, 0)
+      `,
+      [usuarioId, loja_id, custo, codigo]
     );
 
-    // Debita pontos
-    await db.query(
-      'UPDATE usuarios SET pontos = pontos - ? WHERE id = ?',
-      [loja.pontos_necessarios, usuarioId]
-    );
-
-    res.json({ sucesso: true, codigo });
+    res.json({
+      sucesso: true,
+      codigo,
+      pontos_restantes: pontosUsuario - custo
+    });
 
   } catch (err) {
     console.error('ERRO RESGATE:', err);
     res.status(500).json({ erro: 'Erro interno ao resgatar cupom' });
+  }
+};
+
+exports.listarUsuarios = async (req, res) => {
+  try {
+    const [usuarios] = await db.query(`
+      SELECT id, nome, email, tipo, pontos, status
+      FROM usuarios
+    `);
+
+    res.json(usuarios);
+  } catch (err) {
+    console.error('ERRO LISTAR USUÁRIOS:', err);
+    res.status(500).json({ erro: 'Erro ao listar usuários' });
+  }
+};
+
+/* =========================
+   ADMIN — BLOQUEAR / DESBLOQUEAR
+========================= */
+exports.alterarStatusUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    await db.query(
+      'UPDATE usuarios SET status = ? WHERE id = ?',
+      [status, id]
+    );
+
+    res.json({ sucesso: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao alterar status' });
+  }
+};
+
+/* =========================
+   ADMIN — ALTERAR TIPO
+========================= */
+exports.alterarTipoUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { tipo } = req.body;
+
+    await db.query(
+      'UPDATE usuarios SET tipo = ? WHERE id = ?',
+      [tipo, id]
+    );
+
+    res.json({ sucesso: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao alterar tipo' });
   }
 };

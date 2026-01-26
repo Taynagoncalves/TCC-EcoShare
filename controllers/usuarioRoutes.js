@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
 
+const verificarAdmin = require('./verificarAdmin');
 const verificarAutenticacao = require('./verificarAutenticacao');
 const usuarioController = require('./usuarioController');
 
@@ -51,7 +52,7 @@ router.get(
 );
 
 /* =========================
-   DEBITAR PONTOS (USADO EM RESGATE)
+   DEBITAR PONTOS
 ========================= */
 router.post(
   '/usuarios/debitar-pontos',
@@ -75,6 +76,36 @@ router.post(
   '/resgatar',
   verificarAutenticacao,
   usuarioController.resgatarCupom
+);
+
+/* =========================
+   ADMIN — LISTAR USUÁRIOS (API)
+========================= */
+router.get(
+  '/api/admin/usuarios',
+  verificarAutenticacao,
+  verificarAdmin,
+  usuarioController.listarUsuarios
+);
+
+/* =========================
+   ADMIN — BLOQUEAR / DESBLOQUEAR
+========================= */
+router.put(
+  '/admin/usuarios/:id/status',
+  verificarAutenticacao,
+  verificarAdmin,
+  usuarioController.alterarStatusUsuario
+);
+
+/* =========================
+   ADMIN — ALTERAR TIPO (ADMIN / USUÁRIO)
+========================= */
+router.put(
+  '/admin/usuarios/:id/tipo',
+  verificarAutenticacao,
+  verificarAdmin,
+  usuarioController.alterarTipoUsuario
 );
 
 module.exports = router;

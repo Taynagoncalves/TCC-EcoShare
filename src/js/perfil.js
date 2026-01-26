@@ -2,17 +2,19 @@ document.addEventListener('DOMContentLoaded', carregarPerfil);
 
 async function carregarPerfil() {
   try {
-    // 🔹 dados do usuário
-    const userRes = await fetch('/usuario-logado');
-    if (!userRes.ok) throw new Error('Erro usuário');
+    const userRes = await fetch('/usuario-logado', {
+      credentials: 'include'
+    });
+    if (!userRes.ok) throw new Error();
 
     const usuario = await userRes.json();
 
-    // 🔹 pontos
-    const pontosRes = await fetch('/usuarios/pontos');
-    if (!pontosRes.ok) throw new Error('Erro pontos');
+    const pontosRes = await fetch('/usuarios/pontos', {
+      credentials: 'include'
+    });
+    if (!pontosRes.ok) throw new Error();
 
-    const pontos = await pontosRes.json();
+    const pontosData = await pontosRes.json();
 
     document.getElementById('nome').value = usuario.nome || '';
     document.getElementById('email').value = usuario.email || '';
@@ -22,11 +24,17 @@ async function carregarPerfil() {
         ? usuario.data_nascimento.split('T')[0]
         : '';
 
+    // ✅ pontos no perfil
     document.getElementById('pontosUsuario').innerText =
-      `${pontos.pontos || 0} pts`;
+      `${pontosData.pontos} pts`;
 
   } catch (err) {
-    console.error('Erro ao carregar perfil:', err);
-    alert('Erro ao carregar perfil');
+    console.error(err);
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Erro ao carregar perfil',
+      confirmButtonColor: '#347142'
+    });
   }
 }

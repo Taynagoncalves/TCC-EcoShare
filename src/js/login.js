@@ -16,14 +16,6 @@ function irParaCadastro() {
   window.location.href = "/cadastro";
 }
 
-//  Esqueci minha senha
-const forgotPassword = document.getElementById("forgotPassword");
-if (forgotPassword) {
-  forgotPassword.addEventListener("click", () => {
-    window.location.href = "/esqueci-senha";
-  });
-}
-
 // LOGIN
 const formLogin = document.getElementById("formLogin");
 
@@ -34,7 +26,12 @@ formLogin.addEventListener("submit", async (e) => {
   const senha = formLogin.senha.value;
 
   if (!email || !senha) {
-    alert("Preencha todos os campos.");
+    Swal.fire({
+      icon: "warning",
+      title: "Atenção",
+      text: "Preencha todos os campos.",
+      confirmButtonColor: "#347142"
+    });
     return;
   }
 
@@ -47,11 +44,35 @@ formLogin.addEventListener("submit", async (e) => {
 
   const json = await res.json();
 
-  if (!res.ok) {
-    alert(json.error || "Email ou senha inválidos.");
+  // 🔒 USUÁRIO BLOQUEADO
+  if (res.status === 403 && json.erro === "Usuário bloqueado") {
+    Swal.fire({
+      icon: "error",
+      title: "Conta bloqueada",
+      text: "Sua conta foi bloqueada pelo administrador.",
+      confirmButtonColor: "#347142"
+    });
     return;
   }
 
-  // Login OK ir para Home
-  window.location.href = "/telahome";
+  // ❌ ERRO DE LOGIN
+  if (!res.ok) {
+    Swal.fire({
+      icon: "error",
+      title: "Erro",
+      text: json.erro || "Email ou senha inválidos.",
+      confirmButtonColor: "#347142"
+    });
+    return;
+  }
+
+  // ✅ LOGIN OK
+  Swal.fire({
+    icon: "success",
+    title: "Bem-vindo!",
+    timer: 1200,
+    showConfirmButton: false
+  }).then(() => {
+    window.location.href = "/telahome";
+  });
 });

@@ -35,13 +35,42 @@ form.addEventListener('submit', async e => {
 
   const formData = new FormData(form);
 
-  await fetch('/api/admin/lojas', {
-    method: 'POST',
-    body: formData
-  });
+  try {
+    const res = await fetch('/api/admin/lojas', {
+      method: 'POST',
+      body: formData
+    });
 
-  form.reset();
-  carregarLojas();
+    const data = await res.json();
+
+    if (!res.ok) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: data.erro || 'Erro ao cadastrar loja',
+        confirmButtonColor: '#347142'
+      });
+      return;
+    }
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Loja cadastrada com sucesso!',
+      text: 'A loja já está disponível para resgate.',
+      confirmButtonColor: '#347142'
+    });
+
+    form.reset();
+    carregarLojas();
+
+  } catch (err) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro inesperado',
+      text: 'Não foi possível cadastrar a loja.',
+      confirmButtonColor: '#347142'
+    });
+  }
 });
 
 // ==========================

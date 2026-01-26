@@ -1,77 +1,143 @@
+// 🔹 Atualiza o saldo de pontos no topo
+async function carregarPontosTopo() {
+  try {
+    const res = await fetch('/usuarios/pontos', {
+      credentials: 'include'
+    });
+
+    if (!res.ok) return;
+
+    const data = await res.json();
+
+    const saldo = document.getElementById('saldoPontos');
+    if (saldo) {
+      saldo.innerText = `${data.pontos} pts`;
+    }
+
+  } catch (err) {
+    console.error('Erro ao carregar pontos:', err);
+  }
+}
+
+// 🔹 Carrega lojas para resgate (ROTA CORRETA)
 async function carregarResgate() {
-  const lojasRes = await fetch('/admin/lojas');
-  const lojas = await lojasRes.json();
+  try {
+    // saldo primeiro
+    await carregarPontosTopo();
 
-  const userRes = await fetch('/usuario-logado');
-  const usuario = await userRes.json();
+    // 🔥 ROTA CERTA (usuário)
+    const res = await fetch('/api/lojas');
+    if (!res.ok) throw new Error();
 
-  document.getElementById('pontosUsuario').innerText =
-    `Seus pontos: ${usuario.pontos}`;
+    const lojas = await res.json();
 
-  const lista = document.getElementById('listaCupons');
-  lista.innerHTML = '';
+    const lista = document.getElementById('listaCupons');
+    lista.innerHTML = '';
 
-  lojas.forEach(loja => {
-    lista.innerHTML += `
-      <div class="cupom">
-        <h3>${loja.nome}</h3>
-        <p>${loja.descricao || ''}</p>
-        <p><strong>${loja.pontos} pontos</strong></p>
-        <button onclick="resgatar(${loja.id}, ${loja.pontos})">
+    if (lojas.length === 0) {
+      lista.innerHTML = '<p>Nenhuma loja disponível no momento.</p>';
+      return;
+    }
+
+lojas.forEach(loja => {
+  lista.innerHTML += `
+    <div class="cupom-card">
+      <div class="cupom-topo">
+        <img 
+          src="/uploads/${loja.imagem}" 
+          alt="${loja.nome}" 
+          class="logo-loja"
+          onerror="this.src='/img/loja-padrao.png'"
+        >
+
+        <div class="cupom-info">
+          <h3>${loja.nome}</h3>
+          <p class="descricao">
+            ${loja.descricao || 'Loja parceira EcoShare'}
+          </p>
+        </div>
+      </div>
+
+      <div class="cupom-rodape">
+        <span class="pontos">${loja.pontos} pontos</span>
+        <button onclick="resgatar(${loja.id})">
           Resgatar
         </button>
       </div>
-    `;
-  });
+    </div>
+  `;
+});
+
+
+      
+    
+
+  } catch (err) {
+    console.error('Erro ao carregar resgate:', err);
+  }
 }
+
+// 🔹 Resgatar cupom
 async function resgatar(lojaId) {
   try {
     const res = await fetch('/resgatar', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ loja_id: lojaId })
+      body: JSON.stringify({
+        loja_id: lojaId //  SOMENTE ISSO
+      })
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.erro || 'Erro ao resgatar cupom');
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: data.erro || 'Erro ao resgatar cupom',
+        confirmButtonColor: '#347142'
+      });
       return;
     }
 
-    alert(`Cupom resgatado com sucesso!\nCódigo: ${data.codigo}`);
+    Swal.fire({
+      icon: 'success',
+      title: 'Cupom resgatado!',
+      text: `Código: ${data.codigo}`,
+      confirmButtonColor: '#347142'
+    });
+
+    // 🔄 Atualiza pontos no topo
+    carregarPontosTopo();
 
   } catch (err) {
     console.error(err);
-    alert('Erro inesperado ao resgatar cupom');
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Erro inesperado ao resgatar',
+      confirmButtonColor: '#347142'
+    });
   }
 }
+function filtrarLojas(texto) {
+  const filtro = texto.toLowerCase();
+  const cards = document.querySelectorAll('.cupom-card');
 
-async function carregarLojas() {
-  const res = await fetch('/api/lojas');
-  const lojas = await res.json();
+  cards.forEach(card => {
+    const nomeLoja = card
+      .querySelector('.cupom-info h3')
+      .innerText
+      .toLowerCase();
 
-  const container = document.getElementById('lista-lojas');
-  container.innerHTML = '';
-
-  lojas.forEach(loja => {
-    container.innerHTML += `
-      <div class="loja-card">
-        <img src="/uploads/${loja.imagem}" />
-        <h3>${loja.nome}</h3>
-        <p>${loja.descricao}</p>
-        <strong>${loja.pontos} pontos</strong>
-        <button onclick="resgatar(${loja.id})">
-          Resgatar
-        </button>
-      </div>
-    `;
+    if (nomeLoja.includes(filtro)) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
   });
 }
 
-carregarLojas();
-
+// 🚀 inicializa a tela
 carregarResgate();

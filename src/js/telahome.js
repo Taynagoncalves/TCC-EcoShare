@@ -30,18 +30,52 @@ function irParaMinhasDoacoes() {
 /* =========================
    LISTAR DOAÇÕES
 ========================= */
+
+// ===== CONTROLE DO SPINNER =====
+function mostrarSpinner() {
+  const spinner = document.getElementById('spinner');
+  if (spinner) spinner.style.display = 'flex';
+}
+
+function esconderSpinner() {
+  const spinner = document.getElementById('spinner');
+  if (spinner) spinner.style.display = 'none';
+}
+
 async function carregarDoacoes() {
   try {
+    mostrarSpinner();
+
     const res = await fetch('/doacoes');
-    if (!res.ok) throw new Error('Erro ao buscar doações');
+    const dados = await res.json();
 
-    todasDoacoes = await res.json();
-    renderizarDoacoes(todasDoacoes);
+    todasDoacoes = dados; // 🔴 ESSENCIAL
+    renderizarDoacoes(dados);
 
-  } catch (error) {
-    console.error('Erro ao carregar doações:', error);
+  } catch (err) {
+    console.error('Erro ao carregar doações:', err);
+  } finally {
+    esconderSpinner();
   }
 }
+
+function renderizarDoacoes(doacoes) {
+  const lista = document.getElementById('listaPublicacoes');
+  if (!lista) return; // 🔒 PROTEÇÃO ESSENCIAL
+
+  lista.innerHTML = '';
+
+  doacoes.forEach(d => {
+    lista.innerHTML += `
+      <div class="card-doacao">
+        <h3>${d.nome_material}</h3>
+        <p>${d.descricao}</p>
+      </div>
+    `;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', carregarDoacoes);
 
 /* =========================
    RENDERIZAR DOAÇÕES
@@ -67,12 +101,7 @@ function renderizarDoacoes(doacoes) {
         >
       </div>
 
-      <div class="card-body">
-        <div class="card-header">
-          <h3 class="card-title">${d.nome_material}</h3>
-          <span class="badge-disponivel">Disponível</span>
-        </div>
-
+   
         <div class="card-info">
           <p><strong>Bairro:</strong> ${d.bairro}</p>
           <p><strong>Material:</strong> ${d.tipo_material}</p>
@@ -122,9 +151,27 @@ function normalizarTexto(texto) {
 
 /* filtros */
 function filtrarPorMaterial(material) {
-  filtroAtivo = normalizarTexto(material);
-  aplicarFiltros();
-  destacarFiltro(material);
+  const filtro = material
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+  const filtradas = todasDoacoes.filter(d => {
+    if (!d.material) return false;
+
+    const materialDoacao = d.material
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    return materialDoacao.includes(filtro);
+  });
+
+  if (filtradas.length === 0) {
+    renderizarDoacoes([]);
+  } else {
+    renderizarDoacoes(filtradas);
+  }
 }
 
 
@@ -216,10 +263,14 @@ function fecharDetalhes() {
   document.getElementById('modalDetalhes').style.display = 'none';
 }
 
-/* denuncia */
 function abrirDenuncia() {
+  // fecha o modal de detalhes
+  document.getElementById('modalDetalhes').style.display = 'none';
+
+  // abre o modal de denúncia
   document.getElementById('modalDenuncia').style.display = 'flex';
 }
+
 
 function fecharDenuncia() {
   document.getElementById('modalDenuncia').style.display = 'none';
@@ -331,6 +382,13 @@ document.addEventListener('DOMContentLoaded', () => {
     menu.style.display = 'none';
   });
 });
+async function atualizarPontosTopo() {
+  const res = await fetch('/usuarios/pontos');
+  const data = await res.json();
+
+  document.getElementById('saldoPontos').innerText =
+    `${data.pontos} pts`;
+}
 
 /* =========================
    INICIALIZAÇÃO
