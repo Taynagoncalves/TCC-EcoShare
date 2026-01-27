@@ -3,34 +3,26 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-
+const connection = require('./models/db');
 const app = express();
 
-/* =========================
-   MIDDLEWARES GERAIS
-========================= */
+/* MIDDLEWARES GERAIS */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-/* =========================
-   ARQUIVOS ESTÁTICOS
-========================= */
+/* ARQUIVOS ESTÁTICOS */
 app.use('/css', express.static(path.join(__dirname, 'src/css')));
 app.use('/js', express.static(path.join(__dirname, 'src/js')));
 app.use('/icons', express.static(path.join(__dirname, 'src/icons')));
 app.use('/imagens', express.static(path.join(__dirname, 'src/imagens')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-/* =========================
-   MIDDLEWARE AUTH
-========================= */
+// MIDDLEWARE AUTH 
 const verificarAutenticacao = require('./controllers/verificarAutenticacao');
 const verificarAdmin = require('./controllers/verificarAdmin');
 
-/* =========================
-   ROTAS DE AUTENTICAÇÃO
-========================= */
+/*ROTAS DE AUTENTICAÇÃO */
 app.post('/login', require('./controllers/logar'));
 app.post('/cadastro', require('./controllers/cadastrar'));
 app.post('/logout', require('./controllers/deslogar'));
@@ -38,9 +30,8 @@ app.post('/esqueci-senha', require('./controllers/esqueciSenha'));
 app.post('/redefinir-senha', require('./controllers/redefinirSenha'));
 app.use('/notificacoes', require('./controllers/notificacaoRoutes'));
 
-/* =========================
-   ROTAS DE FUNCIONALIDADES
-========================= */
+/* ROTAS DE FUNCIONALIDADES */
+
 app.use('/', require('./controllers/doacoesRoutes'));
 app.use('/', require('./controllers/denunciaRoutes'));
 app.use('/', require('./controllers/bairrosRoutes'));
@@ -62,6 +53,7 @@ app.use('/', require('./controllers/lojasRoutes'));
 app.get('/', (req, res) => {
   res.redirect('/inicio');
 });
+
 
 app.get('/inicio', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/inicio.html'));
@@ -140,6 +132,7 @@ app.get('/redefinir-senha', (req, res) => {
 /* =========================
    🔐 PÁGINA ADMIN (HTML)
 ========================= */
+
 app.get(
   '/admin/lojas',
   verificarAutenticacao,
