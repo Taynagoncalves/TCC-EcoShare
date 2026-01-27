@@ -20,11 +20,17 @@
   <div class="topo-esquerda">
     <img src="../imagens/logo.png" class="logo" alt="EcoShare">
   </div>
-
+<header class="topo-notificacoes">
   <h2 class="titulo-centro">Notificações</h2>
 
   <div class="topo-direita">
-    <img src="../icons/notificacao.png" class="icon-notificacao" alt="Notificações">
+    <img 
+      src="../icons/notificacao.png" 
+      class="icon-notificacao" 
+      alt="Notificações"
+      onclick="toggleNotificacoes()"
+    >
+    <span class="badge-notificacao" id="badgeNotificacao" hidden>0</span>
   </div>
 </header>
 
@@ -52,10 +58,10 @@
 </div>
 
 
-  <div class="menu-item">
-    <img src="../icons/user.png">
-    <span>Perfil</span>
-  </div>
+<div class="menu-item" onclick="location.href='/perfil'">
+  <img src="../icons/user.png">
+  <span>Perfil</span>
+</div>
 
   <div class="menu-item" onclick="location.href='/configuracoes'">
     <img src="../icons/config.png">

@@ -52,6 +52,10 @@ router.put(
   verificarAutenticacao,
   coletaController.concluirColeta
 );;
-
+router.post(
+  '/coletas/solicitar',
+  verificarAutenticacao,
+  coletaController.solicitarColeta
+);
 
 module.exports = router;

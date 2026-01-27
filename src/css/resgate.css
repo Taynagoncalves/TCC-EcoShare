@@ -15,10 +15,11 @@ body {
 .topo {
   background: #fff;
   padding: 10px 16px;
-  display: flex;
+  display: fixed;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #ddd;
+  z-index: 1;
 }
 
 .topo img {
@@ -33,12 +34,11 @@ body {
   font-size: 14px;
   font-weight: 600;
 }
-
-/* ===== CONTEÚDO ===== */
+/* garante espaço para o menu inferior */
 .conteudo {
-  max-width: 1000px;
-  margin: 24px auto 90px;
-  padding: 0 16px;
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 0 16px 160px; /* 👈 espaço maior para o menu */
 }
 
 .titulo {
@@ -60,12 +60,7 @@ body {
   margin-bottom: 20px;
 }
 
-.lista-cupons {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 260px);
-  gap: 20px;
-  justify-content: center;
-}
+
 .logo-loja {
   width: 90px;
   height: 90px;
@@ -79,14 +74,6 @@ body {
 }
 
 
-/* ===== CARDS DE CUPOM ===== */
-.lista-cupons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-  padding-bottom: 120px;
-
-}
 
 .cupom-card {
   background: #fff;
@@ -149,12 +136,14 @@ body {
 .cupom-acao button:hover {
   background: #2b5f37;
 }
-/* ===== LISTA DE CUPONS ===== */
 .lista-cupons {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
+  position: relative;
+  z-index: 1;
 }
+
 
 /* ===== CARD ===== */
 .cupom-card {

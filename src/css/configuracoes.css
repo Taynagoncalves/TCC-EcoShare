@@ -110,3 +110,42 @@ input:checked + .slider:before {
 .menu-item.ativo {
   font-weight: bold;
 }
+.topo-notificacoes {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #fff;
+}
+
+.titulo-centro {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f4d2b;
+  margin: 0;
+}
+
+.topo-direita {
+  position: absolute;
+  right: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.icon-notificacao {
+  width: 26px;
+  cursor: pointer;
+}
+
+.badge-notificacao {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: #d32f2f;
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 50%;
+}

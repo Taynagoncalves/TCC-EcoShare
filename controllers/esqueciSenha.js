@@ -1,20 +1,19 @@
 const db = require('../models/db');
 const nodemailer = require('nodemailer');
 const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 
 module.exports = async (req, res) => {
   try {
-    console.log('🚀 ROTA /esqueci-senha CHAMADA');
-
     const { email } = req.body;
 
     const [rows] = await db.execute(
-      'SELECT * FROM usuarios WHERE email = ?',
+      'SELECT id FROM usuarios WHERE email = ?',
       [email]
     );
 
+    // 🔐 Sempre responde igual (segurança)
     if (rows.length === 0) {
-      console.log('⚠️ EMAIL NÃO ENCONTRADO:', email);
       return res.json({
         message: 'Se o e-mail existir, você receberá o link.'
       });
@@ -28,6 +27,14 @@ module.exports = async (req, res) => {
       [token, expires, email]
     );
 
+    const link = `http://localhost:8000/redefinir-senha?token=${token}`;
+
+    // ✅ RESPONDE IMEDIATAMENTE (UX PERFEITA)
+    res.json({
+      message: 'Se o e-mail existir, você receberá o link.'
+    });
+
+    // 🚀 ENVIO DO EMAIL EM SEGUNDO PLANO
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -36,30 +43,116 @@ module.exports = async (req, res) => {
       }
     });
 
-    const link = `http://localhost:8000/redefinir-senha?token=${token}`;
+  await transporter.sendMail({
+  from: `"EcoShare" <${process.env.EMAIL_USER}>`,
+  to: email,
+  subject: 'Redefinição de Senha - EcoShare',
 
-    console.log('📤 ENVIANDO EMAIL PARA:', email);
+  html: `
+    <div style="
+      font-family: Arial, sans-serif;
+      background:#ffffff;
+      padding:20px;
+      text-align:center;
+    ">
 
-    await transporter.sendMail({
+      <img 
+        src="cid:logoEco"
+        alt="EcoShare"
+        style="width:90px; margin-bottom:10px;"
+      />
+
+      <h2 style="
+        color:#1f4d2b;
+        margin:10px 0 10px 0;
+      ">
+        Redefinição de Senha
+      </h2>
+
+      <img 
+        src="cid:cadeadoEco"
+        alt="Redefinir senha"
+        style="width:200px; margin:10px 0;"
+      />
+
+      <p style="
+        font-size:15px;
+        color:#333;
+        margin:10px 0;
+        line-height:1.4;
+      ">
+        Você solicitou a redefinição da sua senha no <strong>EcoShare</strong>.
+        <br>
+        Clique no botão abaixo para criar uma nova senha.
+      </p>
+
+      <a href="${link}"
+        style="
+          display:inline-block;
+          margin:15px 0;
+          padding:14px 32px;
+          background:#2f7d3a;
+          color:#ffffff;
+          text-decoration:none;
+          border-radius:30px;
+          font-size:16px;
+          font-weight:bold;
+        ">
+        Redefinir Senha
+      </a>
+
+      <p style="
+        font-size:12px;
+        color:#777;
+        margin-top:10px;
+      ">
+        Este link expira em 1 hora.
+        <br>
+        Se você não solicitou essa alteração, ignore este e-mail.
+      </p>
+
+    </div>
+  `,
+
+  attachments: [
+    {
+      filename: 'logo.png',
+      path: 'src/imagens/logo.png',
+      cid: 'logoEco'
+    },
+    {
+      filename: 'cadeado.png',
+      path: 'src/imagens/cadeado-redefinir-senha.png',
+      cid: 'cadeadoEco'
+    }
+  ]
+});
+
+
+    transporter.sendMail({
       from: `"EcoShare" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: 'Redefinição de Senha - EcoShare',
-      html: `
-        <p>Você solicitou a redefinição de senha.</p>
-        <p>Clique no link abaixo:</p>
-        <a href="${link}">${link}</a>
-        <p>Este link expira em 1 hora.</p>
-      `
-    });
-
-    console.log('📧 EMAIL ENVIADO COM SUCESSO');
-
-    res.json({
-      message: 'Se o e-mail existir, você receberá o link.'
+      html: htmlEmail,
+      attachments: [
+        {
+          filename: 'logo.png',
+          path: path.join(__dirname, '../src/imagens/logo.png'),
+          cid: 'logoEcoShare'
+        },
+        {
+          filename: 'cadeado.png',
+          path: path.join(__dirname, '../src/imagens/cadeado-redefinir-senha.png'),
+          cid: 'cadeadoEcoShare'
+        }
+      ]
+    }).then(() => {
+      console.log('📧 Email de redefinição enviado');
+    }).catch(err => {
+      console.error('❌ Erro ao enviar email:', err);
     });
 
   } catch (err) {
-    console.error('❌ ERRO AO ENVIAR EMAIL:', err);
-    res.status(500).json({ error: 'Erro ao enviar e-mail' });
+    console.error('❌ ERRO GERAL:', err);
   }
 };

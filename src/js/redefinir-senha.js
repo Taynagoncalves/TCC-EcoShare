@@ -11,23 +11,49 @@ form.addEventListener('submit', async (e) => {
   const confirmar = document.getElementById('confirmar').value;
 
   if (senha !== confirmar) {
-    alert('As senhas não coincidem');
+    Swal.fire({
+      icon: 'error',
+      title: 'Senhas diferentes',
+      text: 'As senhas informadas não coincidem.',
+      confirmButtonColor: '#347142'
+    });
     return;
   }
 
-  const res = await fetch('/redefinir-senha', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token, senha })
-  });
+  try {
+    const res = await fetch('/redefinir-senha', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, senha })
+    });
 
-  const json = await res.json();
+    const json = await res.json();
 
-  if (!res.ok) {
-    alert(json.error);
-    return;
+    if (!res.ok) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: json.error || 'Não foi possível redefinir a senha.',
+        confirmButtonColor: '#347142'
+      });
+      return;
+    }
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Senha redefinida!',
+      text: 'Sua senha foi alterada com sucesso. Faça login novamente.',
+      confirmButtonColor: '#347142'
+    }).then(() => {
+      window.location.href = '/login';
+    });
+
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro inesperado',
+      text: 'Erro de conexão com o servidor.',
+      confirmButtonColor: '#347142'
+    });
   }
-
-  alert('Senha redefinida com sucesso!');
-  window.location.href = '/login';
 });

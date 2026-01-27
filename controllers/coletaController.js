@@ -1,4 +1,5 @@
 const db = require('../models/db');
+const { criarNotificacao } = require('./notificacaoController');
 
 /* =========================
    SOLICITAR COLETA
@@ -23,6 +24,7 @@ exports.solicitarColeta = async (req, res) => {
       });
     }
 
+    // cria solicitação
     await db.query(
       `INSERT INTO solicitacoes_coleta
        (doacao_id, solicitante_id, doador_id)
@@ -30,10 +32,16 @@ exports.solicitarColeta = async (req, res) => {
       [doacao_id, solicitante_id, doacao.usuario_id]
     );
 
+    // 🔔 NOTIFICAÇÃO PARA O DOADOR
+    await criarNotificacao(
+      doacao.usuario_id,
+      'solicitacao',
+      'Você recebeu uma nova solicitação de coleta.'
+    );
+
     res.json({ sucesso: true });
 
   } catch (err) {
-    // 🔥 TRATAMENTO DO UNIQUE
     if (err.code === 'ER_DUP_ENTRY') {
       return res.status(400).json({
         erro: 'Você já solicitou a coleta desta doação.'
@@ -89,11 +97,25 @@ exports.confirmarColeta = async (req, res) => {
       return res.status(400).json({ erro: 'ID inválido' });
     }
 
+    // busca dados
+    const [[solicitacao]] = await db.query(`
+      SELECT solicitante_id
+      FROM solicitacoes_coleta
+      WHERE id = ?
+    `, [solicitacaoId]);
+
     await db.query(
       `UPDATE solicitacoes_coleta 
        SET status = 'confirmada'
        WHERE id = ?`,
       [solicitacaoId]
+    );
+
+    // 🔔 NOTIFICAÇÃO PARA O SOLICITANTE
+    await criarNotificacao(
+      solicitacao.solicitante_id,
+      'andamento',
+      'Sua solicitação foi aceita. A coleta está em andamento.'
     );
 
     res.json({ sucesso: true });
@@ -109,15 +131,24 @@ exports.recusarColeta = async (req, res) => {
   try {
     const solicitacaoId = Number(req.params.id);
 
-    if (!solicitacaoId) {
-      return res.status(400).json({ erro: 'ID inválido' });
-    }
+    const [[solicitacao]] = await db.query(`
+      SELECT solicitante_id
+      FROM solicitacoes_coleta
+      WHERE id = ?
+    `, [solicitacaoId]);
 
     await db.query(
       `UPDATE solicitacoes_coleta 
        SET status = 'recusada'
        WHERE id = ?`,
       [solicitacaoId]
+    );
+
+    // 🔔 NOTIFICAÇÃO
+    await criarNotificacao(
+      solicitacao.solicitante_id,
+      'recusada',
+      'Sua solicitação de coleta foi recusada.'
     );
 
     res.json({ sucesso: true });
@@ -286,4 +317,3 @@ exports.historico = async (req, res) => {
 
   res.json(rows);
 };
-

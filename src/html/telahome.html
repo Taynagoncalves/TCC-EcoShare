@@ -25,20 +25,20 @@
   placeholder="Buscar material..."
 >
 
+<div class="icon-notificacao-wrapper" id="btnNotificacao">
+  <img src="../icons/notificacao.png" class="icon-notificacao">
+  <span id="badgeNotificacoes" class="badge hidden">0</span>
+</div>
 
-  <!-- 🔔 NOTIFICAÇÕES -->
-  <div class="notificacao-container">
-    <img
-      src="../icons/notificacao.png"
-      id="iconeNotificacao"
-      class="icon-notificacao"
-      alt="Notificações"
-    >
+<div id="menuNotificacao" class="menu-notificacao hidden">
+  <a href="/solicitacoes-coleta">Solicitações de coleta</a>
+  <a href="/coletas-andamento">Coletas em andamento</a>
+  <a href="/historico">Histórico de Doações e Coletas</a>
 
-    <div id="menuNotificacao" class="menu-notificacao">
-     <a href="/solicitacoes-coleta"> Solicitações de coleta</a>
-<a href="/coletas-andamento"> Coletas em andamento</a>
-<a href="/historico">Histórico de Doações e Coletas</a>
+  <hr>
+
+  <div id="listaNotificacoes"></div>
+</div>
 
 
     </div>

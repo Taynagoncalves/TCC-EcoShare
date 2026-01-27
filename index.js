@@ -47,6 +47,7 @@ app.use('/', require('./controllers/coletaRoutes'));
 app.use('/', require('./controllers/usuarioRoutes'));
 app.use('/', require('./controllers/resgateRoutes'));
 app.use('/', require('./controllers/lojasRoutes'));
+app.use('/', require('./controllers/notificacaoRoutes'));
 
 /* =========================
    🔐 ROTAS ADMIN — LOJAS PARCEIRAS
@@ -120,6 +121,18 @@ app.get('/perfil', verificarAutenticacao, (req, res) => {
 
 app.get('/admin-lojas', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/admin-lojas.html'));
+});
+
+// Página "Esqueci minha senha"
+app.get('/esqueci-senha', (req, res) => {
+  res.sendFile(
+    path.join(__dirname, 'src/html/esqueci-senha.html')
+  );
+});
+app.get('/redefinir-senha', (req, res) => {
+  res.sendFile(
+    path.join(__dirname, 'src/html/redefinir-senha.html')
+  );
 });
 
 /* =========================

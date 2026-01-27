@@ -518,3 +518,13 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2026-01-25 23:32:31
+CREATE TABLE notificacoes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL,
+  tipo VARCHAR(50),
+  mensagem TEXT,
+  lida BOOLEAN DEFAULT false,
+  criada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+ALTER TABLE usuarios ADD notificacoes_ativas BOOLEAN DEFAULT true;

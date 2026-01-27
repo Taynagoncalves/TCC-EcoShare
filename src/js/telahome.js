@@ -343,45 +343,8 @@ async function solicitarColeta() {
   alert('Solicitação enviada!');
 }
 
-/* notificacoes */
-async function carregarNotificacoes() {
-  try {
-    const res = await fetch('/coletas/recebidas');
-    const solicitacoes = await res.json();
 
-    const sino = document.getElementById('iconeNotificacao');
-    if (solicitacoes.length > 0) {
-      sino.classList.add('tem-notificacao');
-    } else {
-      sino.classList.remove('tem-notificacao');
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
 
-function abrirSolicitacoes() {
-  window.location.href = '/solicitacoes-coleta';
-}
-/* =========================
-   MENU DE NOTIFICAÇÕES 🔔
-========================= */
-document.addEventListener('DOMContentLoaded', () => {
-  const icone = document.getElementById('iconeNotificacao');
-  const menu = document.getElementById('menuNotificacao');
-
-  if (!icone || !menu) return;
-
-  icone.addEventListener('click', (e) => {
-    e.stopPropagation();
-    menu.style.display =
-      menu.style.display === 'block' ? 'none' : 'block';
-  });
-
-  document.addEventListener('click', () => {
-    menu.style.display = 'none';
-  });
-});
 async function atualizarPontosTopo() {
   const res = await fetch('/usuarios/pontos');
   const data = await res.json();
@@ -390,6 +353,78 @@ async function atualizarPontosTopo() {
     `${data.pontos} pts`;
 }
 
+
+document.addEventListener('DOMContentLoaded', () => {
+  const botao = document.getElementById('btnNotificacao');
+  const menu = document.getElementById('menuNotificacao');
+  const lista = document.getElementById('listaNotificacoes');
+  const badge = document.getElementById('badgeNotificacoes');
+
+  if (!botao || !menu || !lista || !badge) return;
+
+  botao.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menu.classList.toggle('hidden');
+  });
+
+  menu.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
+  document.addEventListener('click', () => {
+    menu.classList.add('hidden');
+  });
+
+  carregarNotificacoes();
+
+  setInterval(carregarNotificacoes, 10000);
+
+  async function carregarNotificacoes() {
+    const res = await fetch('/notificacoes');
+    const notificacoes = await res.json();
+
+    lista.innerHTML = '';
+
+    const naoLidas = notificacoes.filter(n => !n.lida);
+
+    if (naoLidas.length > 0) {
+      badge.textContent = naoLidas.length;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+
+    notificacoes.forEach(n => {
+      const div = document.createElement('div');
+      div.className = 'notificacao-item';
+      div.innerHTML = `
+        <p>${n.mensagem}</p>
+        <small>${new Date(n.criada_em).toLocaleString()}</small>
+      `;
+
+      div.onclick = async () => {
+        await fetch(`/notificacoes/${n.id}/lida`, { method: 'PUT' });
+
+        if (n.tipo === 'solicitacao') {
+          window.location.href = '/solicitacoes-coleta';
+        } else if (n.tipo === 'andamento') {
+          window.location.href = '/coletas-andamento';
+        } else {
+          window.location.href = '/historico';
+        }
+      };
+
+      lista.appendChild(div);
+    });
+  }
+});
+document.addEventListener('DOMContentLoaded', () => {
+  carregarNotificacoes();
+
+  // atualiza automaticamente
+  setInterval(carregarNotificacoes, 10000);
+});
+
 /* =========================
    INICIALIZAÇÃO
 ========================= */
@@ -397,3 +432,5 @@ document.addEventListener('DOMContentLoaded', () => {
   carregarDoacoes();
   carregarNotificacoes();
 });
+
+
