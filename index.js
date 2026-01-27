@@ -30,7 +30,7 @@ app.post('/esqueci-senha', require('./controllers/esqueciSenha'));
 app.post('/redefinir-senha', require('./controllers/redefinirSenha'));
 app.use('/notificacoes', require('./controllers/notificacaoRoutes'));
 
-/* ROTAS DE FUNCIONALIDADES */
+/*rotas de funcionalidades */
 
 app.use('/', require('./controllers/doacoesRoutes'));
 app.use('/', require('./controllers/denunciaRoutes'));
@@ -41,22 +41,13 @@ app.use('/', require('./controllers/resgateRoutes'));
 app.use('/', require('./controllers/lojasRoutes'));
 app.use('/', require('./controllers/notificacaoRoutes'));
 
-
-/* =========================
-   🔐 ROTAS ADMIN — LOJAS PARCEIRAS
-========================= */
-app.use('/', require('./controllers/lojasRoutes'));
-
-/* =========================
-   ROTAS DE PÁGINAS (HTML)
-========================= */
-app.get('/', (req, res) => {
-  res.redirect('/inicio');
-});
-
-
+/*rotas paginas html*/
 app.get('/inicio', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/inicio.html'));
+});
+
+app.get('/', (req, res) => {
+  res.redirect('/inicio');
 });
 
 app.get('/login', (req, res) => {
@@ -129,9 +120,7 @@ app.get('/redefinir-senha', (req, res) => {
   );
 });
 
-/* =========================
-   🔐 PÁGINA ADMIN (HTML)
-========================= */
+/* rotas da pagina Admin */
 
 app.get(
   '/admin/lojas',
@@ -182,9 +171,7 @@ app.get(
   }
 );
 
-/* =========================
-   SERVER
-========================= */
+/*server*/
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
