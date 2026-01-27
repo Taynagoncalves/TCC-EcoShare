@@ -28,16 +28,29 @@
 <div class="icon-notificacao-wrapper" id="btnNotificacao">
   <img src="../icons/notificacao.png" class="icon-notificacao">
   <span id="badgeNotificacoes" class="badge hidden">0</span>
-</div>
 
-<div id="menuNotificacao" class="menu-notificacao hidden">
-  <a href="/solicitacoes-coleta">Solicitações de coleta</a>
-  <a href="/coletas-andamento">Coletas em andamento</a>
-  <a href="/historico">Histórico de Doações e Coletas</a>
+  <div id="menuNotificacao" class="menu-notificacao hidden">
 
-  <hr>
 
-  <div id="listaNotificacoes"></div>
+    <hr>
+
+    <!-- Atalhos -->
+    <a href="/solicitacoes-coleta">Solicitações de coleta</a>
+    <a href="/coletas-andamento">Coletas em andamento</a>
+    <a href="/historico">Histórico de Doações e Coletas</a>
+
+    <hr>
+ <!-- Botão limpar notificações -->
+    <button
+      id="btnLimparNotificacoes"
+      class="btn-limpar-notificacoes"
+      onclick="limparNotificacoes(event)"
+    >
+      Limpar notificações
+    </button>
+    <!-- Lista dinâmica -->
+    <div id="listaNotificacoes"></div>
+  </div>
 </div>
 
 

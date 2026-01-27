@@ -20,7 +20,6 @@ INSERT INTO bairros (nome) VALUES
 ('Alto da Glória'),
 ('Bairro Universitário'),
 ('Bela Vista'),
-('Brazmadeira'),
 ('Brasmadeira'),
 ('Brasília'),
 ('Cajati'),

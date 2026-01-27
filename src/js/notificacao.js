@@ -38,7 +38,7 @@ async function carregarNotificacoes() {
 
           <div class="acoes">
          <button class="recusar" onclick="recusar(${n.solicitacao_id})">Recusar</button>
-<button class="confirmar" onclick="confirmar(${s.solicitacao_id})">Confirmar</button>
+<button class="confirmar" onclick="confirmar(${n.solicitacao_id})">Confirmar</button>
 
           </div>
         </div>

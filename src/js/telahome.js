@@ -59,21 +59,7 @@ async function carregarDoacoes() {
   }
 }
 
-function renderizarDoacoes(doacoes) {
-  const lista = document.getElementById('listaPublicacoes');
-  if (!lista) return; // 🔒 PROTEÇÃO ESSENCIAL
 
-  lista.innerHTML = '';
-
-  doacoes.forEach(d => {
-    lista.innerHTML += `
-      <div class="card-doacao">
-        <h3>${d.nome_material}</h3>
-        <p>${d.descricao}</p>
-      </div>
-    `;
-  });
-}
 
 document.addEventListener('DOMContentLoaded', carregarDoacoes);
 
@@ -148,32 +134,17 @@ function normalizarTexto(texto) {
     .trim();
 }
 
-
 /* filtros */
 function filtrarPorMaterial(material) {
-  const filtro = material
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
+  // atualiza o filtro ativo
+  filtroAtivo = normalizarTexto(material);
 
-  const filtradas = todasDoacoes.filter(d => {
-    if (!d.material) return false;
+  // aplica filtro + busca juntos
+  aplicarFiltros();
 
-    const materialDoacao = d.material
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
-
-    return materialDoacao.includes(filtro);
-  });
-
-  if (filtradas.length === 0) {
-    renderizarDoacoes([]);
-  } else {
-    renderizarDoacoes(filtradas);
-  }
+  // destaca o botão selecionado
+  destacarFiltro(material);
 }
-
 
 function aplicarFiltros() {
   const busca = document
@@ -182,16 +153,14 @@ function aplicarFiltros() {
     .toLowerCase() || '';
 
   const filtradas = todasDoacoes.filter(d => {
-const nome = normalizarTexto(d.nome_material);
-const tipo = normalizarTexto(d.tipo_material);
-
+    const nome = normalizarTexto(d.nome_material || '');
+    const tipo = normalizarTexto(d.tipo_material || '');
 
     const correspondeBusca =
       nome.includes(busca) || tipo.includes(busca);
 
     const correspondeFiltro =
-  !filtroAtivo || tipo.includes(filtroAtivo);
-
+      !filtroAtivo || tipo.includes(filtroAtivo);
 
     return correspondeBusca && correspondeFiltro;
   });
@@ -217,6 +186,7 @@ function limparFiltro() {
     .querySelectorAll('.filtros button')
     .forEach(btn => btn.classList.remove('ativo'));
 }
+
 
 /* ver mais */
 async function verDetalhes(id) {
@@ -344,7 +314,6 @@ async function solicitarColeta() {
 }
 
 
-
 async function atualizarPontosTopo() {
   const res = await fetch('/usuarios/pontos');
   const data = await res.json();
@@ -353,33 +322,16 @@ async function atualizarPontosTopo() {
     `${data.pontos} pts`;
 }
 
+/* =========================
+   NOTIFICAÇÕES (CORRIGIDO)
+========================= */
+async function carregarNotificacoes() {
+  try {
+    const lista = document.getElementById('listaNotificacoes');
+    const badge = document.getElementById('badgeNotificacoes');
 
-document.addEventListener('DOMContentLoaded', () => {
-  const botao = document.getElementById('btnNotificacao');
-  const menu = document.getElementById('menuNotificacao');
-  const lista = document.getElementById('listaNotificacoes');
-  const badge = document.getElementById('badgeNotificacoes');
+    if (!lista || !badge) return;
 
-  if (!botao || !menu || !lista || !badge) return;
-
-  botao.addEventListener('click', (e) => {
-    e.stopPropagation();
-    menu.classList.toggle('hidden');
-  });
-
-  menu.addEventListener('click', (e) => {
-    e.stopPropagation();
-  });
-
-  document.addEventListener('click', () => {
-    menu.classList.add('hidden');
-  });
-
-  carregarNotificacoes();
-
-  setInterval(carregarNotificacoes, 10000);
-
-  async function carregarNotificacoes() {
     const res = await fetch('/notificacoes');
     const notificacoes = await res.json();
 
@@ -404,33 +356,75 @@ document.addEventListener('DOMContentLoaded', () => {
 
       div.onclick = async () => {
         await fetch(`/notificacoes/${n.id}/lida`, { method: 'PUT' });
-
-        if (n.tipo === 'solicitacao') {
-          window.location.href = '/solicitacoes-coleta';
-        } else if (n.tipo === 'andamento') {
-          window.location.href = '/coletas-andamento';
-        } else {
-          window.location.href = '/historico';
-        }
       };
 
       lista.appendChild(div);
     });
-  }
-});
-document.addEventListener('DOMContentLoaded', () => {
-  carregarNotificacoes();
 
-  // atualiza automaticamente
-  setInterval(carregarNotificacoes, 10000);
-});
+  } catch (err) {
+    console.error('Erro ao carregar notificações:', err);
+  }
+}
 
 /* =========================
-   INICIALIZAÇÃO
+   INICIALIZAÇÃO ÚNICA
 ========================= */
 document.addEventListener('DOMContentLoaded', () => {
   carregarDoacoes();
   carregarNotificacoes();
+
+  setInterval(carregarNotificacoes, 10000);
+
+  const campoBusca = document.getElementById('campoBusca');
+  if (campoBusca) {
+    campoBusca.addEventListener('input', e => {
+      e.target.value = e.target.value.replace(/[0-9]/g, '');
+      clearTimeout(debounceBusca);
+      debounceBusca = setTimeout(aplicarFiltros, 300);
+    });
+  }
+
+  const botao = document.getElementById('btnNotificacao');
+  const menu = document.getElementById('menuNotificacao');
+
+  if (!botao || !menu) return;
+
+  // 🔔 Clique no sino
+  botao.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menu.classList.toggle('hidden');
+  });
+
+  // 🧾 Clique dentro do menu (não fecha)
+  menu.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
+  // 👆 Clique fora fecha
+  document.addEventListener('click', () => {
+    if (!menu.classList.contains('hidden')) {
+      menu.classList.add('hidden');
+    }
+  });
 });
+
+async function limparNotificacoes(e) {
+  e.stopPropagation();
+
+  try {
+    const res = await fetch('/notificacoes/limpar', {
+      method: 'DELETE'
+    });
+
+    if (!res.ok) throw new Error();
+
+    document.getElementById('listaNotificacoes').innerHTML = '';
+    document.getElementById('badgeNotificacoes').classList.add('hidden');
+
+  } catch (err) {
+    console.error(err);
+    alert('Não foi possível limpar as notificações.');
+  }
+}
 
 

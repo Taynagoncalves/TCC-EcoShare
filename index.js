@@ -36,6 +36,7 @@ app.post('/cadastro', require('./controllers/cadastrar'));
 app.post('/logout', require('./controllers/deslogar'));
 app.post('/esqueci-senha', require('./controllers/esqueciSenha'));
 app.post('/redefinir-senha', require('./controllers/redefinirSenha'));
+app.use('/notificacoes', require('./controllers/notificacaoRoutes'));
 
 /* =========================
    ROTAS DE FUNCIONALIDADES
@@ -48,6 +49,7 @@ app.use('/', require('./controllers/usuarioRoutes'));
 app.use('/', require('./controllers/resgateRoutes'));
 app.use('/', require('./controllers/lojasRoutes'));
 app.use('/', require('./controllers/notificacaoRoutes'));
+
 
 /* =========================
    🔐 ROTAS ADMIN — LOJAS PARCEIRAS
