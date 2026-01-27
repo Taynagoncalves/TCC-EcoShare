@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const verificarAdmin = require('./verificarAdmin');
 const upload = require('../models/upload');
 const doacoesController = require('./doacoesController');
 const verificarAutenticacao = require('./verificarAutenticacao');
@@ -31,5 +31,19 @@ router.delete(
   verificarAutenticacao,
   doacoesController.excluirDoacao
 );
+// listar todas
+router.get(
+  '/api/admin/doacoes',
+  verificarAutenticacao,
+  verificarAdmin,
+  doacoesController.listarTodasAdmin
+);
 
+// remover (soft delete)
+router.delete(
+  '/api/admin/doacoes/:id',
+  verificarAutenticacao,
+  verificarAdmin,
+  doacoesController.removerDoacaoAdmin
+);
 module.exports = router;

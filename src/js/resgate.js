@@ -25,7 +25,7 @@ async function carregarResgate() {
     // saldo primeiro
     await carregarPontosTopo();
 
-    // 🔥 ROTA CERTA (usuário)
+    // ROTA CERTA (usuário)
     const res = await fetch('/api/lojas');
     if (!res.ok) throw new Error();
 

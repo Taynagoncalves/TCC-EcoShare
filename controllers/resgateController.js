@@ -45,7 +45,7 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-    /* ❌ BLOQUEIA SALDO INSUFICIENTE */
+    /* BLOQUEIA SALDO INSUFICIENTE */
     if (pontosUsuario < custo) {
       return res.status(400).json({
         erro: 'Pontos insuficientes para resgatar este cupom'

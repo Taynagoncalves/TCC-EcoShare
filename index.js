@@ -42,6 +42,8 @@ app.use('/', require('./controllers/lojasRoutes'));
 app.use('/', require('./controllers/notificacaoRoutes'));
 
 /*rotas paginas html*/
+
+// Página "Início"
 app.get('/inicio', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/inicio.html'));
 });
@@ -50,60 +52,73 @@ app.get('/', (req, res) => {
   res.redirect('/inicio');
 });
 
+// Página "Login"
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/login.html'));
 });
 
+// Página "Cadastro"
 app.get('/cadastro', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/cadastro.html'));
 });
 
+// Página "Tela Home" 
 app.get('/telahome', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/telahome.html'));
 });
 
+// Página "Adicionar Doação"
 app.get('/adicionar-doacao', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/adicionar-doacao.html'));
 });
 
+// Página "Minhas Publicações"
 app.get('/minhas-publicacoes', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/minhas-publicacoes.html'));
 });
 
+// Página "Configurações"
 app.get('/configuracoes', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/configuracoes.html'));
 });
 
+// Página "Solicitações de Coleta"
 app.get('/solicitacoes-coleta', verificarAutenticacao, (req, res) => {
   res.sendFile(
     path.join(__dirname, 'src/html/solicitacao-coleta.html')
   );
 });
 
+// Página "Notificações"
 app.get('/notificacao', verificarAutenticacao, (req, res) => {
   res.sendFile(
     path.join(__dirname, 'src/html/notificacao.html')
   );
 });
 
+// Página "Coletas em Andamento"
 app.get('/coletas-andamento', verificarAutenticacao, (req, res) => {
   res.sendFile(
     path.join(__dirname, 'src/html/coletas-andamento.html')
   );
 });
 
+// Página "Resgate"
 app.get('/resgate', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/resgate.html'));
 });
 
+// Página "Histórico"
 app.get('/historico', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/historico.html'));
 });
 
+// Página "Perfil"
 app.get('/perfil', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/perfil.html'));
 });
 
+// Página "Admin Lojas"
 app.get('/admin-lojas', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/admin-lojas.html'));
 });
@@ -114,6 +129,8 @@ app.get('/esqueci-senha', (req, res) => {
     path.join(__dirname, 'src/html/esqueci-senha.html')
   );
 });
+
+// Página "Redefinir senha"
 app.get('/redefinir-senha', (req, res) => {
   res.sendFile(
     path.join(__dirname, 'src/html/redefinir-senha.html')
@@ -121,7 +138,7 @@ app.get('/redefinir-senha', (req, res) => {
 });
 
 /* rotas da pagina Admin */
-
+// Página "Admin Lojas"
 app.get(
   '/admin/lojas',
   verificarAutenticacao,
@@ -132,7 +149,7 @@ app.get(
     );
   }
 );
-
+// Página "Admin Dashboard"
 app.get(
   '/admin',
   verificarAutenticacao,
@@ -143,6 +160,8 @@ app.get(
     );
   }
 );
+
+// Rota para obter dados do usuário logado
 app.get('/usuario-logado', verificarAutenticacao, (req, res) => {
   res.json({
     id: req.usuario.id,
@@ -150,6 +169,8 @@ app.get('/usuario-logado', verificarAutenticacao, (req, res) => {
     tipo: req.usuario.tipo
   });
 });
+
+// Página "Admin Usuários"
 app.get(
   '/admin/usuarios/painel',
   verificarAutenticacao,
@@ -160,6 +181,8 @@ app.get(
     );
   }
 );
+
+// Página "Admin Doações"
 app.get(
   '/admin/doacoes',
   verificarAutenticacao,
