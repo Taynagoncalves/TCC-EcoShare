@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>EcoShare | Adicionar Doação</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="../css/adicionar-doacao.css">
   <link rel="stylesheet" href="../css/telahome.css">
 </head>
@@ -16,21 +17,24 @@
 <main class="container">
   <form id="formDoacao" enctype="multipart/form-data">
 
-    <!-- NOME DO MATERIAL -->
-    <input
-      type="text"
-      name="nome_material"
-      placeholder="Nome do material"
-      required
-    >
+    <!-- nome do material -->
+   <input
+  type="text"
+  name="nome_material"
+  placeholder="Nome do material"
+  required
+  oninput="this.value = this.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '')"
+>
 
-    <!-- QUANTIDADE E TIPO -->
+
+    <!-- quantidade e tipo -->
     <div class="row">
       <input
         type="number"
         name="quantidade"
         placeholder="Quantidade"
         required
+        min="1"
       >
 
       <select name="tipo_material" required>
@@ -43,78 +47,125 @@
       </select>
     </div>
 
-    <!-- DIAS E HORÁRIOS -->
-    <div class="row">
-      <input
-        type="text"
-        name="dias_semana"
-        placeholder="Dias disponíveis (ex: Seg, Qua, Sex)"
-        required
-      >
+    <!-- dias e horários -->
+<div class="dias-container">
+  <p class="label">Dias disponíveis</p>
 
-      <input
-        type="text"
-        name="horarios"
-        placeholder="Horários (ex: 08:00 às 12:00)"
-        required
-      >
+  <div class="dias-grid">
+    <label class="dia-item">
+      <input type="checkbox" value="Segunda">
+      <span>Seg</span>
+    </label>
+
+    <label class="dia-item">
+      <input type="checkbox" value="Terça">
+      <span>Ter</span>
+    </label>
+
+    <label class="dia-item">
+      <input type="checkbox" value="Quarta">
+      <span>Qua</span>
+    </label>
+
+    <label class="dia-item">
+      <input type="checkbox" value="Quinta">
+      <span>Qui</span>
+    </label>
+
+    <label class="dia-item">
+      <input type="checkbox" value="Sexta">
+      <span>Sex</span>
+    </label>
+
+    <label class="dia-item">
+      <input type="checkbox" value="Sábado">
+      <span>Sáb</span>
+    </label>
+
+    <label class="dia-item">
+      <input type="checkbox" value="Domingo">
+      <span>Dom</span>
+    </label>
+  </div>
+</div>
+
+
+
+
+    <select name="horarios" required>
+  <option value="">Selecione o horário</option>
+  <option value="07:00 às 12:00">07:00 às 12:00</option>
+  <option value="12:00 às 18:00">12:00 às 18:00</option>
+  <option value="18:00 às 20:00">18:00 às 20:00</option>
+</select>
+
     </div>
 
-    <!-- BAIRRO -->
+    <!-- bairro -->
     <select name="bairro_id" id="bairroSelect" required>
       <option value="">Selecione seu bairro</option>
-      <!-- bairros virão do banco -->
     </select>
 
-    <!-- DESCRIÇÃO -->
+    <!-- descrição -->
     <textarea
       name="descricao"
       placeholder="Descrição (opcional)"
       rows="4"
     ></textarea>
 
-    <!-- IMAGEM -->
+    <!-- imagem -->
     <label class="upload-box">
-      <input type="file" name="imagem" accept="image/*" required hidden>
+    <input type="file" name="imagem" accept="image/*" hidden>
+<img id="previewImagem" style="display:none; max-width:100%; border-radius:8px;">
+
       <div class="upload-content">
-        <span>📷</span>
-        <p>Adicionar imagem do material</p>
+        <span>Adicionar imagem</span>
       </div>
     </label>
 
-    <!-- BOTÕES -->
+    <!-- botões -->
     <button type="submit" class="btn-publicar">
       Publicar Doação
     </button>
 
-    <button type="button" class="btn-sair" onclick="window.location.href='/telahome'">
+    <button
+      type="button"
+      class="btn-sair"
+      onclick="window.location.href='/telahome'"
+    >
       Cancelar
     </button>
 
   </form>
 </main>
+
 <nav class="menu">
   <div class="menu-item ativo" onclick="location.href='/telahome'">
     <img src="../icons/home.png">
     <span>Home</span>
   </div>
 
-<div class="menu-item" onclick="location.href='/resgate'">
-  <img src="../icons/cupom.png">
-  <span>Resgate</span>
-</div>
+  <div class="menu-item" onclick="location.href='/resgate'">
+    <img src="../icons/cupom.png">
+    <span>Resgate</span>
+  </div>
 
-
-<div class="menu-item" onclick="location.href='/perfil'">
-  <img src="../icons/user.png">
-  <span>Perfil</span>
-</div>
+  <div class="menu-item" onclick="location.href='/perfil'">
+    <img src="../icons/user.png">
+    <span>Perfil</span>
+  </div>
 
   <div class="menu-item" onclick="location.href='/configuracoes'">
     <img src="../icons/config.png">
     <span>Configurações</span>
   </div>
 </nav>
+
+<!-- sweetalert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- js da página -->
 <script src="../js/adicionar-doacao.js"></script>
+
 </body>
 </html>

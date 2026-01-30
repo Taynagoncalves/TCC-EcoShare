@@ -1,8 +1,9 @@
 async function carregarDoacoes() {
   try {
-    const res = await fetch('/doacoes/admin', {
-      credentials: 'include'
-    });
+  const res = await fetch('/api/admin/doacoes', {
+  credentials: 'include'
+});
+;
 
     if (!res.ok) {
       console.error('Erro ao buscar doações:', res.status);

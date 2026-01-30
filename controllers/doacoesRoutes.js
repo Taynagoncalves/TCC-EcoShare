@@ -6,46 +6,74 @@ const doacoesController = require('./doacoesController');
 const verificarAutenticacao = require('./verificarAutenticacao');
 const verificarAdmin = require('./verificarAdmin');
 
-/* rotas de usuário */
+/* =========================
+   ROTAS DO USUÁRIO
+========================= */
+
+// criar doação
 router.post(
-  '/doacoes',
+  '/',
   verificarAutenticacao,
   upload.single('imagem'),
   doacoesController.criarDoacao
 );
 
+// listar doações (home)
 router.get(
-  '/doacoes',
+  '/',
   doacoesController.listarDoacoes
 );
 
-router.get(
-  '/doacoes/:id',
-  doacoesController.detalhesDoacao
-);
-
-router.delete(
-  '/doacoes/:id',
-  verificarAutenticacao,
-  doacoesController.excluirDoacao
-);
-
+// listar minhas doações
 router.get(
   '/minhas-doacoes',
   verificarAutenticacao,
   doacoesController.minhasDoacoes
 );
 
-/* rotas de admin */
+// 🔥 buscar doação para edição
 router.get(
-  '/admin/doacoes',
+  '/:id/editar',
+  verificarAutenticacao,
+  doacoesController.buscarParaEdicao
+);
+
+// 🔥 editar doação
+router.put(
+  '/:id',
+  verificarAutenticacao,
+  upload.single('imagem'),
+  doacoesController.editarDoacao
+);
+
+// detalhes da doação
+router.get(
+  '/:id',
+  doacoesController.detalhesDoacao
+);
+
+// excluir doação (usuário)
+router.delete(
+  '/:id',
+  verificarAutenticacao,
+  doacoesController.excluirDoacao
+);
+
+/* =========================
+   ROTAS ADMIN
+========================= */
+
+// listar todas as doações
+router.get(
+  '/admin',
   verificarAutenticacao,
   verificarAdmin,
   doacoesController.listarTodasAdmin
 );
 
+// remover doação (admin)
 router.delete(
-  '/admin/doacoes/:id',
+  '/admin/:id',
   verificarAutenticacao,
   verificarAdmin,
   doacoesController.removerAdmin

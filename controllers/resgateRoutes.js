@@ -1,17 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const verificarAutenticacao = require('../controllers/verificarAutenticacao');
-const resgateController = require('../controllers/resgateController');
 
+const verificarAutenticacao = require('./verificarAutenticacao');
+const resgateController = require('./resgateController');
+
+// resgatar cupom
 router.post(
   '/resgatar',
   verificarAutenticacao,
   resgateController.resgatarCupom
 );
+
+// listar meus cupons resgatados
 router.get(
-  '/resgates/meus',
+  '/meus',
   verificarAutenticacao,
-  resgatesController.meusCupons
+  resgateController.meusCupons
 );
 
 module.exports = router;

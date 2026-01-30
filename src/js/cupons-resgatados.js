@@ -23,14 +23,17 @@ async function carregarCupons() {
       const div = document.createElement('div');
       div.className = 'cupom-item';
 
-      div.innerHTML = `
-        <strong>${c.loja_nome}</strong>
-        <span>${c.pontos_usados} pontos</span>
+   div.innerHTML = `
+  <div class="cupom-item-info">
+    <strong>${c.loja_nome}</strong>
+    <span>${c.pontos_usados} pontos</span>
+  </div>
 
-        <button onclick="verCodigo('${c.codigo}')">
-          Ver código
-        </button>
-      `;
+  <button onclick="verCodigo('${c.codigo}')">
+    Ver código
+  </button>
+`;
+
 
       lista.appendChild(div);
     });

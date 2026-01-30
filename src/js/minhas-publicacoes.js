@@ -1,9 +1,16 @@
 async function carregarMinhasDoacoes() {
   try {
-    const res = await fetch('/minhas-doacoes');
-    const doacoes = await res.json();
+    const res = await fetch('/doacoes/minhas-doacoes', {
+      credentials: 'include'
+    });
 
+    if (!res.ok) throw new Error();
+
+    const doacoes = await res.json();
     const lista = document.getElementById('listaMinhasDoacoes');
+
+    if (!lista) return;
+
     lista.innerHTML = '';
 
     if (!doacoes.length) {
@@ -28,11 +35,7 @@ async function carregarMinhasDoacoes() {
         </p>
 
         <div class="acoes">
-          <button onclick="verDetalhes(${d.id})">Ver</button>
-          <button onclick="editarDoacao(${d.id})">Editar</button>
-          <button class="btn-excluir" onclick="excluirDoacao(${d.id})">
-            Excluir
-          </button>
+          ${renderizarBotoes(d)}
         </div>
       `;
 
@@ -40,23 +43,70 @@ async function carregarMinhasDoacoes() {
     });
 
   } catch (err) {
-    console.error('Erro ao carregar minhas doações:', err);
+    console.error(err);
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Erro ao carregar suas publicações',
+      confirmButtonColor: '#347142'
+    });
   }
+}
+
+/* =========================
+   BOTÕES CONDICIONAIS
+========================= */
+function renderizarBotoes(d) {
+  // concluída → apenas excluir
+  if (d.status === 'concluida') {
+    return `
+      <button class="btn-excluir" onclick="excluirDoacao(${d.id})">
+        Excluir
+      </button>
+    `;
+  }
+
+  // em andamento → ver + excluir
+  if (d.status === 'andamento') {
+    return `
+      <button onclick="verDetalhes(${d.id})">Ver</button>
+      <button class="btn-excluir" onclick="excluirDoacao(${d.id})">
+        Excluir
+      </button>
+    `;
+  }
+
+  // ativa → ver + editar + excluir
+  return `
+    <button onclick="verDetalhes(${d.id})">Ver</button>
+    <button onclick="editarDoacao(${d.id})">Editar</button>
+    <button class="btn-excluir" onclick="excluirDoacao(${d.id})">
+      Excluir
+    </button>
+  `;
 }
 
 /* =========================
    EXCLUIR DOAÇÃO
 ========================= */
 async function excluirDoacao(id) {
-  const confirmar = confirm(
-    'Tem certeza que deseja excluir esta doação?\nEssa ação não pode ser desfeita.'
-  );
+  const confirmar = await Swal.fire({
+    title: 'Excluir doação?',
+    text: 'Essa ação não pode ser desfeita.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Excluir',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#c0392b',
+    cancelButtonColor: '#aaa'
+  });
 
-  if (!confirmar) return;
+  if (!confirmar.isConfirmed) return;
 
   try {
     const res = await fetch(`/doacoes/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      credentials: 'include'
     });
 
     const data = await res.json();
@@ -65,12 +115,22 @@ async function excluirDoacao(id) {
       throw new Error(data.erro || 'Erro ao excluir');
     }
 
-    alert('Doação excluída com sucesso!');
+    Swal.fire({
+      icon: 'success',
+      title: 'Doação excluída',
+      confirmButtonColor: '#347142'
+    });
+
     carregarMinhasDoacoes();
 
-  } catch (error) {
-    console.error(error);
-    alert('Erro ao excluir doação.');
+  } catch (err) {
+    console.error(err);
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Não foi possível excluir a doação',
+      confirmButtonColor: '#347142'
+    });
   }
 }
 
@@ -78,9 +138,10 @@ async function excluirDoacao(id) {
    AUXILIARES
 ========================= */
 function formatarStatus(status) {
-  if (status === 'ativo') return 'Ativo';
+  if (status === 'ativo') return 'Ativa';
   if (status === 'andamento') return 'Em andamento';
-  return 'Concluído';
+  if (status === 'concluida') return 'Concluída';
+  return status;
 }
 
 function verDetalhes(id) {
@@ -88,7 +149,7 @@ function verDetalhes(id) {
 }
 
 function editarDoacao(id) {
-  alert('Função editar será implementada futuramente.');
+  window.location.href = `/editar-doacao?id=${id}`;
 }
 
 /* =========================

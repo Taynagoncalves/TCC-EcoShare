@@ -204,18 +204,50 @@ input:checked + .slider:before {
   border: 1px solid #e0e0e0;
   padding: 12px;
   border-radius: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+}
+
+.cupom-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cupom-item strong {
+  font-size: 14px;
+  color: #2e7d32;
+}
+
+.cupom-item span {
+  font-size: 13px;
+  color: #555;
 }
 
 .cupom-item button {
   background: #347142;
   color: #fff;
   border: none;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
+  white-space: nowrap;
+}
+
+/* =========================
+   MOBILE REAL
+========================= */
+@media (max-width: 600px) {
+  .cupom-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cupom-item button {
+    width: 100%;
+  }
 }

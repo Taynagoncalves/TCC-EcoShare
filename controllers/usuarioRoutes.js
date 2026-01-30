@@ -6,11 +6,9 @@ const verificarAdmin = require('./verificarAdmin');
 const verificarAutenticacao = require('./verificarAutenticacao');
 const usuarioController = require('./usuarioController');
 
-/* =========================
-   USUÁRIO LOGADO (DADOS BÁSICOS)
-========================= */
+// dados do usuário logado
 router.get(
-  '/usuario-logado',
+  '/me',
   verificarAutenticacao,
   async (req, res) => {
     try {
@@ -31,78 +29,57 @@ router.get(
       );
 
       if (!usuario) {
-        return res.status(404).json({ erro: 'Usuário não encontrado' });
+        return res.status(404).json({ erro: 'usuário não encontrado' });
       }
 
       res.json(usuario);
     } catch (err) {
-      console.error('ERRO USUÁRIO LOGADO:', err);
-      res.status(500).json({ erro: 'Erro ao buscar usuário' });
+      console.error('erro usuário logado:', err);
+      res.status(500).json({ erro: 'erro ao buscar usuário' });
     }
   }
 );
 
-/* =========================
-   PONTOS DO USUÁRIO
-========================= */
+// pontos do usuário
 router.get(
-  '/usuarios/pontos',
+  '/pontos',
   verificarAutenticacao,
   usuarioController.buscarPontos
 );
 
-/* =========================
-   DEBITAR PONTOS
-========================= */
+// debitar pontos
 router.post(
-  '/usuarios/debitar-pontos',
+  '/debitar-pontos',
   verificarAutenticacao,
   usuarioController.debitarPontos
 );
 
-/* =========================
-   DADOS DO USUÁRIO (ME)
-========================= */
-router.get(
-  '/usuario/me',
-  verificarAutenticacao,
-  usuarioController.me
-);
-
-/* =========================
-   RESGATAR CUPOM
-========================= */
+// resgatar cupom
 router.post(
   '/resgatar',
   verificarAutenticacao,
   usuarioController.resgatarCupom
 );
 
-/* =========================
-   ADMIN — LISTAR USUÁRIOS (API)
-========================= */
+// admin listar usuários
 router.get(
-  '/api/admin/usuarios',
+  '/admin',
   verificarAutenticacao,
   verificarAdmin,
   usuarioController.listarUsuarios
 );
 
-/* =========================
-   ADMIN — BLOQUEAR / DESBLOQUEAR
-========================= */
+// admin bloquear / desbloquear
 router.put(
-  '/admin/usuarios/:id/status',
+  '/admin/:id/status',
   verificarAutenticacao,
   verificarAdmin,
   usuarioController.alterarStatusUsuario
 );
 
-/* =========================
-   ADMIN — ALTERAR TIPO (ADMIN / USUÁRIO)
-========================= */
+// admin alterar tipo
 router.put(
-  '/admin/usuarios/:id/tipo',
+  '/admin/:id/tipo',
   verificarAutenticacao,
   verificarAdmin,
   usuarioController.alterarTipoUsuario

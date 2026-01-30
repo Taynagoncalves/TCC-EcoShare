@@ -1,10 +1,9 @@
-
-//VARIÁVEIS GLOBAIS
+// variáveis globais
 let todasDoacoes = [];
 let filtroAtivo = '';
 let doacaoAtualId = null;
 
-//MODAL ADICIONAR DOAÇÃO
+// modal adicionar doação
 function abrirModalDoacao() {
   document.getElementById('modalDoacao').style.display = 'flex';
 }
@@ -13,7 +12,8 @@ function fecharModalDoacao() {
   document.getElementById('modalDoacao').style.display = 'none';
 }
 
-//NAVEGAÇÃO
+
+// navegação
 function irParaAdicionarDoacao() {
   window.location.href = '/adicionar-doacao';
 }
@@ -22,10 +22,7 @@ function irParaMinhasDoacoes() {
   window.location.href = '/minhas-publicacoes';
 }
 
-
-//LISTAR DOAÇÕES
-
-//CONTROLE DO SPINNER 
+// controle do spinner
 function mostrarSpinner() {
   const spinner = document.getElementById('spinner');
   if (spinner) spinner.style.display = 'flex';
@@ -36,35 +33,34 @@ function esconderSpinner() {
   if (spinner) spinner.style.display = 'none';
 }
 
+// carregar doações
 async function carregarDoacoes() {
   try {
     mostrarSpinner();
 
     const res = await fetch('/doacoes');
-    const dados = await res.json();
+    if (!res.ok) throw new Error('erro http');
 
-    todasDoacoes = dados; // ESSENCIAL
+    const dados = await res.json();
+    todasDoacoes = dados;
     renderizarDoacoes(dados);
 
   } catch (err) {
-    console.error('Erro ao carregar doações:', err);
+    console.error('erro ao carregar doações:', err);
   } finally {
     esconderSpinner();
   }
 }
 
-
-
-document.addEventListener('DOMContentLoaded', carregarDoacoes);
-
-/* =========================
-   RENDERIZAR DOAÇÕES */
+// renderizar doações
 function renderizarDoacoes(doacoes) {
   const lista = document.getElementById('listaPublicacoes');
+  if (!lista) return;
+
   lista.innerHTML = '';
 
   if (!doacoes || doacoes.length === 0) {
-    lista.innerHTML = '<p>Nenhuma doação encontrada.</p>';
+    lista.innerHTML = '<p>nenhuma doação encontrada.</p>';
     return;
   }
 
@@ -80,44 +76,24 @@ function renderizarDoacoes(doacoes) {
         >
       </div>
 
-   
-        <div class="card-info">
-          <p><strong>Bairro:</strong> ${d.bairro}</p>
-          <p><strong>Material:</strong> ${d.tipo_material}</p>
-          <p><strong>Quantidade:</strong> ${d.quantidade}</p>
-        </div>
-
-        <button class="btn-ver-mais" onclick="verDetalhes(${d.id})">
-          Ver mais
-        </button>
+      <div class="card-info">
+        <p><strong>bairro:</strong> ${d.bairro}</p>
+        <p><strong>material:</strong> ${d.tipo_material}</p>
+        <p><strong>quantidade:</strong> ${d.quantidade}</p>
       </div>
+
+      <button class="btn-ver-mais" onclick="verDetalhes(${d.id})">
+        ver mais
+      </button>
     `;
 
     lista.appendChild(card);
   });
 }
 
-/* busca sem numeros*/
+
+// busca sem números
 let debounceBusca;
-
-document.addEventListener('DOMContentLoaded', () => {
-  const campoBusca = document.getElementById('campoBusca');
-
-  if (campoBusca) {
-    campoBusca.addEventListener('input', (e) => {
-      let valor = e.target.value;
-
-      //remove números
-      valor = valor.replace(/[0-9]/g, '');
-      e.target.value = valor;
-
-      clearTimeout(debounceBusca);
-      debounceBusca = setTimeout(() => {
-        aplicarFiltros();
-      }, 300);
-    });
-  }
-});
 
 function normalizarTexto(texto) {
   return texto
@@ -127,23 +103,16 @@ function normalizarTexto(texto) {
     .trim();
 }
 
-/* filtros */
+// filtros
 function filtrarPorMaterial(material) {
-  // atualiza o filtro ativo
   filtroAtivo = normalizarTexto(material);
-
-  // aplica filtro + busca juntos
   aplicarFiltros();
-
-  // destaca o botão selecionado
   destacarFiltro(material);
 }
 
 function aplicarFiltros() {
-  const busca = document
-    .getElementById('campoBusca')
-    ?.value
-    .toLowerCase() || '';
+  const busca =
+    document.getElementById('campoBusca')?.value.toLowerCase() || '';
 
   const filtradas = todasDoacoes.filter(d => {
     const nome = normalizarTexto(d.nome_material || '');
@@ -180,8 +149,7 @@ function limparFiltro() {
     .forEach(btn => btn.classList.remove('ativo'));
 }
 
-
-/* ver mais */
+// ver detalhes da doação
 async function verDetalhes(id) {
   try {
     doacaoAtualId = id;
@@ -198,27 +166,27 @@ async function verDetalhes(id) {
       `${d.nome_material} - ${d.quantidade} unidades`;
 
     document.getElementById('detalheMaterial').innerText =
-      `Material: ${d.tipo_material}`;
+      `material: ${d.tipo_material}`;
 
     document.getElementById('detalheBairro').innerText =
-      `Bairro: ${d.bairro || 'Não informado'}`;
+      `bairro: ${d.bairro || 'não informado'}`;
 
     document.getElementById('detalheUsuario').innerText =
-      `Doado por: ${d.usuario || 'Usuário não identificado'}`;
+      `doado por: ${d.usuario || 'usuário não identificado'}`;
 
     document.getElementById('detalheDias').innerText =
-      ` Dias: ${d.dias_semana || 'Não informado'}`;
+      `dias: ${d.dias_semana || 'não informado'}`;
 
     document.getElementById('detalheHorario').innerText =
-      ` Horário: ${d.horarios || 'Não informado'}`;
+      `horário: ${d.horarios || 'não informado'}`;
 
     document.getElementById('detalheDescricao').innerText =
-       `Descricao: ${d.descricao || 'Sem descrição'}`;
+      `descrição: ${d.descricao || 'sem descrição'}`;
 
     document.getElementById('modalDetalhes').style.display = 'flex';
 
   } catch {
-    alert('Não foi possível abrir os detalhes.');
+    alert('não foi possível abrir os detalhes.');
   }
 }
 
@@ -226,14 +194,11 @@ function fecharDetalhes() {
   document.getElementById('modalDetalhes').style.display = 'none';
 }
 
+// denúncia
 function abrirDenuncia() {
-  // fecha o modal de detalhes
   document.getElementById('modalDetalhes').style.display = 'none';
-
-  // abre o modal de denúncia
   document.getElementById('modalDenuncia').style.display = 'flex';
 }
-
 
 function fecharDenuncia() {
   document.getElementById('modalDenuncia').style.display = 'none';
@@ -246,15 +211,14 @@ async function enviarDenuncia() {
   if (!texto) {
     Swal.fire({
       icon: 'warning',
-      title: 'Atenção',
-      text: 'Descreva o motivo da denúncia.',
-      confirmButtonText: 'Ok'
+      title: 'atenção',
+      text: 'descreva o motivo da denúncia.'
     });
     return;
   }
 
   try {
-    const res = await fetch('/denuncia', {
+    const res = await fetch('/denuncias', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -269,44 +233,87 @@ async function enviarDenuncia() {
 
     Swal.fire({
       icon: 'success',
-      title: 'Denúncia enviada!',
-      text: 'Obrigado por ajudar a manter o EcoShare um ambiente seguro e responsável. Nossa equipe irá analisar a denúncia..',
-      confirmButtonText: 'Ok'
+      title: 'denúncia enviada',
+      text: 'nossa equipe irá analisar a denúncia.'
     });
 
   } catch {
     Swal.fire({
       icon: 'error',
-      title: 'Erro',
-      text: 'Erro ao enviar denúncia. Tente novamente.',
-      confirmButtonText: 'Ok'
+      title: 'erro',
+      text: 'erro ao enviar denúncia.'
     });
   }
 }
 
-/* solicitar coleta */
+// solicitar coleta
 async function solicitarColeta() {
   if (!doacaoAtualId) {
-    alert('Erro: doação não identificada.');
+    fecharDetalhes();
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Doação não identificada.',
+      confirmButtonColor: '#347142'
+    });
     return;
   }
 
-  const res = await fetch('/coletas/solicitar', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ doacao_id: doacaoAtualId })
-  });
+  try {
+    const res = await fetch('/coletas/solicitar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        doacao_id: doacaoAtualId
+      })
+    });
 
-  if (!res.ok) {
-    const erro = await res.json();
-    alert(erro.erro || 'Erro ao solicitar coleta');
-    return;
+    const data = await res.json();
+
+    // erro de regra de negócio (ex: própria doação)
+    if (!res.ok) {
+      fecharDetalhes();
+
+      Swal.fire({
+        icon: 'warning',
+        title: 'Atenção',
+        text: data.erro || 'Não foi possível solicitar a coleta.',
+        confirmButtonColor: '#347142'
+      });
+
+      return;
+    }
+
+    // sucesso
+    fecharDetalhes();
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Solicitação enviada!',
+      text: 'Aguarde a confirmação do doador.',
+      confirmButtonColor: '#347142'
+    });
+
+  } catch (err) {
+    console.error('erro ao solicitar coleta:', err);
+    fecharDetalhes();
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Erro inesperado ao solicitar a coleta.',
+      confirmButtonColor: '#347142'
+    });
   }
-
-  alert('Solicitação enviada!');
 }
 
 
+
+// atualizar pontos do usuário
 async function atualizarPontosTopo() {
   const res = await fetch('/usuarios/pontos');
   const data = await res.json();
@@ -315,9 +322,7 @@ async function atualizarPontosTopo() {
     `${data.pontos} pts`;
 }
 
-/* =========================
-   NOTIFICAÇÕES (CORRIGIDO)
-========================= */
+// notificações
 async function carregarNotificacoes() {
   try {
     const lista = document.getElementById('listaNotificacoes');
@@ -325,9 +330,13 @@ async function carregarNotificacoes() {
 
     if (!lista || !badge) return;
 
-    const res = await fetch('/notificacoes');
-    const notificacoes = await res.json();
+    const res = await fetch('/notificacoes', {
+      credentials: 'include'
+    });
 
+    if (!res.ok) throw new Error();
+
+    const notificacoes = await res.json();
     lista.innerHTML = '';
 
     const naoLidas = notificacoes.filter(n => !n.lida);
@@ -355,13 +364,31 @@ async function carregarNotificacoes() {
     });
 
   } catch (err) {
-    console.error('Erro ao carregar notificações:', err);
+    console.error('erro ao carregar notificações:', err);
   }
 }
 
-/* =========================
-   INICIALIZAÇÃO ÚNICA
-========================= */
+// limpar notificações
+async function limparNotificacoes(e) {
+  e.stopPropagation();
+
+  try {
+    const res = await fetch('/notificacoes/limpar', {
+      method: 'DELETE'
+    });
+
+    if (!res.ok) throw new Error();
+
+    document.getElementById('listaNotificacoes').innerHTML = '';
+    document.getElementById('badgeNotificacoes').classList.add('hidden');
+
+  } catch (err) {
+    console.error(err);
+    alert('não foi possível limpar as notificações.');
+  }
+}
+
+// inicialização
 document.addEventListener('DOMContentLoaded', () => {
   carregarDoacoes();
   carregarNotificacoes();
@@ -382,42 +409,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!botao || !menu) return;
 
-  // 🔔 Clique no sino
-  botao.addEventListener('click', (e) => {
+  botao.addEventListener('click', e => {
     e.stopPropagation();
     menu.classList.toggle('hidden');
   });
 
-  // 🧾 Clique dentro do menu (não fecha)
-  menu.addEventListener('click', (e) => {
+  menu.addEventListener('click', e => {
     e.stopPropagation();
   });
 
-  // 👆 Clique fora fecha
   document.addEventListener('click', () => {
     if (!menu.classList.contains('hidden')) {
       menu.classList.add('hidden');
     }
   });
 });
-
-async function limparNotificacoes(e) {
-  e.stopPropagation();
-
-  try {
-    const res = await fetch('/notificacoes/limpar', {
-      method: 'DELETE'
-    });
-
-    if (!res.ok) throw new Error();
-
-    document.getElementById('listaNotificacoes').innerHTML = '';
-    document.getElementById('badgeNotificacoes').classList.add('hidden');
-
-  } catch (err) {
-    console.error(err);
-    alert('Não foi possível limpar as notificações.');
-  }
-}
-
-

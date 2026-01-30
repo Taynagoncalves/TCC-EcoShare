@@ -274,3 +274,57 @@ textarea {
     flex-direction: column;
   }
 }
+.dias-container {
+  margin-top: 12px;
+}
+
+.dias-container .label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.dias-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.dia-item {
+  position: relative;
+}
+
+.dia-item input {
+  display: none;
+}
+
+.dia-item span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+.dia-item input:checked + span {
+  background: #347142;
+  color: #fff;
+  border-color: #347142;
+}
+
+.dia-item span:hover {
+  background: #f0f0f0;
+}
+#previewImagem {
+  max-width: 160px;     /* tamanho menor */
+  max-height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-top: 10px;
+  display: none;
+  border: 1px solid #cfcfcf;
+}

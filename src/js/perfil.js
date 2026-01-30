@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', carregarPerfil);
 
 async function carregarPerfil() {
   try {
-    const userRes = await fetch('/usuario-logado', {
+    const userRes = await fetch('/usuarios/me', {
       credentials: 'include'
     });
     if (!userRes.ok) throw new Error();
@@ -24,7 +24,6 @@ async function carregarPerfil() {
         ? usuario.data_nascimento.split('T')[0]
         : '';
 
-    // ✅ pontos no perfil
     document.getElementById('pontosUsuario').innerText =
       `${pontosData.pontos} pts`;
 

@@ -31,14 +31,14 @@ app.post('/esqueci-senha', require('./controllers/esqueciSenha'));
 app.post('/redefinir-senha', require('./controllers/redefinirSenha'));
 
 /* rotas de funcionalidades */
-app.use('/', require('./controllers/doacoesRoutes'));
-app.use('/', require('./controllers/denunciaRoutes'));
-app.use('/', require('./controllers/bairrosRoutes'));
-app.use('/', require('./controllers/coletaRoutes'));
-app.use('/', require('./controllers/usuarioRoutes'));
-app.use('/', require('./controllers/resgateRoutes'));
-app.use('/', require('./controllers/lojasRoutes'));
-app.use('/', require('./controllers/notificacaoRoutes'));
+app.use('/doacoes', require('./controllers/doacoesRoutes'));
+app.use('/denuncias', require('./controllers/denunciaRoutes'));
+app.use('/bairros', require('./controllers/bairrosRoutes'));
+app.use('/coletas', require('./controllers/coletaRoutes'));
+app.use('/usuarios', require('./controllers/usuarioRoutes'));
+app.use('/resgates', require('./controllers/resgateRoutes'));
+app.use('/lojas', require('./controllers/lojasRoutes'));
+app.use('/notificacoes', require('./controllers/notificacaoRoutes'));
 
 /* rotas de páginas html */
 app.get('/', (req, res) => {
@@ -142,9 +142,12 @@ app.get(
   verificarAutenticacao,
   verificarAdmin,
   (req, res) => {
-    res.sendFile(path.join(__dirname, 'src/html/admin-doacoes.html'));
+    res.sendFile(
+      path.join(__dirname, 'src/html/admin-doacoes.html')
+    );
   }
 );
+
 
 /* rota para obter dados do usuário logado */
 app.get('/usuario-logado', verificarAutenticacao, (req, res) => {

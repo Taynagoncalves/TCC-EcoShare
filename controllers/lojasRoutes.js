@@ -6,32 +6,33 @@ const verificarAdmin = require('./verificarAdmin');
 const lojasController = require('./lojasController');
 const upload = require('../models/upload');
 
-// LISTAR LOJAS
+// listar lojas (usuario)
 router.get(
-  '/api/admin/lojas',
+  '/',
+  verificarAutenticacao,
+  lojasController.listarLojas
+);
+
+// listar lojas (admin)
+router.get(
+  '/admin',
   verificarAutenticacao,
   verificarAdmin,
   lojasController.listarLojas
 );
 
-// CRIAR LOJA (COM IMAGEM)
+// criar loja (admin)
 router.post(
-  '/api/admin/lojas',
+  '/admin',
   verificarAutenticacao,
   verificarAdmin,
   upload.single('imagem'),
   lojasController.criarLoja
 );
-// LOJAS DISPONÍVEIS PARA RESGATE (USUÁRIO)
-router.get(
-  '/api/lojas',
-  verificarAutenticacao,
-  lojasController.listarLojas
-);
 
-// EXCLUIR LOJA
+// excluir loja (admin)
 router.delete(
-  '/api/admin/lojas/:id',
+  '/admin/:id',
   verificarAutenticacao,
   verificarAdmin,
   lojasController.excluirLoja

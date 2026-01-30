@@ -1,8 +1,12 @@
-// 🔹 Carrega automaticamente ao abrir a página
+// carrega automaticamente ao abrir a página
 document.addEventListener('DOMContentLoaded', carregarColetas);
+
 async function carregarColetas() {
   try {
-    const res = await fetch('/coletas/andamento');
+    const res = await fetch('/coletas/andamento', {
+      credentials: 'include'
+    });
+
     if (!res.ok) throw new Error();
 
     const dados = await res.json();
@@ -18,20 +22,24 @@ async function carregarColetas() {
     }
 
     dados.forEach(c => {
-      container.innerHTML += c.papel === 'doador'
-        ? cardDoador(c)
-        : cardSolicitante(c);
+      container.innerHTML +=
+        c.papel === 'doador'
+          ? cardDoador(c)
+          : cardSolicitante(c);
     });
 
   } catch (err) {
     console.error(err);
-    alert('Erro ao carregar coletas');
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Erro ao carregar coletas em andamento',
+      confirmButtonColor: '#347142'
+    });
   }
 }
 
-/* =========================
-   CARD — DOADOR
-========================= */
+// card do doador
 function cardDoador(c) {
   const telefone = limparTelefone(c.solicitante_telefone);
 
@@ -63,21 +71,18 @@ function cardDoador(c) {
           Concluir Coleta
         </button>
 
-        <button
-  class="btn vermelho"
-  onclick="cancelarColeta(${c.solicitacao_id})"
->
-  Cancelar Solicitação
-</button>
-
+        <button 
+          class="btn vermelho"
+          onclick="cancelarColeta(${c.solicitacao_id})"
+        >
+          Cancelar Solicitação
+        </button>
       </div>
     </div>
   `;
 }
 
-/* =========================
-   CARD — SOLICITANTE
-========================= */
+// card do solicitante
 function cardSolicitante(c) {
   const telefone = limparTelefone(c.doador_telefone);
 
@@ -104,72 +109,35 @@ function cardSolicitante(c) {
   `;
 }
 
-/* =========================
-   CONCLUIR COLETA (DOADOR)
-========================= */
-document.addEventListener('DOMContentLoaded', carregarColetas);
-
-async function carregarColetas() {
+// concluir coleta (doador)
+async function concluirColeta(id) {
   try {
-    const res = await fetch('/coletas/andamento', {
-      credentials: 'include'
-    });
-    if (!res.ok) throw new Error();
-
-    const dados = await res.json();
-    const container = document.getElementById('lista-coletas');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    if (!dados || dados.length === 0) {
-      container.innerHTML = '<p>Nenhuma coleta em andamento.</p>';
-      return;
-    }
-
-    dados.forEach(c => {
-      container.innerHTML += c.papel === 'doador'
-        ? cardDoador(c)
-        : cardSolicitante(c);
-    });
-
-  } catch (err) {
-    console.error(err);
-    alert('Erro ao carregar coletas');
-  }
-}
-
-async function concluirColeta(idSolicitacao) {
-  try {
-    const res = await fetch(`/coletas/concluir/${idSolicitacao}`, {
+    const res = await fetch(`/coletas/concluir/${id}`, {
       method: 'PUT',
       credentials: 'include'
     });
 
+    const data = await res.json();
+
     if (!res.ok) {
-      const erro = await res.json();
       Swal.fire({
         icon: 'error',
         title: 'Erro',
-        text: erro.erro || 'Erro ao concluir coleta',
+        text: data.erro || 'Erro ao concluir coleta',
         confirmButtonColor: '#347142'
       });
       return;
     }
 
-    const data = await res.json();
-
     Swal.fire({
       icon: 'success',
-      title: 'Parabéns! 🎉',
-      html: `<strong>+${data.pontos} pontos</strong> adicionados à sua conta!`,
+      title: 'Coleta concluída!',
+      html: `<strong>+${data.pontos} pontos</strong> adicionados à sua conta`,
       timer: 2200,
       showConfirmButton: false
     });
 
-    setTimeout(() => {
-      carregarColetas();
-    }, 2200);
+    setTimeout(carregarColetas, 2200);
 
   } catch (err) {
     console.error(err);
@@ -182,32 +150,59 @@ async function concluirColeta(idSolicitacao) {
   }
 }
 
-/* =========================
-   FUNÇÕES AUXILIARES (MANTIDAS)
-========================= */
+// cancelar coleta (solicitante)
+async function cancelarColeta(id) {
+  const confirmacao = await Swal.fire({
+    title: 'Cancelar solicitação?',
+    text: 'Essa ação não poderá ser desfeita',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sim, cancelar',
+    cancelButtonText: 'Voltar',
+    confirmButtonColor: '#d33'
+  });
 
-function limparTelefone(telefone) {
-  if (!telefone) return '';
-  return telefone.replace(/\D/g, '');
-}
+  if (!confirmacao.isConfirmed) return;
 
-function mensagemWhatsApp(tipo, c) {
-  let msg = '';
-  if (tipo === 'doador') {
-    msg = `Olá ${c.solicitante_nome}, referente à coleta do material ${c.nome_material}.`;
-  } else {
-    msg = `Olá ${c.doador_nome}, referente à coleta do material ${c.nome_material}.`;
+  try {
+    const res = await fetch(`/coletas/cancelar/${id}`, {
+      method: 'PUT',
+      credentials: 'include'
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: data.erro || 'Erro ao cancelar solicitação',
+        confirmButtonColor: '#347142'
+      });
+      return;
+    }
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Solicitação cancelada',
+      timer: 1800,
+      showConfirmButton: false
+    });
+
+    carregarColetas();
+
+  } catch (err) {
+    console.error(err);
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Erro inesperado ao cancelar',
+      confirmButtonColor: '#347142'
+    });
   }
-  return encodeURIComponent(msg);
 }
 
-
-
-
-
-/* =========================
-   UTILITÁRIOS
-========================= */
+// utilitarios
 function limparTelefone(telefone) {
   if (!telefone) return '';
   return telefone.replace(/\D/g, '');
@@ -215,52 +210,28 @@ function limparTelefone(telefone) {
 
 function mensagemWhatsApp(tipo, c) {
   let mensagem = '';
-  let nomeDestino = '';
 
   if (tipo === 'doador') {
-    nomeDestino = c.solicitante_nome;
     mensagem = `
-Olá, ${nomeDestino}
+Olá ${c.solicitante_nome},
 
-Sou o responsável pela doação do seguinte material:
+Sobre a coleta do material:
+${c.nome_material} (${c.quantidade} unidades).
 
-Material: ${c.nome_material}
-Quantidade: ${c.quantidade} unidades
-
-A coleta foi confirmada e estou disponível para combinarmos os próximos passos.
+Podemos combinar os detalhes?
 `;
   }
 
   if (tipo === 'solicitante') {
-    nomeDestino = c.doador_nome;
     mensagem = `
-Olá, ${nomeDestino}
+Olá ${c.doador_nome},
 
-Estou entrando em contato a respeito da solicitação de coleta do seguinte material:
+Estou entrando em contato sobre a coleta do material:
+${c.nome_material} (${c.quantidade} unidades).
 
-Material: ${c.nome_material}
-Quantidade: ${c.quantidade} unidades
-
-Fico à disposição para alinharmos os detalhes da retirada.
+Fico no aguardo.
 `;
   }
 
   return encodeURIComponent(mensagem.trim());
-}
-async function cancelarColeta(id) {
-  if (!confirm('Deseja cancelar esta solicitação?')) return;
-
-  const res = await fetch(`/coletas/cancelar/${id}`, {
-    method: 'PUT'
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    alert(data.erro || 'Erro ao cancelar');
-    return;
-  }
-
-  alert('Solicitação cancelada');
-  carregarColetas();
 }

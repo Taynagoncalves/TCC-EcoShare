@@ -3,59 +3,60 @@ const router = express.Router();
 const verificarAutenticacao = require('./verificarAutenticacao');
 const coletaController = require('./coletaController');
 
+// solicitar coleta
 router.post(
-  '/coletas/solicitar',
+  '/solicitar',
   verificarAutenticacao,
   coletaController.solicitarColeta
 );
 
+// solicitações recebidas
 router.get(
-  '/coletas/recebidas',
+  '/recebidas',
   verificarAutenticacao,
   coletaController.listarSolicitacoes
 );
 
+// confirmar coleta
 router.put(
-  '/coletas/:id/confirmar',
+  '/:id/confirmar',
   verificarAutenticacao,
   coletaController.confirmarColeta
 );
 
+// recusar coleta
 router.put(
-  '/coletas/:id/recusar',
+  '/:id/recusar',
   verificarAutenticacao,
   coletaController.recusarColeta
 );
 
+// coletas em andamento
 router.get(
-  '/coletas/andamento',
+  '/andamento',
   verificarAutenticacao,
   coletaController.coletasEmAndamento
 );
+
+// concluir coleta
 router.put(
-  '/coletas/concluir/:id',
+  '/concluir/:id',
   verificarAutenticacao,
   coletaController.concluirColeta
 );
+
+// cancelar coleta
 router.put(
-  '/coletas/cancelar/:id',
+  '/cancelar/:id',
   verificarAutenticacao,
   coletaController.cancelarColeta
 );
+
+// histórico
 router.get(
-  '/api/historico',
+  '/historico',
   verificarAutenticacao,
   coletaController.historico
-);
-router.put(
-  '/coletas/concluir/:id',
-  verificarAutenticacao,
-  coletaController.concluirColeta
-);;
-router.post(
-  '/coletas/solicitar',
-  verificarAutenticacao,
-  coletaController.solicitarColeta
 );
 
 module.exports = router;

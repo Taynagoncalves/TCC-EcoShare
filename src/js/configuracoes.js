@@ -22,13 +22,15 @@ function deslogar() {
 // CARREGAR USUÁRIO LOGADO
 async function carregarUsuario() {
   try {
-    const res = await fetch('/usuario/me');
+    const res = await fetch('/usuarios/me', {
+      credentials: 'include'
+    });
 
     if (!res.ok) return;
 
     const usuario = await res.json();
 
-    // MOSTRAR ÁREA ADMIN APENAS SE FOR ADMIN
+    // mostrar area admin apenas se for admin
     if (usuario.tipo === 'admin') {
       const areaAdmin = document.getElementById('area-admin');
       if (areaAdmin) {
@@ -37,14 +39,13 @@ async function carregarUsuario() {
     }
 
   } catch (err) {
-    console.error('Erro ao carregar usuário', err);
+    console.error('erro ao carregar usuario', err);
   }
 }
+
 function irParaAdmin() {
   window.location.href = '/admin';
 }
 
-// ==========================
-// INIT
-// ==========================
-carregarUsuario();
+// init
+document.addEventListener('DOMContentLoaded', carregarUsuario);
