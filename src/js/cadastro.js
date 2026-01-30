@@ -60,7 +60,7 @@ const dados = {
       confirmButtonText: 'Ir para login',
       confirmButtonColor: '347142'
     }).then(() => {
-      window.location.href = '/';
+      window.location.href = '/login';
     });
 
   } catch (err) {

@@ -1,40 +1,98 @@
 async function carregarDoacoes() {
-  const res = await fetch('/api/admin/doacoes');
-  const doacoes = await res.json();
+  try {
+    const res = await fetch('/doacoes/admin', {
+      credentials: 'include'
+    });
 
-  const tbody = document.getElementById('listaDoacoes');
-  tbody.innerHTML = '';
+    if (!res.ok) {
+      console.error('Erro ao buscar doações:', res.status);
+      return;
+    }
 
-  doacoes.forEach(d => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${d.id}</td>
-      <td>${d.nome_material}</td>
-      <td>${d.quantidade}</td>
-      <td>${d.usuario_nome}</td>
-      <td>${d.status}</td>
-      <td>
-        ${d.status !== 'removida'
-          ? `<button onclick="removerDoacao(${d.id})">Remover</button>`
-          : '—'}
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+    const doacoes = await res.json();
 
-async function removerDoacao(id) {
-  if (!confirm('Deseja remover esta doação?')) return;
+    const tbody = document.getElementById('listaDoacoes');
+    tbody.innerHTML = '';
 
-  const res = await fetch(`/api/admin/doacoes/${id}`, {
-    method: 'DELETE'
-  });
+    if (!Array.isArray(doacoes)) {
+      console.error('Resposta inesperada:', doacoes);
+      return;
+    }
 
-  if (res.ok) {
-    carregarDoacoes();
-  } else {
-    alert('Erro ao remover doação');
+    doacoes.forEach(d => {
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${d.id}</td>
+        <td>${d.nome_material}</td>
+        <td>${d.quantidade}</td>
+        <td>${d.usuario_nome}</td>
+        <td>${d.status || '-'}</td>
+        <td>
+          <button onclick="removerDoacao(${d.id})">
+            Remover
+          </button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+
+  } catch (err) {
+    console.error('Erro ao carregar doações:', err);
   }
 }
 
-carregarDoacoes();
+async function removerDoacao(id) {
+  const confirmacao = await Swal.fire({
+    title: 'Remover doação?',
+    text: 'Esta ação não poderá ser desfeita.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sim, remover',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#c62828',
+    cancelButtonColor: '#9e9e9e'
+  });
+
+  if (!confirmacao.isConfirmed) return;
+
+  try {
+    const res = await fetch(`/doacoes/admin/${id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: data.erro || 'Erro ao remover doação'
+      });
+      return;
+    }
+
+    await Swal.fire({
+      icon: 'success',
+      title: 'Removida!',
+      text: 'A doação foi removida com sucesso.',
+      timer: 1800,
+      showConfirmButton: false
+    });
+
+    carregarDoacoes();
+
+  } catch (err) {
+    console.error('Erro ao remover doação:', err);
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro inesperado',
+      text: 'Não foi possível remover a doação.'
+    });
+  }
+}
+
+
+document.addEventListener('DOMContentLoaded', carregarDoacoes);

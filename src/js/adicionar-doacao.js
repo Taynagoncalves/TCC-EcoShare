@@ -1,6 +1,4 @@
-/* =======================
-   CARREGAR BAIRROS
-======================= */
+/* CARREGAR BAIRROS*/
 async function carregarBairros() {
   try {
     const res = await fetch('/bairros');
@@ -21,9 +19,7 @@ async function carregarBairros() {
 
 carregarBairros();
 
-/* =======================
-   ENVIAR DOAÇÃO
-======================= */
+/*ENVIAR DOAÇÃO */
 document.getElementById('formDoacao').addEventListener('submit', async (e) => {
   e.preventDefault();
 

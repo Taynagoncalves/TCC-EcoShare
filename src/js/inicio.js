@@ -7,7 +7,6 @@ setTimeout(() => {
   splash.classList.add("exit");
 
   setTimeout(() => {
-    // 🚀 REDIRECIONAMENTO CORRETO NO EXPRESS
     window.location.href = "/login";
   }, TEMPO_SAIDA);
 

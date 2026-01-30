@@ -15,7 +15,8 @@ body {
 
 /* logo */
 .top-logo {
-  margin-top: 40px;
+  margin-top: -10px;
+  margin-bottom: 5px;
 }
 
 .top-logo img {
@@ -25,15 +26,17 @@ body {
 .center-container {
   width: 100%;
   max-width: 420px;
-  margin-top: 30px;
+  margin-top: -70px;
   padding: 0 20px;
   text-align: center;
 }
 
 .center-container h2 {
   color: #2e7d32;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
+  margin-top: 1px;    
 }
+
 
 /* FORMULÁRIO */
 .cadastro-form {

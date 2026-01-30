@@ -8,12 +8,12 @@ exports.resgatarCupom = async (req, res) => {
     const usuarioId = req.usuario.id;
     const loja_id = Number(req.body.loja_id);
 
-    /* 🔒 VALIDA ID DA LOJA */
+    /* VALIDA ID DA LOJA */
     if (!loja_id || isNaN(loja_id)) {
       return res.status(400).json({ erro: 'Loja inválida' });
     }
 
-    /* 🔹 BUSCA USUÁRIO */
+    /* BUSCA USUÁRIO */
     const [[usuario]] = await db.query(
       'SELECT pontos FROM usuarios WHERE id = ?',
       [usuarioId]
@@ -23,7 +23,7 @@ exports.resgatarCupom = async (req, res) => {
       return res.status(404).json({ erro: 'Usuário não encontrado' });
     }
 
-    /* 🔹 BUSCA LOJA */
+    /*BUSCA LOJA */
     const [[loja]] = await db.query(
       'SELECT pontos FROM lojas WHERE id = ?',
       [loja_id]
@@ -45,14 +45,14 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-    /* ❌ BLOQUEIA SALDO INSUFICIENTE */
+    /*BLOQUEIA SALDO INSUFICIENTE */
     if (pontosUsuario < custo) {
       return res.status(400).json({
         erro: 'Pontos insuficientes para resgatar este cupom'
       });
     }
 
-    /* 🔒 VERIFICA SE JÁ RESGATOU (ANTES DE TUDO) */
+    /* VERIFICA SE JÁ RESGATOU (ANTES DE TUDO) */
     const [[existe]] = await db.query(
       'SELECT id FROM resgates WHERE usuario_id = ? AND loja_id = ?',
       [usuarioId, loja_id]
@@ -64,7 +64,7 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-    /* ✅ PRIMEIRO: DESCONTA OS PONTOS (SE ISSO FALHAR, PARA TUDO) */
+    /* PRIMEIRO: DESCONTA OS PONTOS (SE ISSO FALHAR, PARA TUDO) */
     await db.query(
       `
       UPDATE usuarios
@@ -74,7 +74,7 @@ exports.resgatarCupom = async (req, res) => {
       [custo, usuarioId]
     );
 
-    /* 🔹 DEPOIS: REGISTRA O RESGATE */
+    /*DEPOIS: REGISTRA O RESGATE */
     const codigo = `CUPOM-${Math.random()
       .toString(36)
       .substring(2, 8)
@@ -99,5 +99,28 @@ exports.resgatarCupom = async (req, res) => {
     return res.status(500).json({
       erro: 'Erro interno ao resgatar cupom'
     });
+  }
+};
+
+exports.meusCupons = async (req, res) => {
+  try {
+    const usuarioId = req.usuario.id;
+
+    const [rows] = await db.query(`
+      SELECT 
+        r.codigo,
+        r.pontos_usados,
+        l.nome AS loja_nome
+      FROM resgates r
+      JOIN lojas l ON l.id = r.loja_id
+      WHERE r.usuario_id = ?
+      ORDER BY r.id DESC
+    `, [usuarioId]);
+
+    res.json(rows);
+
+  } catch (err) {
+    console.error('ERRO CUPONS:', err);
+    res.status(500).json({ erro: 'Erro ao buscar cupons' });
   }
 };

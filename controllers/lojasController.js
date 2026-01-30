@@ -21,9 +21,31 @@ exports.criarLoja = async (req, res) => {
 
 // EXCLUIR LOJA
 exports.excluirLoja = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  await db.query('DELETE FROM lojas WHERE id = ?', [id]);
+    // APAGAR RESGATES DA LOJA
+    await db.query(
+      'DELETE FROM resgates WHERE loja_id = ?',
+      [id]
+    );
 
-  res.json({ sucesso: true });
+    // APAGAR CUPONS RESGATADOS DA LOJA
+    await db.query(
+      'DELETE FROM cupons_resgatados WHERE loja_id = ?',
+      [id]
+    );
+
+    // APAGAR A LOJA
+    await db.query(
+      'DELETE FROM lojas WHERE id = ?',
+      [id]
+    );
+
+    res.json({ sucesso: true });
+
+  } catch (err) {
+    console.error('ERRO AO EXCLUIR LOJA:', err);
+    res.status(500).json({ erro: 'Erro ao excluir loja' });
+  }
 };

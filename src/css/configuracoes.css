@@ -149,3 +149,73 @@ input:checked + .slider:before {
   padding: 2px 6px;
   border-radius: 50%;
 }
+/* BOTÃO PAINEL ADMINISTRATIVO */
+#area-admin {
+  margin: 18px 0;
+}
+
+#area-admin button {
+  width: 100%;
+  padding: 12px 14px;
+
+  background-color: #fafafa;
+  color: #2e7d32;
+
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  cursor: pointer;
+
+  transition: background-color 0.25s ease,
+              border-color 0.25s ease,
+              box-shadow 0.25s ease,
+              transform 0.15s ease;
+}
+
+#area-admin button:hover {
+  background-color: #f1f8f4;
+  border-color: #c8e6c9;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.08);
+  transform: translateY(-1px);
+}
+
+#area-admin button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* detalhe sutil de seta */
+#area-admin button::after {
+  content: '›';
+  font-size: 18px;
+  color: #81c784;
+}
+
+/*cupons resgatados */
+.cupom-item {
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cupom-item button {
+  background: #347142;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}

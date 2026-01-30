@@ -18,14 +18,14 @@ module.exports = async (req, res) => {
       });
     }
 
-    // 🔒 BLOQUEIO ANTES DO LOGIN
+    // BLOQUEIO ANTES DO LOGIN
     if (usuario.status === 'bloqueado') {
       return res.status(403).json({
         erro: 'Usuário bloqueado'
       });
     }
 
-    // 🔐 COMPARAÇÃO CORRETA DA SENHA (bcrypt)
+    // COMPARAÇÃO CORRETA DA SENHA (bcrypt)
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
     if (!senhaValida) {

@@ -4,8 +4,12 @@ const router = express.Router();
 const upload = require('../models/upload');
 const doacoesController = require('./doacoesController');
 const verificarAutenticacao = require('./verificarAutenticacao');
+const verificarAdmin = require('./verificarAdmin');
 
-/* CRIAR DOAÇÃO */
+/* =========================
+   USUÁRIO
+========================= */
+
 router.post(
   '/doacoes',
   verificarAutenticacao,
@@ -13,23 +17,48 @@ router.post(
   doacoesController.criarDoacao
 );
 
-/* HOME */
-router.get('/doacoes', doacoesController.listarDoacoes);
-
-/* DETALHES */
-router.get('/doacoes/:id', doacoesController.detalhesDoacao);
-
-/* MINHAS PUBLICAÇÕES */
 router.get(
-  '/minhas-doacoes',
-  verificarAutenticacao,
-  doacoesController.minhasDoacoes
+  '/doacoes',
+  doacoesController.listarDoacoes
 );
-/* EXCLUIR DOAÇÃO */
+
+/* =========================
+   ADMIN (⚠️ ANTES DO :id)
+========================= */
+
+router.get(
+  '/doacoes/admin',
+  verificarAutenticacao,
+  verificarAdmin,
+  doacoesController.listarTodasAdmin
+);
+
+router.delete(
+  '/doacoes/admin/:id',
+  verificarAutenticacao,
+  verificarAdmin,
+  doacoesController.removerAdmin
+);
+
+/* =========================
+   ROTAS COM :id (POR ÚLTIMO)
+========================= */
+
+router.get(
+  '/doacoes/:id',
+  doacoesController.detalhesDoacao
+);
+
 router.delete(
   '/doacoes/:id',
   verificarAutenticacao,
   doacoesController.excluirDoacao
+);
+
+router.get(
+  '/minhas-doacoes',
+  verificarAutenticacao,
+  doacoesController.minhasDoacoes
 );
 
 module.exports = router;

@@ -1,13 +1,10 @@
-/* =========================
-   VARIÁVEIS GLOBAIS
-========================= */
+
+//VARIÁVEIS GLOBAIS
 let todasDoacoes = [];
 let filtroAtivo = '';
 let doacaoAtualId = null;
 
-/* =========================
-   MODAL ADICIONAR DOAÇÃO
-========================= */
+//MODAL ADICIONAR DOAÇÃO
 function abrirModalDoacao() {
   document.getElementById('modalDoacao').style.display = 'flex';
 }
@@ -16,9 +13,7 @@ function fecharModalDoacao() {
   document.getElementById('modalDoacao').style.display = 'none';
 }
 
-/* =========================
-   NAVEGAÇÃO
-========================= */
+//NAVEGAÇÃO
 function irParaAdicionarDoacao() {
   window.location.href = '/adicionar-doacao';
 }
@@ -27,11 +22,10 @@ function irParaMinhasDoacoes() {
   window.location.href = '/minhas-publicacoes';
 }
 
-/* =========================
-   LISTAR DOAÇÕES
-========================= */
 
-// ===== CONTROLE DO SPINNER =====
+//LISTAR DOAÇÕES
+
+//CONTROLE DO SPINNER 
 function mostrarSpinner() {
   const spinner = document.getElementById('spinner');
   if (spinner) spinner.style.display = 'flex';
@@ -49,7 +43,7 @@ async function carregarDoacoes() {
     const res = await fetch('/doacoes');
     const dados = await res.json();
 
-    todasDoacoes = dados; // 🔴 ESSENCIAL
+    todasDoacoes = dados; // ESSENCIAL
     renderizarDoacoes(dados);
 
   } catch (err) {
@@ -64,8 +58,7 @@ async function carregarDoacoes() {
 document.addEventListener('DOMContentLoaded', carregarDoacoes);
 
 /* =========================
-   RENDERIZAR DOAÇÕES
-========================= */
+   RENDERIZAR DOAÇÕES */
 function renderizarDoacoes(doacoes) {
   const lista = document.getElementById('listaPublicacoes');
   lista.innerHTML = '';

@@ -1,9 +1,9 @@
 const lista = document.getElementById('listaLojas');
 const form = document.getElementById('formLoja');
 
-// ==========================
+
 // CARREGAR LOJAS
-// ==========================
+
 async function carregarLojas() {
   const res = await fetch('/api/admin/lojas');
   const lojas = await res.json();
@@ -27,9 +27,9 @@ async function carregarLojas() {
   });
 }
 
-// ==========================
+
 // CRIAR LOJA
-// ==========================
+
 form.addEventListener('submit', async e => {
   e.preventDefault();
 
@@ -73,20 +73,55 @@ form.addEventListener('submit', async e => {
   }
 });
 
-// ==========================
-// EXCLUIR LOJA
-// ==========================
-async function excluirLoja(id) {
-  if (!confirm('Deseja excluir esta loja?')) return;
 
-  await fetch(`/api/admin/lojas/${id}`, {
-    method: 'DELETE'
+// EXCLUIR LOJA
+async function excluirLoja(id) {
+  const confirmacao = await Swal.fire({
+    title: 'Excluir loja?',
+    text: 'Todos os cupons resgatados dessa loja também serão removidos.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sim, excluir',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#c62828',
+    cancelButtonColor: '#9e9e9e'
   });
 
-  carregarLojas();
+  if (!confirmacao.isConfirmed) return;
+
+  try {
+    const res = await fetch(`/api/admin/lojas/${id}`, {
+      method: 'DELETE'
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: data.erro || 'Erro ao excluir loja'
+      });
+      return;
+    }
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Loja excluída!',
+      text: 'A loja e seus resgates foram removidos.',
+      timer: 1800,
+      showConfirmButton: false
+    });
+
+    carregarLojas();
+
+  } catch (err) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro inesperado',
+      text: 'Não foi possível excluir a loja.'
+    });
+  }
 }
 
-// ==========================
-// INIT
-// ==========================
 carregarLojas();

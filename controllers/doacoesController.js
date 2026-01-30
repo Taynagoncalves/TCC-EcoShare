@@ -1,4 +1,6 @@
 const db = require('../models/db');
+const fs = require('fs');
+const path = require('path');
 
 /* =========================
    CRIAR DOAÇÃO
@@ -15,7 +17,7 @@ exports.criarDoacao = async (req, res) => {
       horarios
     } = req.body;
 
-    const usuario_id = req.usuario.id; // 🔥 USUÁRIO LOGADO
+    const usuario_id = req.usuario.id;
 
     if (!usuario_id) {
       return res.status(401).json({ erro: 'Usuário não autenticado' });
@@ -127,15 +129,15 @@ exports.minhasDoacoes = async (req, res) => {
 
   res.json(rows);
 };
-const fs = require('fs');
-const path = require('path');
 
+/* =========================
+   EXCLUIR DOAÇÃO (USUÁRIO)
+========================= */
 exports.excluirDoacao = async (req, res) => {
   try {
     const { id } = req.params;
     const usuario_id = req.usuario.id;
 
-    // buscar doação
     const [rows] = await db.query(
       'SELECT imagem FROM doacoes WHERE id = ? AND usuario_id = ?',
       [id, usuario_id]
@@ -149,13 +151,11 @@ exports.excluirDoacao = async (req, res) => {
 
     const imagem = rows[0].imagem;
 
-    // excluir do banco
     await db.query(
       'DELETE FROM doacoes WHERE id = ? AND usuario_id = ?',
       [id, usuario_id]
     );
 
-    // excluir imagem do disco
     if (imagem) {
       const caminhoImagem = path.join(__dirname, '..', 'uploads', imagem);
       if (fs.existsSync(caminhoImagem)) {
@@ -170,6 +170,7 @@ exports.excluirDoacao = async (req, res) => {
     res.status(500).json({ erro: 'Erro ao excluir doação' });
   }
 };
+
 /* =========================
    ADMIN — LISTAR TODAS DOAÇÕES
 ========================= */
@@ -181,11 +182,10 @@ exports.listarTodasAdmin = async (req, res) => {
         d.nome_material,
         d.quantidade,
         d.status,
-        d.criada_em,
         u.nome AS usuario_nome
       FROM doacoes d
       JOIN usuarios u ON u.id = d.usuario_id
-      ORDER BY d.criada_em DESC
+      ORDER BY d.id DESC
     `);
 
     res.json(doacoes);
@@ -198,18 +198,50 @@ exports.listarTodasAdmin = async (req, res) => {
 /* =========================
    ADMIN — REMOVER DOAÇÃO
 ========================= */
-exports.removerDoacaoAdmin = async (req, res) => {
+exports.removerAdmin = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await db.query(
-      `UPDATE doacoes SET status = 'removida' WHERE id = ?`,
+    // buscar imagem
+    const [[doacao]] = await db.query(
+      'SELECT imagem FROM doacoes WHERE id = ?',
       [id]
     );
 
+    if (!doacao) {
+      return res.status(404).json({ erro: 'Doação não encontrada' });
+    }
+
+    //APAGAR DEPENDÊNCIAS
+    await db.query(
+      'DELETE FROM solicitacoes_coleta WHERE doacao_id = ?',
+      [id]
+    );
+
+    // APAGAR DOAÇÃO
+    await db.query(
+      'DELETE FROM doacoes WHERE id = ?',
+      [id]
+    );
+
+    // APAGAR IMAGEM (SE EXISTIR)
+    if (doacao.imagem) {
+      const caminhoImagem = path.join(
+        __dirname,
+        '..',
+        'uploads',
+        doacao.imagem
+      );
+
+      if (fs.existsSync(caminhoImagem)) {
+        fs.unlinkSync(caminhoImagem);
+      }
+    }
+
     res.json({ sucesso: true });
+
   } catch (err) {
-    console.error('ERRO REMOVER DOAÇÃO:', err);
+    console.error('ERRO REMOVER ADMIN:', err);
     res.status(500).json({ erro: 'Erro ao remover doação' });
   }
 };

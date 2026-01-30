@@ -8,5 +8,10 @@ router.post(
   verificarAutenticacao,
   resgateController.resgatarCupom
 );
+router.get(
+  '/resgates/meus',
+  verificarAutenticacao,
+  resgatesController.meusCupons
+);
 
 module.exports = router;

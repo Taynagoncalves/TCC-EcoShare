@@ -1,12 +1,14 @@
-// ==========================
+
 // NAVEGAÇÕES
-// ==========================
 function irParaMinhasPublicacoes() {
   window.location.href = '/minhas-publicacoes';
 }
 
 function irParaAdmin() {
   window.location.href = '/admin/lojas';
+}
+function irParaCuponsResgatados() {
+  window.location.href = '/cupons-resgatados';
 }
 
 function deslogar() {
@@ -16,9 +18,8 @@ function deslogar() {
     });
 }
 
-// ==========================
+
 // CARREGAR USUÁRIO LOGADO
-// ==========================
 async function carregarUsuario() {
   try {
     const res = await fetch('/usuario/me');
@@ -27,7 +28,7 @@ async function carregarUsuario() {
 
     const usuario = await res.json();
 
-    // 🔥 MOSTRAR ÁREA ADMIN APENAS SE FOR ADMIN
+    // MOSTRAR ÁREA ADMIN APENAS SE FOR ADMIN
     if (usuario.tipo === 'admin') {
       const areaAdmin = document.getElementById('area-admin');
       if (areaAdmin) {
