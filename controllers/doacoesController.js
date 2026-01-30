@@ -2,9 +2,7 @@ const db = require('../models/db');
 const fs = require('fs');
 const path = require('path');
 
-/* =========================
-   CRIAR DOAÇÃO
-========================= */
+/* criar doação */
 exports.criarDoacao = async (req, res) => {
   try {
     const {
@@ -20,16 +18,16 @@ exports.criarDoacao = async (req, res) => {
     const usuario_id = req.usuario.id;
 
     if (!usuario_id) {
-      return res.status(401).json({ erro: 'Usuário não autenticado' });
+      return res.status(401).json({ erro: 'usuário não autenticado' });
     }
 
     const imagem = req.file ? req.file.filename : null;
 
     await db.query(
-      `INSERT INTO doacoes
+      `insert into doacoes
       (nome_material, quantidade, tipo_material, descricao, bairro_id,
        dias_semana, horarios, imagem, status, usuario_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'ativo', ?)`,
+      values (?, ?, ?, ?, ?, ?, ?, ?, 'ativo', ?)`,
       [
         nome_material,
         quantidade,
@@ -46,40 +44,36 @@ exports.criarDoacao = async (req, res) => {
     res.json({ sucesso: true });
 
   } catch (error) {
-    console.error('Erro criar doação:', error);
-    res.status(500).json({ erro: 'Erro ao criar doação' });
+    console.error('erro ao criar doação:', error);
+    res.status(500).json({ erro: 'erro ao criar doação' });
   }
 };
 
-/* =========================
-   LISTAR DOAÇÕES (HOME)
-========================= */
+/* listar doações (home) */
 exports.listarDoacoes = async (req, res) => {
   const [rows] = await db.query(`
-    SELECT 
+    select 
       d.id,
       d.nome_material,
       d.quantidade,
       d.tipo_material,
       d.imagem,
-      b.nome AS bairro
-    FROM doacoes d
-    LEFT JOIN bairros b ON d.bairro_id = b.id
-    WHERE d.status = 'ativo'
+      b.nome as bairro
+    from doacoes d
+    left join bairros b on d.bairro_id = b.id
+    where d.status = 'ativo'
   `);
 
   res.json(rows);
 };
 
-/* =========================
-   DETALHES DA DOAÇÃO
-========================= */
+/* detalhes da doação */
 exports.detalhesDoacao = async (req, res) => {
   try {
     const { id } = req.params;
 
     const [rows] = await db.query(`
-      SELECT 
+      select 
         d.id,
         d.nome_material,
         d.quantidade,
@@ -89,70 +83,66 @@ exports.detalhesDoacao = async (req, res) => {
         d.horarios,
         d.imagem,
         d.status,
-        b.nome AS bairro,
-        u.nome AS usuario
-      FROM doacoes d
-      LEFT JOIN bairros b ON d.bairro_id = b.id
-      LEFT JOIN usuarios u ON d.usuario_id = u.id
-      WHERE d.id = ?
-      LIMIT 1
+        b.nome as bairro,
+        u.nome as usuario
+      from doacoes d
+      left join bairros b on d.bairro_id = b.id
+      left join usuarios u on d.usuario_id = u.id
+      where d.id = ?
+      limit 1
     `, [id]);
 
     if (!rows || rows.length === 0) {
-      return res.status(404).json({ erro: 'Doação não encontrada' });
+      return res.status(404).json({ erro: 'doação não encontrada' });
     }
 
     res.json(rows[0]);
 
   } catch (error) {
-    console.error('Erro detalhes doação:', error);
-    res.status(500).json({ erro: 'Erro ao buscar detalhes' });
+    console.error('erro ao buscar detalhes da doação:', error);
+    res.status(500).json({ erro: 'erro ao buscar detalhes' });
   }
 };
 
-/* =========================
-   MINHAS DOAÇÕES
-========================= */
+/* minhas doações */
 exports.minhasDoacoes = async (req, res) => {
   const usuario_id = req.usuario.id;
 
   const [rows] = await db.query(`
-    SELECT 
+    select 
       id,
       nome_material,
       quantidade,
       status,
       imagem
-    FROM doacoes
-    WHERE usuario_id = ?
+    from doacoes
+    where usuario_id = ?
   `, [usuario_id]);
 
   res.json(rows);
 };
 
-/* =========================
-   EXCLUIR DOAÇÃO (USUÁRIO)
-========================= */
+/* excluir doação (usuário) */
 exports.excluirDoacao = async (req, res) => {
   try {
     const { id } = req.params;
     const usuario_id = req.usuario.id;
 
     const [rows] = await db.query(
-      'SELECT imagem FROM doacoes WHERE id = ? AND usuario_id = ?',
+      'select imagem from doacoes where id = ? and usuario_id = ?',
       [id, usuario_id]
     );
 
     if (rows.length === 0) {
       return res.status(403).json({
-        erro: 'Você não tem permissão para excluir esta doação'
+        erro: 'você não tem permissão para excluir esta doação'
       });
     }
 
     const imagem = rows[0].imagem;
 
     await db.query(
-      'DELETE FROM doacoes WHERE id = ? AND usuario_id = ?',
+      'delete from doacoes where id = ? and usuario_id = ?',
       [id, usuario_id]
     );
 
@@ -166,73 +156,59 @@ exports.excluirDoacao = async (req, res) => {
     res.json({ sucesso: true });
 
   } catch (error) {
-    console.error('Erro ao excluir doação:', error);
-    res.status(500).json({ erro: 'Erro ao excluir doação' });
+    console.error('erro ao excluir doação:', error);
+    res.status(500).json({ erro: 'erro ao excluir doação' });
   }
 };
 
-/* =========================
-   ADMIN — LISTAR TODAS DOAÇÕES
-========================= */
+/* admin listar todas as doações */
 exports.listarTodasAdmin = async (req, res) => {
   try {
     const [doacoes] = await db.query(`
-      SELECT 
+      select 
         d.id,
         d.nome_material,
         d.quantidade,
         d.status,
-        u.nome AS usuario_nome
-      FROM doacoes d
-      JOIN usuarios u ON u.id = d.usuario_id
-      ORDER BY d.id DESC
+        u.nome as usuario_nome
+      from doacoes d
+      join usuarios u on u.id = d.usuario_id
+      order by d.id desc
     `);
 
     res.json(doacoes);
   } catch (err) {
-    console.error('ERRO ADMIN DOAÇÕES:', err);
-    res.status(500).json({ erro: 'Erro ao listar doações' });
+    console.error('erro admin ao listar doações:', err);
+    res.status(500).json({ erro: 'erro ao listar doações' });
   }
 };
 
-/* =========================
-   ADMIN — REMOVER DOAÇÃO
-========================= */
+/* admin remover doação */
 exports.removerAdmin = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // buscar imagem
     const [[doacao]] = await db.query(
-      'SELECT imagem FROM doacoes WHERE id = ?',
+      'select imagem from doacoes where id = ?',
       [id]
     );
 
     if (!doacao) {
-      return res.status(404).json({ erro: 'Doação não encontrada' });
+      return res.status(404).json({ erro: 'doação não encontrada' });
     }
 
-    //APAGAR DEPENDÊNCIAS
     await db.query(
-      'DELETE FROM solicitacoes_coleta WHERE doacao_id = ?',
+      'delete from solicitacoes_coleta where doacao_id = ?',
       [id]
     );
 
-    // APAGAR DOAÇÃO
     await db.query(
-      'DELETE FROM doacoes WHERE id = ?',
+      'delete from doacoes where id = ?',
       [id]
     );
 
-    // APAGAR IMAGEM (SE EXISTIR)
     if (doacao.imagem) {
-      const caminhoImagem = path.join(
-        __dirname,
-        '..',
-        'uploads',
-        doacao.imagem
-      );
-
+      const caminhoImagem = path.join(__dirname, '..', 'uploads', doacao.imagem);
       if (fs.existsSync(caminhoImagem)) {
         fs.unlinkSync(caminhoImagem);
       }
@@ -241,7 +217,7 @@ exports.removerAdmin = async (req, res) => {
     res.json({ sucesso: true });
 
   } catch (err) {
-    console.error('ERRO REMOVER ADMIN:', err);
-    res.status(500).json({ erro: 'Erro ao remover doação' });
+    console.error('erro ao remover doação admin:', err);
+    res.status(500).json({ erro: 'erro ao remover doação' });
   }
 };

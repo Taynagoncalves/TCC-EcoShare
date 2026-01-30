@@ -1,80 +1,78 @@
 const db = require('../models/db');
 
-/* =========================
-   RESGATAR CUPOM
-========================= */
+/* resgatar cupom */
 exports.resgatarCupom = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
     const loja_id = Number(req.body.loja_id);
 
-    /* VALIDA ID DA LOJA */
+    /* valida id da loja */
     if (!loja_id || isNaN(loja_id)) {
-      return res.status(400).json({ erro: 'Loja inválida' });
+      return res.status(400).json({ erro: 'loja inválida' });
     }
 
-    /* BUSCA USUÁRIO */
+    /* busca usuário */
     const [[usuario]] = await db.query(
-      'SELECT pontos FROM usuarios WHERE id = ?',
+      'select pontos from usuarios where id = ?',
       [usuarioId]
     );
 
     if (!usuario) {
-      return res.status(404).json({ erro: 'Usuário não encontrado' });
+      return res.status(404).json({ erro: 'usuário não encontrado' });
     }
 
-    /*BUSCA LOJA */
+    /* busca loja */
     const [[loja]] = await db.query(
-      'SELECT pontos FROM lojas WHERE id = ?',
+      'select pontos from lojas where id = ?',
       [loja_id]
     );
 
     if (!loja || loja.pontos == null) {
       return res.status(400).json({
-        erro: 'Cupom inválido ou sem pontos definidos'
+        erro: 'cupom inválido ou sem pontos definidos'
       });
     }
 
     const pontosUsuario = Number(usuario.pontos);
     const custo = Number(loja.pontos);
 
-    /* 🔒 BLOQUEIA CUSTO INVÁLIDO */
+    /* bloqueia custo inválido */
     if (isNaN(custo) || custo <= 0) {
       return res.status(400).json({
-        erro: 'Valor do cupom inválido'
+        erro: 'valor do cupom inválido'
       });
     }
 
-    /*BLOQUEIA SALDO INSUFICIENTE */
+    /* bloqueia saldo insuficiente */
     if (pontosUsuario < custo) {
       return res.status(400).json({
-        erro: 'Pontos insuficientes para resgatar este cupom'
+        erro: 'pontos insuficientes para resgatar este cupom'
       });
     }
 
-    /* VERIFICA SE JÁ RESGATOU (ANTES DE TUDO) */
+    /* verifica se já resgatou */
     const [[existe]] = await db.query(
-      'SELECT id FROM resgates WHERE usuario_id = ? AND loja_id = ?',
+      'select id from resgates where usuario_id = ? and loja_id = ?',
       [usuarioId, loja_id]
     );
 
     if (existe) {
       return res.status(400).json({
-        erro: 'Você já resgatou este cupom'
+        erro: 'você já resgatou este cupom'
       });
     }
 
-    /* PRIMEIRO: DESCONTA OS PONTOS (SE ISSO FALHAR, PARA TUDO) */
+    /* desconta os pontos do usuário */
     await db.query(
       `
-      UPDATE usuarios
-      SET pontos = pontos - ?
-      WHERE id = ?
+      update usuarios
+      set pontos = pontos - ?
+      where id = ?
       `,
       [custo, usuarioId]
     );
 
-    /*DEPOIS: REGISTRA O RESGATE */
+    /* registra o resgate */
     const codigo = `CUPOM-${Math.random()
       .toString(36)
       .substring(2, 8)
@@ -82,8 +80,8 @@ exports.resgatarCupom = async (req, res) => {
 
     await db.query(
       `
-      INSERT INTO resgates (usuario_id, loja_id, pontos_usados, codigo, usado)
-      VALUES (?, ?, ?, ?, 0)
+      insert into resgates (usuario_id, loja_id, pontos_usados, codigo, usado)
+      values (?, ?, ?, ?, 0)
       `,
       [usuarioId, loja_id, custo, codigo]
     );
@@ -95,32 +93,33 @@ exports.resgatarCupom = async (req, res) => {
     });
 
   } catch (err) {
-    console.error('ERRO RESGATE:', err);
+    console.error('erro ao resgatar cupom:', err);
     return res.status(500).json({
-      erro: 'Erro interno ao resgatar cupom'
+      erro: 'erro interno ao resgatar cupom'
     });
   }
 };
 
+/* meus cupons */
 exports.meusCupons = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
 
     const [rows] = await db.query(`
-      SELECT 
+      select 
         r.codigo,
         r.pontos_usados,
-        l.nome AS loja_nome
-      FROM resgates r
-      JOIN lojas l ON l.id = r.loja_id
-      WHERE r.usuario_id = ?
-      ORDER BY r.id DESC
+        l.nome as loja_nome
+      from resgates r
+      join lojas l on l.id = r.loja_id
+      where r.usuario_id = ?
+      order by r.id desc
     `, [usuarioId]);
 
     res.json(rows);
 
   } catch (err) {
-    console.error('ERRO CUPONS:', err);
-    res.status(500).json({ erro: 'Erro ao buscar cupons' });
+    console.error('erro ao buscar cupons:', err);
+    res.status(500).json({ erro: 'erro ao buscar cupons' });
   }
 };

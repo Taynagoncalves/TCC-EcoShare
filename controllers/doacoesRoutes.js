@@ -6,10 +6,7 @@ const doacoesController = require('./doacoesController');
 const verificarAutenticacao = require('./verificarAutenticacao');
 const verificarAdmin = require('./verificarAdmin');
 
-/* =========================
-   USUÁRIO
-========================= */
-
+/* rotas de usuário */
 router.post(
   '/doacoes',
   verificarAutenticacao,
@@ -21,28 +18,6 @@ router.get(
   '/doacoes',
   doacoesController.listarDoacoes
 );
-
-/* =========================
-   ADMIN (⚠️ ANTES DO :id)
-========================= */
-
-router.get(
-  '/doacoes/admin',
-  verificarAutenticacao,
-  verificarAdmin,
-  doacoesController.listarTodasAdmin
-);
-
-router.delete(
-  '/doacoes/admin/:id',
-  verificarAutenticacao,
-  verificarAdmin,
-  doacoesController.removerAdmin
-);
-
-/* =========================
-   ROTAS COM :id (POR ÚLTIMO)
-========================= */
 
 router.get(
   '/doacoes/:id',
@@ -59,6 +34,21 @@ router.get(
   '/minhas-doacoes',
   verificarAutenticacao,
   doacoesController.minhasDoacoes
+);
+
+/* rotas de admin */
+router.get(
+  '/admin/doacoes',
+  verificarAutenticacao,
+  verificarAdmin,
+  doacoesController.listarTodasAdmin
+);
+
+router.delete(
+  '/admin/doacoes/:id',
+  verificarAutenticacao,
+  verificarAdmin,
+  doacoesController.removerAdmin
 );
 
 module.exports = router;

@@ -4,36 +4,33 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const db = require('./models/db');
+
 const app = express();
 
-
-//MIDDLEWARES GERAIS
+/* middlewares gerais */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-//ARQUIVOS ESTÁTICOS
+/* arquivos estáticos */
 app.use('/css', express.static(path.join(__dirname, 'src/css')));
 app.use('/js', express.static(path.join(__dirname, 'src/js')));
 app.use('/icons', express.static(path.join(__dirname, 'src/icons')));
 app.use('/imagens', express.static(path.join(__dirname, 'src/imagens')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
-//MIDDLEWARE AUTH
+/* middlewares de autenticação */
 const verificarAutenticacao = require('./controllers/verificarAutenticacao');
 const verificarAdmin = require('./controllers/verificarAdmin');
 
-
-//rotas de autentificacao
+/* rotas de autenticação */
 app.post('/login', require('./controllers/logar'));
 app.post('/cadastro', require('./controllers/cadastrar'));
 app.post('/logout', require('./controllers/deslogar'));
 app.post('/esqueci-senha', require('./controllers/esqueciSenha'));
 app.post('/redefinir-senha', require('./controllers/redefinirSenha'));
 
-
-// rotas de funcionalidades
+/* rotas de funcionalidades */
 app.use('/', require('./controllers/doacoesRoutes'));
 app.use('/', require('./controllers/denunciaRoutes'));
 app.use('/', require('./controllers/bairrosRoutes'));
@@ -43,13 +40,7 @@ app.use('/', require('./controllers/resgateRoutes'));
 app.use('/', require('./controllers/lojasRoutes'));
 app.use('/', require('./controllers/notificacaoRoutes'));
 
-
-//rotas admin/lojas
-app.use('/', require('./controllers/lojasRoutes'));
-
-
-
-//rotas das paginas
+/* rotas de páginas html */
 app.get('/', (req, res) => {
   res.redirect('/inicio');
 });
@@ -83,21 +74,15 @@ app.get('/configuracoes', verificarAutenticacao, (req, res) => {
 });
 
 app.get('/solicitacoes-coleta', verificarAutenticacao, (req, res) => {
-  res.sendFile(
-    path.join(__dirname, 'src/html/solicitacao-coleta.html')
-  );
+  res.sendFile(path.join(__dirname, 'src/html/solicitacao-coleta.html'));
 });
 
 app.get('/notificacao', verificarAutenticacao, (req, res) => {
-  res.sendFile(
-    path.join(__dirname, 'src/html/notificacao.html')
-  );
+  res.sendFile(path.join(__dirname, 'src/html/notificacao.html'));
 });
 
 app.get('/coletas-andamento', verificarAutenticacao, (req, res) => {
-  res.sendFile(
-    path.join(__dirname, 'src/html/coletas-andamento.html')
-  );
+  res.sendFile(path.join(__dirname, 'src/html/coletas-andamento.html'));
 });
 
 app.get('/resgate', verificarAutenticacao, (req, res) => {
@@ -112,35 +97,25 @@ app.get('/perfil', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/perfil.html'));
 });
 
-app.get('/admin-lojas', verificarAutenticacao, (req, res) => {
-  res.sendFile(path.join(__dirname, 'src/html/admin-lojas.html'));
-});
-
 app.get('/cupons-resgatados', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/cupons-resgatados.html'));
 });
 
-// Página "Esqueci minha senha"
 app.get('/esqueci-senha', (req, res) => {
-  res.sendFile(
-    path.join(__dirname, 'src/html/esqueci-senha.html')
-  );
-});
-app.get('/redefinir-senha', (req, res) => {
-  res.sendFile(
-    path.join(__dirname, 'src/html/redefinir-senha.html')
-  );
+  res.sendFile(path.join(__dirname, 'src/html/esqueci-senha.html'));
 });
 
-//rotas admin html
+app.get('/redefinir-senha', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src/html/redefinir-senha.html'));
+});
+
+/* rotas admin */
 app.get(
   '/admin/lojas',
   verificarAutenticacao,
   verificarAdmin,
   (req, res) => {
-    res.sendFile(
-      path.join(__dirname, 'src/html/admin-lojas.html')
-    );
+    res.sendFile(path.join(__dirname, 'src/html/admin-lojas.html'));
   }
 );
 
@@ -149,11 +124,29 @@ app.get(
   verificarAutenticacao,
   verificarAdmin,
   (req, res) => {
-    res.sendFile(
-      path.join(__dirname, 'src/html/admin-dashboard.html')
-    );
+    res.sendFile(path.join(__dirname, 'src/html/admin-dashboard.html'));
   }
 );
+
+app.get(
+  '/admin/usuarios/painel',
+  verificarAutenticacao,
+  verificarAdmin,
+  (req, res) => {
+    res.sendFile(path.join(__dirname, 'src/html/admin-usuarios.html'));
+  }
+);
+
+app.get(
+  '/admin/doacoes',
+  verificarAutenticacao,
+  verificarAdmin,
+  (req, res) => {
+    res.sendFile(path.join(__dirname, 'src/html/admin-doacoes.html'));
+  }
+);
+
+/* rota para obter dados do usuário logado */
 app.get('/usuario-logado', verificarAutenticacao, (req, res) => {
   res.json({
     id: req.usuario.id,
@@ -161,29 +154,9 @@ app.get('/usuario-logado', verificarAutenticacao, (req, res) => {
     tipo: req.usuario.tipo
   });
 });
-app.get(
-  '/admin/usuarios/painel',
-  verificarAutenticacao,
-  verificarAdmin,
-  (req, res) => {
-    res.sendFile(
-      path.join(__dirname, 'src/html/admin-usuarios.html')
-    );
-  }
-);
-app.get(
-  '/admin/doacoes',
-  verificarAutenticacao,
-  verificarAdmin,
-  (req, res) => {
-    res.sendFile(
-      path.join(__dirname, 'src/html/admin-doacoes.html')
-    );
-  }
-);
 
-//servidor
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+/* servidor */
+const port = process.env.PORT || 8000;
+app.listen(port, () => {
+  console.log(`servidor rodando em http://localhost:${port}`);
 });
