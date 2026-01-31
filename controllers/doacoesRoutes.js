@@ -24,21 +24,21 @@ router.get(
   doacoesController.listarDoacoes
 );
 
-// listar minhas doações
+// minhas doações
 router.get(
   '/minhas-doacoes',
   verificarAutenticacao,
   doacoesController.minhasDoacoes
 );
 
-// 🔥 buscar doação para edição
+// buscar para edição (antes do :id)
 router.get(
   '/:id/editar',
   verificarAutenticacao,
   doacoesController.buscarParaEdicao
 );
 
-// 🔥 editar doação
+// editar doação
 router.put(
   '/:id',
   verificarAutenticacao,
@@ -46,13 +46,13 @@ router.put(
   doacoesController.editarDoacao
 );
 
-// detalhes da doação
+// detalhes
 router.get(
   '/:id',
   doacoesController.detalhesDoacao
 );
 
-// excluir doação (usuário)
+// excluir
 router.delete(
   '/:id',
   verificarAutenticacao,
@@ -63,7 +63,6 @@ router.delete(
    ROTAS ADMIN
 ========================= */
 
-// listar todas as doações
 router.get(
   '/admin',
   verificarAutenticacao,
@@ -71,7 +70,6 @@ router.get(
   doacoesController.listarTodasAdmin
 );
 
-// remover doação (admin)
 router.delete(
   '/admin/:id',
   verificarAutenticacao,

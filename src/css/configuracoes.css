@@ -237,6 +237,15 @@ input:checked + .slider:before {
   cursor: pointer;
   white-space: nowrap;
 }
+.badge-edicao {
+  background: #f1c40f;
+  color: #000;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-left: 10px;
+}
 
 /* =========================
    MOBILE REAL

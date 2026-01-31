@@ -1,3 +1,4 @@
+/*CARREGAR MINHAS DOAÇÕES */
 async function carregarMinhasDoacoes() {
   try {
     const res = await fetch('/doacoes/minhas-doacoes', {
@@ -53,12 +54,11 @@ async function carregarMinhasDoacoes() {
   }
 }
 
-/* =========================
-   BOTÕES CONDICIONAIS
-========================= */
+/* BOTÕES CONDICIONAIS*/
 function renderizarBotoes(d) {
-  // concluída → apenas excluir
-  if (d.status === 'concluida') {
+
+  // CONCLUÍDO → APENAS EXCLUIR
+  if (d.status === 'concluido' || d.status === 'concluida') {
     return `
       <button class="btn-excluir" onclick="excluirDoacao(${d.id})">
         Excluir
@@ -66,7 +66,7 @@ function renderizarBotoes(d) {
     `;
   }
 
-  // em andamento → ver + excluir
+  // ANDAMENTO → VER + EXCLUIR
   if (d.status === 'andamento') {
     return `
       <button onclick="verDetalhes(${d.id})">Ver</button>
@@ -76,7 +76,7 @@ function renderizarBotoes(d) {
     `;
   }
 
-  // ativa → ver + editar + excluir
+  //ATIVO → VER + EDITAR + EXCLUIR
   return `
     <button onclick="verDetalhes(${d.id})">Ver</button>
     <button onclick="editarDoacao(${d.id})">Editar</button>
@@ -86,9 +86,7 @@ function renderizarBotoes(d) {
   `;
 }
 
-/* =========================
-   EXCLUIR DOAÇÃO
-========================= */
+/*EXCLUIR DOAÇÃO*/
 async function excluirDoacao(id) {
   const confirmar = await Swal.fire({
     title: 'Excluir doação?',
@@ -134,13 +132,11 @@ async function excluirDoacao(id) {
   }
 }
 
-/* =========================
-   AUXILIARES
-========================= */
+/* AUXILIARES*/
 function formatarStatus(status) {
   if (status === 'ativo') return 'Ativa';
   if (status === 'andamento') return 'Em andamento';
-  if (status === 'concluida') return 'Concluída';
+  if (status === 'concluido' || status === 'concluida') return 'Concluído';
   return status;
 }
 
@@ -152,7 +148,5 @@ function editarDoacao(id) {
   window.location.href = `/editar-doacao?id=${id}`;
 }
 
-/* =========================
-   INIT
-========================= */
+/*INIT*/
 document.addEventListener('DOMContentLoaded', carregarMinhasDoacoes);

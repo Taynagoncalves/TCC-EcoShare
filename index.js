@@ -109,6 +109,12 @@ app.get('/redefinir-senha', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/redefinir-senha.html'));
 });
 
+app.get('/editar-doacao', verificarAutenticacao, (req, res) => {
+  res.sendFile(
+    path.join(__dirname, 'src/html/adicionar-doacao.html')
+  );
+});
+
 /* rotas admin */
 app.get(
   '/admin/lojas',

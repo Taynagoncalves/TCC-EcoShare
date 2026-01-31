@@ -1,4 +1,12 @@
-// carregar bairros
+// ==========================
+// DETECTA MODO EDIÇÃO
+// ==========================
+const params = new URLSearchParams(window.location.search);
+const idEdicao = params.get('id');
+
+// ==========================
+// CARREGAR BAIRROS
+// ==========================
 async function carregarBairros() {
   try {
     const res = await fetch('/bairros', {
@@ -32,14 +40,76 @@ async function carregarBairros() {
 
 carregarBairros();
 
-// preview da imagem + bloqueio de arquivos não imagem
+// ==========================
+// CARREGAR DOAÇÃO PARA EDIÇÃO
+// ==========================
+async function carregarEdicao(id) {
+  try {
+    const res = await fetch(`/doacoes/${id}/editar`, {
+      credentials: 'include'
+    });
+
+    if (!res.ok) {
+      Swal.fire('Erro', 'Doação não encontrada', 'error');
+      return;
+    }
+
+    const d = await res.json();
+
+    // título e botão
+    document.querySelector('.topo h2').innerText = 'Editar Doação';
+    document.querySelector('.btn-publicar').innerText = 'Salvar Alterações';
+
+    // preencher campos
+    document.querySelector('[name=nome_material]').value = d.nome_material;
+    document.querySelector('[name=quantidade]').value = d.quantidade;
+    document.querySelector('[name=tipo_material]').value = d.tipo_material;
+    document.querySelector('[name=descricao]').value = d.descricao || '';
+    document.querySelector('[name=horarios]').value = d.horarios;
+
+    // bairro (aguarda carregar)
+    const intervalo = setInterval(() => {
+      const select = document.getElementById('bairroSelect');
+      if (select.options.length > 1) {
+        select.value = d.bairro_id;
+        clearInterval(intervalo);
+      }
+    }, 100);
+
+    // dias
+    if (d.dias_semana) {
+      d.dias_semana.split(',').forEach(dia => {
+        const cb = document.querySelector(
+          `.dias-grid input[value="${dia.trim()}"]`
+        );
+        if (cb) cb.checked = true;
+      });
+    }
+
+    // imagem preview
+    if (d.imagem) {
+      previewImagem.src = `/uploads/${d.imagem}`;
+      previewImagem.style.display = 'block';
+    }
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+if (idEdicao) {
+  carregarEdicao(idEdicao);
+}
+
+// ==========================
+// PREVIEW DA IMAGEM
+// ==========================
 const inputImagem = document.querySelector('input[name="imagem"]');
 const previewImagem = document.getElementById('previewImagem');
 
 if (inputImagem) {
   inputImagem.addEventListener('change', () => {
     const file = inputImagem.files[0];
-
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
@@ -63,12 +133,13 @@ if (inputImagem) {
   });
 }
 
-// envio do formulário
+// ==========================
+// ENVIO DO FORMULÁRIO
+// ==========================
 document.getElementById('formDoacao').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const form = e.target;
-  const formData = new FormData(form);
+  const formData = new FormData(e.target);
 
   // dias selecionados
   const diasSelecionados = Array.from(
@@ -85,7 +156,7 @@ document.getElementById('formDoacao').addEventListener('submit', async (e) => {
     return;
   }
 
-  formData.append('dias_semana', diasSelecionados.join(', '));
+  formData.set('dias_semana', diasSelecionados.join(', '));
 
   // valida quantidade
   const quantidade = Number(formData.get('quantidade'));
@@ -100,8 +171,7 @@ document.getElementById('formDoacao').addEventListener('submit', async (e) => {
   }
 
   // valida horário
-  const horario = formData.get('horarios');
-  if (!horario) {
+  if (!formData.get('horarios')) {
     Swal.fire({
       icon: 'warning',
       title: 'Horário obrigatório',
@@ -111,9 +181,8 @@ document.getElementById('formDoacao').addEventListener('submit', async (e) => {
     return;
   }
 
-  // valida imagem
-  const imagem = inputImagem.files[0];
-  if (!imagem) {
+  // imagem obrigatória apenas ao CRIAR
+  if (!idEdicao && !inputImagem.files[0]) {
     Swal.fire({
       icon: 'warning',
       title: 'Imagem obrigatória',
@@ -124,8 +193,11 @@ document.getElementById('formDoacao').addEventListener('submit', async (e) => {
   }
 
   try {
-    const res = await fetch('/doacoes', {
-      method: 'POST',
+    const url = idEdicao ? `/doacoes/${idEdicao}` : '/doacoes';
+    const method = idEdicao ? 'PUT' : 'POST';
+
+    const res = await fetch(url, {
+      method,
       body: formData,
       credentials: 'include'
     });
@@ -133,18 +205,17 @@ document.getElementById('formDoacao').addEventListener('submit', async (e) => {
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.erro || 'Erro ao cadastrar doação');
+      throw new Error(data.erro || 'Erro ao salvar');
     }
 
     Swal.fire({
       icon: 'success',
-      title: 'Doação publicada!',
-      text: 'Sua doação foi cadastrada com sucesso.',
+      title: idEdicao ? 'Doação atualizada!' : 'Doação publicada!',
       confirmButtonColor: '#347142'
     });
 
     setTimeout(() => {
-      window.location.href = '/telahome';
+      window.location.href = '/minhas-publicacoes';
     }, 1200);
 
   } catch (err) {
@@ -152,7 +223,7 @@ document.getElementById('formDoacao').addEventListener('submit', async (e) => {
     Swal.fire({
       icon: 'error',
       title: 'Erro',
-      text: 'Erro ao cadastrar doação.',
+      text: 'Erro ao salvar a doação.',
       confirmButtonColor: '#347142'
     });
   }

@@ -11,21 +11,23 @@
 <body>
 
 <header class="topo">
-  <h2>Adicionar Doação</h2>
+  <h2 id="tituloPagina">Adicionar Doação</h2>
+  <span id="badgeEdicao" class="badge-edicao" style="display:none;">
+    modo edição
+  </span>
 </header>
 
 <main class="container">
   <form id="formDoacao" enctype="multipart/form-data">
 
     <!-- nome do material -->
-   <input
-  type="text"
-  name="nome_material"
-  placeholder="Nome do material"
-  required
-  oninput="this.value = this.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '')"
->
-
+    <input
+      type="text"
+      name="nome_material"
+      placeholder="Nome do material"
+      required
+      oninput="this.value = this.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '')"
+    >
 
     <!-- quantidade e tipo -->
     <div class="row">
@@ -47,59 +49,28 @@
       </select>
     </div>
 
-    <!-- dias e horários -->
-<div class="dias-container">
-  <p class="label">Dias disponíveis</p>
+    <!-- dias disponíveis -->
+    <div class="dias-container">
+      <p class="label">Dias disponíveis</p>
 
-  <div class="dias-grid">
-    <label class="dia-item">
-      <input type="checkbox" value="Segunda">
-      <span>Seg</span>
-    </label>
-
-    <label class="dia-item">
-      <input type="checkbox" value="Terça">
-      <span>Ter</span>
-    </label>
-
-    <label class="dia-item">
-      <input type="checkbox" value="Quarta">
-      <span>Qua</span>
-    </label>
-
-    <label class="dia-item">
-      <input type="checkbox" value="Quinta">
-      <span>Qui</span>
-    </label>
-
-    <label class="dia-item">
-      <input type="checkbox" value="Sexta">
-      <span>Sex</span>
-    </label>
-
-    <label class="dia-item">
-      <input type="checkbox" value="Sábado">
-      <span>Sáb</span>
-    </label>
-
-    <label class="dia-item">
-      <input type="checkbox" value="Domingo">
-      <span>Dom</span>
-    </label>
-  </div>
-</div>
-
-
-
-
-    <select name="horarios" required>
-  <option value="">Selecione o horário</option>
-  <option value="07:00 às 12:00">07:00 às 12:00</option>
-  <option value="12:00 às 18:00">12:00 às 18:00</option>
-  <option value="18:00 às 20:00">18:00 às 20:00</option>
-</select>
-
+      <div class="dias-grid">
+        <label class="dia-item"><input type="checkbox" value="Segunda"><span>Seg</span></label>
+        <label class="dia-item"><input type="checkbox" value="Terça"><span>Ter</span></label>
+        <label class="dia-item"><input type="checkbox" value="Quarta"><span>Qua</span></label>
+        <label class="dia-item"><input type="checkbox" value="Quinta"><span>Qui</span></label>
+        <label class="dia-item"><input type="checkbox" value="Sexta"><span>Sex</span></label>
+        <label class="dia-item"><input type="checkbox" value="Sábado"><span>Sáb</span></label>
+        <label class="dia-item"><input type="checkbox" value="Domingo"><span>Dom</span></label>
+      </div>
     </div>
+
+    <!-- horários -->
+    <select name="horarios" required>
+      <option value="">Selecione o horário</option>
+      <option value="07:00 às 12:00">07:00 às 12:00</option>
+      <option value="12:00 às 18:00">12:00 às 18:00</option>
+      <option value="18:00 às 20:00">18:00 às 20:00</option>
+    </select>
 
     <!-- bairro -->
     <select name="bairro_id" id="bairroSelect" required>
@@ -115,8 +86,10 @@
 
     <!-- imagem -->
     <label class="upload-box">
-    <input type="file" name="imagem" accept="image/*" hidden>
-<img id="previewImagem" style="display:none; max-width:100%; border-radius:8px;">
+      <input type="file" name="imagem" accept="image/*" hidden>
+
+      <img id="previewImagem"
+           style="display:none; max-width:180px; max-height:140px; border-radius:8px; margin:auto;">
 
       <div class="upload-content">
         <span>Adicionar imagem</span>
@@ -124,7 +97,7 @@
     </label>
 
     <!-- botões -->
-    <button type="submit" class="btn-publicar">
+    <button type="submit" class="btn-publicar" id="btnSubmitDoacao">
       Publicar Doação
     </button>
 
@@ -161,10 +134,7 @@
   </div>
 </nav>
 
-<!-- sweetalert -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<!-- js da página -->
 <script src="../js/adicionar-doacao.js"></script>
 
 </body>
