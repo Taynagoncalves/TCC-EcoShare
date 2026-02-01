@@ -1,46 +1,91 @@
 async function carregarUsuarios() {
   const tbody = document.getElementById('listaUsuarios');
+
+  if (!tbody) return;
+
   tbody.innerHTML = `
     <tr>
-      <td colspan="6" style="text-align:center">Carregando usuários...</td>
+      <td colspan="6" style="text-align:center">
+        Carregando usuários...
+      </td>
     </tr>
   `;
 
-  const res = await fetch('/api/admin/usuarios');
-  const usuarios = await res.json();
+  try {
+    const res = await fetch('/usuarios/admin', {
+      credentials: 'include'
+    });
 
-  tbody.innerHTML = '';
+    if (!res.ok) throw new Error('Erro ao buscar usuários');
 
-  usuarios.forEach(u => {
-    const tr = document.createElement('tr');
+    const usuarios = await res.json();
+    tbody.innerHTML = '';
 
-    tr.innerHTML = `
-      <td>${u.nome}</td>
-      <td>${u.email}</td>
-      <td>${u.tipo}</td>
-      <td>${u.pontos ?? 0}</td>
-      <td>
-        <span class="badge ${u.status}">
-          ${u.status}
-        </span>
-      </td>
-      <td class="actions">
-        <button class="btn-status" onclick="confirmarStatus(${u.id}, '${u.status}')">
-          ${u.status === 'ativo' ? 'Bloquear' : 'Ativar'}
-        </button>
+    if (!usuarios || usuarios.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align:center">
+            Nenhum usuário encontrado.
+          </td>
+        </tr>
+      `;
+      return;
+    }
 
-        <button class="btn-tipo" onclick="confirmarTipo(${u.id}, '${u.tipo}')">
-          ${u.tipo === 'admin' ? 'Remover Admin' : 'Tornar Admin'}
-        </button>
-      </td>
+    usuarios.forEach(u => {
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${u.nome}</td>
+        <td>${u.email}</td>
+        <td>${u.tipo}</td>
+        <td>${u.pontos ?? 0}</td>
+        <td>
+          <span class="badge ${u.status}">
+            ${u.status}
+          </span>
+        </td>
+        <td class="actions">
+          <button
+            class="btn-status"
+            onclick="confirmarStatus(${u.id}, '${u.status}')"
+          >
+            ${u.status === 'ativo' ? 'Bloquear' : 'Ativar'}
+          </button>
+
+          <button
+            class="btn-tipo"
+            onclick="confirmarTipo(${u.id}, '${u.tipo}')"
+          >
+            ${u.tipo === 'admin' ? 'Remover Admin' : 'Tornar Admin'}
+          </button>
+        </td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+
+  } catch (err) {
+    console.error(err);
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align:center; color:red">
+          Erro ao carregar usuários
+        </td>
+      </tr>
     `;
 
-    tbody.appendChild(tr);
-  });
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Erro ao carregar usuários',
+      confirmButtonColor: '#347142'
+    });
+  }
 }
 
 /* =========================
-   ALERTA — STATUS
+   ALTERAR STATUS
 ========================= */
 function confirmarStatus(id, statusAtual) {
   const novoStatus = statusAtual === 'ativo' ? 'bloqueado' : 'ativo';
@@ -59,28 +104,43 @@ function confirmarStatus(id, statusAtual) {
     confirmButtonText: 'Confirmar',
     cancelButtonText: 'Cancelar'
   }).then(async (result) => {
-    if (result.isConfirmed) {
-      await fetch(`/admin/usuarios/${id}/status`, {
+    if (!result.isConfirmed) return;
+
+    try {
+      const res = await fetch(`/usuarios/admin/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ status: novoStatus })
       });
 
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.erro);
+
       Swal.fire({
         icon: 'success',
-        title: 'Sucesso!',
-        text: 'Status atualizado com sucesso.',
-        timer: 1500,
+        title: 'Status atualizado!',
+        timer: 1400,
         showConfirmButton: false
       });
 
       carregarUsuarios();
+
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Não foi possível atualizar o status',
+        confirmButtonColor: '#347142'
+      });
     }
   });
 }
 
 /* =========================
-   ALERTA — TIPO
+   ALTERAR TIPO
 ========================= */
 function confirmarTipo(id, tipoAtual) {
   const novoTipo = tipoAtual === 'admin' ? 'usuario' : 'admin';
@@ -98,23 +158,42 @@ function confirmarTipo(id, tipoAtual) {
     confirmButtonText: 'Confirmar',
     cancelButtonText: 'Cancelar'
   }).then(async (result) => {
-    if (result.isConfirmed) {
-      await fetch(`/admin/usuarios/${id}/tipo`, {
+    if (!result.isConfirmed) return;
+
+    try {
+      const res = await fetch(`/usuarios/admin/${id}/tipo`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ tipo: novoTipo })
       });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.erro);
 
       Swal.fire({
         icon: 'success',
         title: 'Permissão atualizada!',
-        timer: 1500,
+        timer: 1400,
         showConfirmButton: false
       });
 
       carregarUsuarios();
+
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Não foi possível alterar a permissão',
+        confirmButtonColor: '#347142'
+      });
     }
   });
 }
 
-carregarUsuarios();
+/* =========================
+   INIT
+========================= */
+document.addEventListener('DOMContentLoaded', carregarUsuarios);

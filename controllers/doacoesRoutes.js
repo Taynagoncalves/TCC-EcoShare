@@ -7,6 +7,26 @@ const verificarAutenticacao = require('./verificarAutenticacao');
 const verificarAdmin = require('./verificarAdmin');
 
 /* =========================
+   ROTAS ADMIN (PRIMEIRO)
+========================= */
+
+// listar todas as doações (ADMIN)
+router.get(
+  '/admin',
+  verificarAutenticacao,
+  verificarAdmin,
+  doacoesController.listarTodasAdmin
+);
+
+// remover doação (ADMIN)
+router.delete(
+  '/admin/:id',
+  verificarAutenticacao,
+  verificarAdmin,
+  doacoesController.removerAdmin
+);
+
+/* =========================
    ROTAS DO USUÁRIO
 ========================= */
 
@@ -24,14 +44,14 @@ router.get(
   doacoesController.listarDoacoes
 );
 
-// minhas doações
+// listar minhas doações
 router.get(
   '/minhas-doacoes',
   verificarAutenticacao,
   doacoesController.minhasDoacoes
 );
 
-// buscar para edição (antes do :id)
+// buscar doação para edição
 router.get(
   '/:id/editar',
   verificarAutenticacao,
@@ -46,35 +66,17 @@ router.put(
   doacoesController.editarDoacao
 );
 
-// detalhes
+// detalhes da doação (SEMPRE POR ÚLTIMO)
 router.get(
   '/:id',
   doacoesController.detalhesDoacao
 );
 
-// excluir
+// excluir doação (usuário)
 router.delete(
   '/:id',
   verificarAutenticacao,
   doacoesController.excluirDoacao
-);
-
-/* =========================
-   ROTAS ADMIN
-========================= */
-
-router.get(
-  '/admin',
-  verificarAutenticacao,
-  verificarAdmin,
-  doacoesController.listarTodasAdmin
-);
-
-router.delete(
-  '/admin/:id',
-  verificarAutenticacao,
-  verificarAdmin,
-  doacoesController.removerAdmin
 );
 
 module.exports = router;
