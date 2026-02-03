@@ -351,3 +351,29 @@ exports.historico = async (req, res) => {
     res.status(500).json({ erro: 'erro ao buscar histórico' });
   }
 };
+exports.listarColetasAdmin = async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT
+        sc.id,
+        d.nome_material,
+        d.quantidade,
+        u1.nome AS doador_nome,
+        u2.nome AS solicitante_nome,
+        sc.status
+      FROM solicitacoes_coleta sc
+      JOIN doacoes d ON d.id = sc.doacao_id
+      JOIN usuarios u1 ON u1.id = sc.doador_id
+      JOIN usuarios u2 ON u2.id = sc.solicitante_id
+      ORDER BY sc.id DESC
+    `);
+
+    res.json(rows);
+
+  } catch (err) {
+    console.error('Erro ao listar coletas admin:', err);
+    res.status(500).json({ erro: 'Erro ao listar coletas' });
+  }
+};
+
+

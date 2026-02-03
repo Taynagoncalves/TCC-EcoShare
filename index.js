@@ -154,6 +154,15 @@ app.get(
   }
 );
 
+app.get(
+  '/admin/coletas',
+  verificarAutenticacao,
+  verificarAdmin,
+  (req, res) => {
+    res.sendFile(path.join(__dirname, 'src/html/admin-coletas.html'));
+  }
+);
+
 
 /* rota para obter dados do usuário logado */
 app.get('/usuario-logado', verificarAutenticacao, (req, res) => {

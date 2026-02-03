@@ -1,0 +1,111 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 30px;
+  background: #f5f5f5;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+/* =========================
+   FILTROS
+========================= */
+.filtros {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filtros input,
+.filtros select {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.filtros input:focus,
+.filtros select:focus {
+  outline: none;
+  border-color: #347142;
+}
+
+/* =========================
+   TABELA
+========================= */
+table {
+  width: 100%;
+  background: #fff;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+th {
+  background: #347142;
+  color: #fff;
+}
+
+/* =========================
+   STATUS
+========================= */
+.status {
+  padding: 6px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status.pendente {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.status.andamento {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.status.concluida {
+  background: #e6f4ea;
+  color: #2e7d32;
+}
+
+.status.recusada {
+  background: #fdecea;
+  color: #c62828;
+}
+
+/* =========================
+   BOTÃO
+========================= */
+button {
+  background: #d9534f;
+  border: none;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+@media (max-width: 768px) {
+  .filtros {
+    flex-direction: column;
+  }
+}

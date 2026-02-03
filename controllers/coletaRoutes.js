@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
+
 const verificarAutenticacao = require('./verificarAutenticacao');
+const verificarAdmin = require('./verificarAdmin');
 const coletaController = require('./coletaController');
 
 // solicitar coleta
@@ -57,6 +59,14 @@ router.get(
   '/historico',
   verificarAutenticacao,
   coletaController.historico
+);
+
+// 🔐 ADMIN — LISTAR TODAS AS COLETAS
+router.get(
+  '/admin',
+  verificarAutenticacao,
+  verificarAdmin,
+  coletaController.listarColetasAdmin
 );
 
 module.exports = router;
