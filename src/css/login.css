@@ -6,40 +6,42 @@
 }
 
 body {
-  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 60px; /* controla o quanto sobe */
   background: #ffffff;
 }
 
+
+/* LOGO */
 .top-logo {
-  position: fixed;
-  top: 90px;
-  width: 100%;
+  margin-bottom: -70px;
   text-align: center;
 }
 
 .top-logo img {
-  position: relative;
   width: 160px;
+  max-width: 100%;
 }
 
-
+/* CONTAINER CENTRAL */
 .center-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 360px;
+  width: 100%;
+  max-width: 360px;
   text-align: center;
 }
 
-
+/* TÍTULO */
 .center-container h1 {
   color: #347142;
   font-size: 26px;
-  margin-bottom: 28px;
+  margin-bottom: 15px;
 }
 
-
+/* FORM */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -60,13 +62,13 @@ body {
   border-bottom: 1px solid #347142;
 }
 
-
+/* SENHA */
 .password-group {
   position: relative;
 }
 
 .password-group input {
-  padding: 12px 32px 12px 0;
+  padding-right: 36px;
 }
 
 .password-group img {
@@ -88,6 +90,7 @@ button {
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
+  width: 100%;
 }
 
 button:hover {
@@ -98,19 +101,19 @@ button.secondary {
   margin-top: 10px;
 }
 
+/* ESQUECI SENHA */
 .forgot-password {
   margin-top: 15px;
   margin-bottom: 25px;
-  text-align: center;
   font-size: 14px;
-  color: rgba(46, 125, 50, 0.7); /* verde transparente */
+  color: rgba(46, 125, 50, 0.7);
   cursor: pointer;
   text-decoration: underline;
   transition: color 0.3s ease;
 }
 
 .forgot-password:hover {
-  color: rgba(46, 125, 50, 1); /* verde forte no hover */
+  color: rgba(46, 125, 50, 1);
 }
 
 /* TEXTO FINAL */
@@ -121,13 +124,14 @@ button.secondary {
   line-height: 1.4;
 }
 
+/* MOBILE */
 @media (max-width: 480px) {
   .top-logo img {
     width: 120px;
   }
 
-  .center-container {
-    width: 90%;
+  .center-container h1 {
+    font-size: 22px;
   }
 
   .login-form input {

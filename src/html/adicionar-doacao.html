@@ -20,39 +20,40 @@
 <main class="container">
   <form id="formDoacao" enctype="multipart/form-data">
 
-    <!-- nome do material -->
-    <input
-      type="text"
-      name="nome_material"
-      placeholder="Nome do material"
-      required
-      oninput="this.value = this.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '')"
-    >
-
-    <!-- quantidade e tipo -->
-    <div class="row">
+    <!-- Nome -->
+    <div class="field">
+      <label>Nome do material</label>
       <input
-        type="number"
-        name="quantidade"
-        placeholder="Quantidade"
+        type="text"
+        name="nome_material"
         required
-        min="1"
+        oninput="this.value = this.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '')"
       >
-
-      <select name="tipo_material" required>
-        <option value="">Tipo de material</option>
-        <option value="metal">Metal</option>
-        <option value="papel">Papel</option>
-        <option value="plastico">Plástico</option>
-        <option value="vidro">Vidro</option>
-        <option value="outros">Outros</option>
-      </select>
     </div>
 
-    <!-- dias disponíveis -->
+    <!-- Quantidade e tipo -->
+    <div class="row">
+      <div class="field">
+        <label>Quantidade</label>
+        <input type="number" name="quantidade" min="1" required>
+      </div>
+
+      <div class="field">
+        <label>Tipo de material</label>
+        <select name="tipo_material" required>
+          <option value="">Selecione</option>
+          <option value="metal">Metal</option>
+          <option value="papel">Papel</option>
+          <option value="plastico">Plástico</option>
+          <option value="vidro">Vidro</option>
+          <option value="outros">Outros</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Dias -->
     <div class="dias-container">
       <p class="label">Dias disponíveis</p>
-
       <div class="dias-grid">
         <label class="dia-item"><input type="checkbox" value="Segunda"><span>Seg</span></label>
         <label class="dia-item"><input type="checkbox" value="Terça"><span>Ter</span></label>
@@ -64,48 +65,48 @@
       </div>
     </div>
 
-    <!-- horários -->
-    <select name="horarios" required>
-      <option value="">Selecione o horário</option>
-      <option value="07:00 às 12:00">07:00 às 12:00</option>
-      <option value="12:00 às 18:00">12:00 às 18:00</option>
-      <option value="18:00 às 20:00">18:00 às 20:00</option>
-    </select>
+    <!-- Horários -->
+    <div class="field">
+      <label>Horário disponível</label>
+      <select name="horarios" required>
+        <option value="">Selecione</option>
+        <option value="07:00 às 12:00">07:00 às 12:00</option>
+        <option value="12:00 às 18:00">12:00 às 18:00</option>
+        <option value="18:00 às 20:00">18:00 às 20:00</option>
+      </select>
+    </div>
 
-    <!-- bairro -->
-    <select name="bairro_id" id="bairroSelect" required>
-      <option value="">Selecione seu bairro</option>
-    </select>
+    <!-- Bairro -->
+    <div class="field">
+      <label>Bairro</label>
+      <select name="bairro_id" id="bairroSelect" required>
+        <option value="">Selecione seu bairro</option>
+      </select>
+    </div>
 
-    <!-- descrição -->
-    <textarea
-      name="descricao"
-      placeholder="Descrição (opcional)"
-      rows="4"
-    ></textarea>
+    <!-- Descrição -->
+    <div class="field">
+      <label>Descrição (opcional)</label>
+      <textarea name="descricao" rows="3"></textarea>
+    </div>
 
-    <!-- imagem -->
+    <!-- Imagem -->
     <label class="upload-box">
       <input type="file" name="imagem" accept="image/*" hidden>
 
-      <img id="previewImagem"
-           style="display:none; max-width:180px; max-height:140px; border-radius:8px; margin:auto;">
+      <img id="previewImagem">
 
       <div class="upload-content">
         <span>Adicionar imagem</span>
       </div>
     </label>
 
-    <!-- botões -->
+    <!-- Botões -->
     <button type="submit" class="btn-publicar" id="btnSubmitDoacao">
       Publicar Doação
     </button>
 
-    <button
-      type="button"
-      class="btn-sair"
-      onclick="window.location.href='/telahome'"
-    >
+    <button type="button" class="btn-sair" onclick="window.location.href='/telahome'">
       Cancelar
     </button>
 
@@ -117,17 +118,14 @@
     <img src="../icons/home.png">
     <span>Home</span>
   </div>
-
   <div class="menu-item" onclick="location.href='/resgate'">
     <img src="../icons/cupom.png">
     <span>Resgate</span>
   </div>
-
   <div class="menu-item" onclick="location.href='/perfil'">
     <img src="../icons/user.png">
     <span>Perfil</span>
   </div>
-
   <div class="menu-item" onclick="location.href='/configuracoes'">
     <img src="../icons/config.png">
     <span>Configurações</span>

@@ -1,6 +1,4 @@
-/* =========================
-   RESET / BASE
-========================= */
+
 * {
   margin: 0;
   padding: 0;
@@ -13,9 +11,6 @@ body {
   padding-bottom: 80px; /* espaço para menu inferior */
 }
 
-/* =========================
-   TOPO
-========================= */
 .topo {
   background: #fff;
   padding: 12px 20px;
@@ -26,7 +21,7 @@ body {
 }
 
 .logo {
-  width: 180px;
+  width: 160px;
 }
 
 .search {
@@ -41,9 +36,6 @@ body {
   width: 30px;
 }
 
-/* =========================
-   FILTROS
-========================= */
 .filtros {
   background: #fff;
   padding: 10px 20px;

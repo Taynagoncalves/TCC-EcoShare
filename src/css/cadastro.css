@@ -7,36 +7,40 @@
 
 body {
   min-height: 100vh;
-  background: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  padding-top: 40px; /* controla o quanto sobe */
+  background: #ffffff;
 }
 
-/* logo */
+
+/* LOGO */
 .top-logo {
-  margin-top: -10px;
-  margin-bottom: 5px;
+  margin-bottom: -80px;
+  text-align: center;
 }
 
 .top-logo img {
-  width: 200px;
+  width: 180px;
+  max-width: 100%;
 }
 
+/* CONTAINER CENTRAL */
 .center-container {
   width: 100%;
   max-width: 420px;
-  margin-top: -70px;
   padding: 0 20px;
   text-align: center;
 }
 
+/* TÍTULO */
 .center-container h2 {
   color: #2e7d32;
-  margin-bottom: 15px;
-  margin-top: 1px;    
+  margin-bottom: 18px;
+  font-size: 24px;
 }
-
 
 /* FORMULÁRIO */
 .cadastro-form {
@@ -53,13 +57,14 @@ body {
   border-bottom: 1px solid #ccc;
   font-size: 14px;
   outline: none;
+  background: transparent;
 }
 
 .cadastro-form input:focus {
   border-bottom-color: #2e7d32;
 }
 
-/* GRUPO DE SENHA COM OLHO */
+/* GRUPO DE SENHA */
 .password-group {
   display: flex;
   align-items: center;
@@ -86,6 +91,7 @@ body {
   border-radius: 6px;
   font-size: 15px;
   cursor: pointer;
+  width: 100%;
 }
 
 .cadastro-form button:hover {
@@ -97,4 +103,27 @@ body {
   margin-top: 25px;
   font-size: 13px;
   color: #2e7d32;
+}
+
+/* 📱 MOBILE */
+@media (max-width: 480px) {
+  .top-logo img {
+    width: 150px;
+  }
+
+  .center-container h2 {
+    font-size: 20px;
+  }
+
+  .cadastro-form input {
+    font-size: 16px;
+  }
+
+  .cadastro-form button {
+    font-size: 16px;
+  }
+
+  .footer-text {
+    font-size: 12px;
+  }
 }

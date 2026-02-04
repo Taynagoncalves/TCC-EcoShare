@@ -1,71 +1,120 @@
+/* RESET */
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* FUNDO */
+body {
+  margin: 0;
+  background: #f5f7f6;
+  padding-bottom: 110px;
+}
+
+.logo-topo {
+  width: 100%;
+  height: 90px;              
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.logo-topo img {
+  height: 120px;             
+  width: auto;
+}
+
+/* CONTAINER PRINCIPAL */
 .perfil-container {
-  max-width: 360px;
-  margin: 30px auto 80px;
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
+  max-width: 420px;        /* MAIS LARGO */
+  margin: 20px auto;
+  padding: 24px 20px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   text-align: center;
 }
 
+/* TÍTULO */
 .perfil-container h2 {
+  margin: 0 0 16px;
   color: #0b6623;
+  font-size: 20px;
 }
 
+/* AVATAR */
 .avatar {
   position: relative;
-  margin: 20px auto;
-  width: 120px;
+  margin: 20px auto 10px;
+  width: 130px;
 }
 
 .avatar-img {
-  width: 120px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
   border: 4px solid #0b6623;
+  background: #f1f1f1;
 }
 
+/* BOTÃO EDITAR */
 .editar {
   position: absolute;
-  bottom: 5px;
-  right: 5px;
+  bottom: 6px;
+  right: 6px;
   background: #0b6623;
   color: #fff;
-  padding: 4px 6px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
 }
 
+/* PONTOS */
 .pontos {
-  background: #0b6623;
+  display: inline-block;
+  margin: 12px auto 20px;
+  background: linear-gradient(135deg, #0b6623, #2e7d32);
   color: #fff;
-  padding: 8px;
-  border-radius: 8px;
-  margin-bottom: 15px;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
 }
 
+/* DADOS */
 .dados {
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 10px;
 }
 
+/* INPUTS COMO INFO */
 .dados input {
   width: 100%;
-  padding: 12px;
+  padding: 12px 14px;
   font-size: 14px;
-  border-radius: 10px;
-  border: 1px solid #d0d0d0;
-  background-color: #f7f7f7;
+  border-radius: 12px;
+  border: none;
+  background: #f2f4f3;
   color: #333;
-  outline: none;
 }
 
+/* DESABILITADO (VISUAL LIMPO) */
 .dados input:disabled {
   opacity: 1;
-  color: #333;
   cursor: default;
 }
 
-/* 🔹 linha dupla (telefone + data) */
+/* LINHA DUPLA */
 .linha-dupla {
   display: flex;
   gap: 10px;
@@ -73,4 +122,21 @@
 
 .linha-dupla input {
   flex: 1;
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .perfil-container {
+    margin: 16px 12px;
+    padding: 20px;
+  }
+
+  .avatar {
+    width: 110px;
+  }
+
+  .avatar-img {
+    width: 110px;
+    height: 110px;
+  }
 }

@@ -1,6 +1,4 @@
--- =========================
--- DATABASE
--- =========================
+
 DROP DATABASE IF EXISTS ecoshare;
 CREATE DATABASE ecoshare
 CHARACTER SET utf8mb4
@@ -8,9 +6,6 @@ COLLATE utf8mb4_general_ci;
 
 USE ecoshare;
 
--- =========================
--- USUÁRIOS
--- =========================
 CREATE TABLE usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL,
@@ -31,9 +26,7 @@ CREATE TABLE usuarios (
   criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- =========================
--- BAIRROS
--- =========================
+
 CREATE TABLE bairros (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL
@@ -56,9 +49,7 @@ INSERT INTO bairros (nome) VALUES
 ('Vila A'),('Vila B'),('Vila C'),('Vila D'),
 ('Vila Tolentino'),('West Side');
 
--- =========================
--- DOAÇÕES
--- =========================
+
 CREATE TABLE doacoes (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome_material VARCHAR(100) NOT NULL,
@@ -77,9 +68,7 @@ CREATE TABLE doacoes (
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 ) ENGINE=InnoDB;
 
--- =========================
--- SOLICITAÇÕES DE COLETA
--- =========================
+
 CREATE TABLE solicitacoes_coleta (
   id INT AUTO_INCREMENT PRIMARY KEY,
   doacao_id INT NOT NULL,
@@ -93,9 +82,7 @@ CREATE TABLE solicitacoes_coleta (
   FOREIGN KEY (doador_id) REFERENCES usuarios(id)
 ) ENGINE=InnoDB;
 
--- =========================
--- LOJAS
--- =========================
+
 CREATE TABLE lojas (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL,
@@ -105,9 +92,7 @@ CREATE TABLE lojas (
   criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- =========================
--- RESGATES
--- =========================
+
 CREATE TABLE resgates (
   id INT AUTO_INCREMENT PRIMARY KEY,
   usuario_id INT NOT NULL,
@@ -121,9 +106,7 @@ CREATE TABLE resgates (
   FOREIGN KEY (loja_id) REFERENCES lojas(id)
 ) ENGINE=InnoDB;
 
--- =========================
--- CUPONS RESGATADOS
--- =========================
+
 CREATE TABLE cupons_resgatados (
   id INT AUTO_INCREMENT PRIMARY KEY,
   usuario_id INT NOT NULL,
@@ -136,9 +119,7 @@ CREATE TABLE cupons_resgatados (
   FOREIGN KEY (loja_id) REFERENCES lojas(id)
 ) ENGINE=InnoDB;
 
--- =========================
--- NOTIFICAÇÕES
--- =========================
+
 CREATE TABLE notificacoes (
   id INT AUTO_INCREMENT PRIMARY KEY,
   usuario_id INT NOT NULL,
