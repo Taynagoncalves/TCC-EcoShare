@@ -1,0 +1,48 @@
+.menu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  background: #ffffff;
+  border-top: 1px solid #e0e0e0;
+  z-index: 1000;
+}
+
+/* item */
+.menu-item {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  color: #777;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  transition: color 0.2s ease;
+}
+
+.menu-item img {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 4px;
+}
+
+/* ativo */
+.menu-item.ativo {
+  color: #347142;
+  font-weight: 600;
+}
+
+/* hover */
+.menu-item:hover {
+  color: #347142;
+}

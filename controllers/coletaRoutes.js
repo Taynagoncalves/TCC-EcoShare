@@ -12,21 +12,21 @@ router.post(
   coletaController.solicitarColeta
 );
 
-// solicitações recebidas
+// solicitações recebidas (doador)
 router.get(
   '/recebidas',
   verificarAutenticacao,
   coletaController.listarSolicitacoes
 );
 
-// confirmar coleta
+// confirmar coleta (doador)
 router.put(
   '/:id/confirmar',
   verificarAutenticacao,
   coletaController.confirmarColeta
 );
 
-// recusar coleta
+// recusar coleta (doador)
 router.put(
   '/:id/recusar',
   verificarAutenticacao,
@@ -40,18 +40,25 @@ router.get(
   coletaController.coletasEmAndamento
 );
 
-// concluir coleta
+// concluir coleta (doador → ganha pontos)
 router.put(
   '/concluir/:id',
   verificarAutenticacao,
   coletaController.concluirColeta
 );
 
-// cancelar coleta
+// ❌ cancelar solicitação pendente (SOLICITANTE)
 router.put(
   '/cancelar/:id',
   verificarAutenticacao,
   coletaController.cancelarColeta
+);
+
+// cancelar coleta em andamento (DOADOR — sem pontos)
+router.put(
+  '/cancelar-andamento/:id',
+  verificarAutenticacao,
+  coletaController.cancelarColetaEmAndamento
 );
 
 // histórico
@@ -61,7 +68,7 @@ router.get(
   coletaController.historico
 );
 
-// 🔐 ADMIN — LISTAR TODAS AS COLETAS
+// admin
 router.get(
   '/admin',
   verificarAutenticacao,

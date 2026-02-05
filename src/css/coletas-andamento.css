@@ -1,6 +1,4 @@
-/* =========================
-   RESET E BASE
-========================= */
+
 * {
   margin: 0;
   padding: 0;
@@ -14,9 +12,7 @@ body {
   min-height: 100vh;
 }
 
-/* =========================
-   TOPO
-========================= */
+
 .topo {
   display: flex;
   justify-content: space-between;
@@ -32,9 +28,7 @@ body {
   color: #347142;
 }
 
-/* =========================
-   NOTIFICAÇÃO
-========================= */
+
 .notificacao {
   position: relative;
   font-size: 22px;
@@ -54,9 +48,7 @@ body {
   border-radius: 50%;
 }
 
-/* =========================
-   LISTA (MOBILE FIRST)
-========================= */
+
 .lista-coletas {
   display: grid;
   grid-template-columns: 1fr;
@@ -64,9 +56,6 @@ body {
   padding: 16px;
 }
 
-/* =========================
-   CARD
-========================= */
 .card.coleta {
   width: 100%;
   background-color: #ffffff;
@@ -153,14 +142,45 @@ body {
 
 /* 🟢 WHATSAPP (IGUAL AOS OUTROS) */
 .btn.whatsapp {
-  background-color: #347142;
+  background-color: #30cb55;
   color: #ffffff;
 }
 
-/* 🔴 CANCELAR */
 .btn.vermelho {
+  background-color: #fff;
+  color: #d32f2f;
+  border: 2px solid #d32f2f;
+}
+
+.btn.vermelho:hover {
   background-color: #d32f2f;
-  color: #ffffff;
+  color: #fff;
+}
+
+
+.status {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  width: fit-content;
+}
+
+.status.andamento {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status.concluida {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status.cancelada {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
 /* =========================

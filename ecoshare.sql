@@ -129,3 +129,13 @@ CREATE TABLE notificacoes (
   criada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 ) ENGINE=InnoDB;
+
+
+ALTER TABLE solicitacoes_coleta
+MODIFY status ENUM(
+  'pendente',
+  'confirmada',
+  'recusada',
+  'cancelada',
+  'concluida'
+) DEFAULT 'pendente';

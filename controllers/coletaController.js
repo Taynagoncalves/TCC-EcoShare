@@ -26,14 +26,11 @@ exports.solicitarColeta = async (req, res) => {
       });
     }
 
-    await db.query(
-      `
+    await db.query(`
       insert into solicitacoes_coleta
       (doacao_id, solicitante_id, doador_id)
       values (?, ?, ?)
-      `,
-      [doacao_id, solicitante_id, doacao.usuario_id]
-    );
+    `, [doacao_id, solicitante_id, doacao.usuario_id]);
 
     await criarNotificacao(
       doacao.usuario_id,
@@ -50,14 +47,12 @@ exports.solicitarColeta = async (req, res) => {
       });
     }
 
-    console.error('erro solicitar coleta:', err);
-    res.status(500).json({
-      erro: 'erro interno ao solicitar coleta'
-    });
+    console.error(err);
+    res.status(500).json({ erro: 'erro ao solicitar coleta' });
   }
 };
 
-/* listar solicitações recebidas (doador) */
+/* listar solicitações recebidas */
 exports.listarSolicitacoes = async (req, res) => {
   try {
     const doador_id = req.usuario.id;
@@ -65,7 +60,6 @@ exports.listarSolicitacoes = async (req, res) => {
     const [rows] = await db.query(`
       select
         sc.id as solicitacao_id,
-        sc.doacao_id,
         sc.status,
         d.nome_material,
         d.quantidade,
@@ -81,7 +75,7 @@ exports.listarSolicitacoes = async (req, res) => {
     res.json(rows);
 
   } catch (err) {
-    console.error('erro listar solicitacoes:', err);
+    console.error(err);
     res.status(500).json({ erro: 'erro ao listar solicitações' });
   }
 };
@@ -89,40 +83,31 @@ exports.listarSolicitacoes = async (req, res) => {
 /* confirmar coleta */
 exports.confirmarColeta = async (req, res) => {
   try {
-    const solicitacaoId = Number(req.params.id);
+    const id = Number(req.params.id);
     const usuarioId = req.usuario.id;
 
-    if (!solicitacaoId) {
-      return res.status(400).json({ erro: 'id inválido' });
-    }
-
-    const [[solicitacao]] = await db.query(`
+    const [[s]] = await db.query(`
       select solicitante_id, doador_id
       from solicitacoes_coleta
       where id = ?
-    `, [solicitacaoId]);
+    `, [id]);
 
-    if (!solicitacao) {
-      return res.status(404).json({ erro: 'solicitação não encontrada' });
-    }
+    if (!s) return res.status(404).json({ erro: 'solicitação não encontrada' });
 
-    if (solicitacao.doador_id !== usuarioId) {
+    if (s.doador_id !== usuarioId) {
       return res.status(403).json({
-        erro: 'apenas o doador pode confirmar a coleta'
+        erro: 'apenas o doador pode confirmar'
       });
     }
 
-    await db.query(
-      `
+    await db.query(`
       update solicitacoes_coleta
       set status = 'confirmada'
       where id = ?
-      `,
-      [solicitacaoId]
-    );
+    `, [id]);
 
     await criarNotificacao(
-      solicitacao.solicitante_id,
+      s.solicitante_id,
       'andamento',
       'sua solicitação foi aceita. a coleta está em andamento.'
     );
@@ -130,7 +115,7 @@ exports.confirmarColeta = async (req, res) => {
     res.json({ sucesso: true });
 
   } catch (err) {
-    console.error('erro ao confirmar coleta:', err);
+    console.error(err);
     res.status(500).json({ erro: 'erro ao confirmar coleta' });
   }
 };
@@ -138,36 +123,31 @@ exports.confirmarColeta = async (req, res) => {
 /* recusar coleta */
 exports.recusarColeta = async (req, res) => {
   try {
-    const solicitacaoId = Number(req.params.id);
+    const id = Number(req.params.id);
     const usuarioId = req.usuario.id;
 
-    const [[solicitacao]] = await db.query(`
+    const [[s]] = await db.query(`
       select solicitante_id, doador_id
       from solicitacoes_coleta
       where id = ?
-    `, [solicitacaoId]);
+    `, [id]);
 
-    if (!solicitacao) {
-      return res.status(404).json({ erro: 'solicitação não encontrada' });
-    }
+    if (!s) return res.status(404).json({ erro: 'solicitação não encontrada' });
 
-    if (solicitacao.doador_id !== usuarioId) {
+    if (s.doador_id !== usuarioId) {
       return res.status(403).json({
-        erro: 'apenas o doador pode recusar a coleta'
+        erro: 'apenas o doador pode recusar'
       });
     }
 
-    await db.query(
-      `
+    await db.query(`
       update solicitacoes_coleta
       set status = 'recusada'
       where id = ?
-      `,
-      [solicitacaoId]
-    );
+    `, [id]);
 
     await criarNotificacao(
-      solicitacao.solicitante_id,
+      s.solicitante_id,
       'recusada',
       'sua solicitação de coleta foi recusada.'
     );
@@ -175,7 +155,7 @@ exports.recusarColeta = async (req, res) => {
     res.json({ sucesso: true });
 
   } catch (err) {
-    console.error('erro ao recusar coleta:', err);
+    console.error(err);
     res.status(500).json({ erro: 'erro ao recusar coleta' });
   }
 };
@@ -211,7 +191,7 @@ exports.coletasEmAndamento = async (req, res) => {
     res.json(rows);
 
   } catch (err) {
-    console.error('erro coletas andamento:', err);
+    console.error(err);
     res.status(500).json({ erro: 'erro ao buscar coletas em andamento' });
   }
 };
@@ -219,111 +199,152 @@ exports.coletasEmAndamento = async (req, res) => {
 /* concluir coleta */
 exports.concluirColeta = async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = Number(req.params.id);
     const usuarioId = req.usuario.id;
 
-    const [[solicitacao]] = await db.query(`
+    const [[s]] = await db.query(`
       select doador_id, doacao_id
       from solicitacoes_coleta
       where id = ?
     `, [id]);
 
-    if (!solicitacao) {
-      return res.status(404).json({ erro: 'solicitação não encontrada' });
-    }
+    if (!s) return res.status(404).json({ erro: 'solicitação não encontrada' });
 
-    if (solicitacao.doador_id !== usuarioId) {
+    if (s.doador_id !== usuarioId) {
       return res.status(403).json({
-        erro: 'apenas o doador pode concluir a coleta'
+        erro: 'apenas o doador pode concluir'
       });
     }
 
     const pontos = 20;
 
-    await db.query(
-      `
+    await db.query(`
       update solicitacoes_coleta
       set status = 'concluida'
       where id = ?
-      `,
-      [id]
-    );
+    `, [id]);
 
-    await db.query(
-      `
+    await db.query(`
       update usuarios
-      set pontos = coalesce(pontos, 0) + ?
+      set pontos = coalesce(pontos,0) + ?
       where id = ?
-      `,
-      [pontos, solicitacao.doador_id]
-    );
+    `, [pontos, s.doador_id]);
 
-    await db.query(
-      `
+    await db.query(`
       update doacoes
       set status = 'concluido'
       where id = ?
-      `,
-      [solicitacao.doacao_id]
-    );
+    `, [s.doacao_id]);
 
-    res.json({
-      sucesso: true,
-      pontos
-    });
+    res.json({ sucesso: true, pontos });
 
   } catch (err) {
-    console.error('erro ao concluir coleta:', err);
+    console.error(err);
     res.status(500).json({ erro: 'erro ao concluir coleta' });
   }
 };
 
-/* cancelar coleta */
+/* cancelar solicitação pendente (SOLICITANTE) */
 exports.cancelarColeta = async (req, res) => {
   try {
-    const solicitacaoId = Number(req.params.id);
+    const id = Number(req.params.id);
     const usuarioId = req.usuario.id;
 
-    const [[solicitacao]] = await db.query(`
+    const [[s]] = await db.query(`
       select solicitante_id, status
       from solicitacoes_coleta
       where id = ?
-    `, [solicitacaoId]);
+    `, [id]);
 
-    if (!solicitacao) {
-      return res.status(404).json({ erro: 'solicitação não encontrada' });
-    }
+    if (!s) return res.status(404).json({ erro: 'solicitação não encontrada' });
 
-    if (solicitacao.solicitante_id !== usuarioId) {
+    if (s.solicitante_id !== usuarioId) {
       return res.status(403).json({
         erro: 'apenas o solicitante pode cancelar'
       });
     }
 
-    if (solicitacao.status !== 'pendente') {
+    if (s.status !== 'pendente') {
       return res.status(400).json({
-        erro: 'só é possível cancelar solicitações pendentes'
+        erro: 'somente solicitações pendentes podem ser canceladas'
       });
     }
 
-    await db.query(
-      `
+    await db.query(`
       update solicitacoes_coleta
       set status = 'cancelada'
       where id = ?
-      `,
-      [solicitacaoId]
+    `, [id]);
+
+    res.json({ sucesso: true });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'erro ao cancelar solicitação' });
+  }
+};
+
+/* cancelar coleta em andamento (DOADOR — sem pontos) */
+exports.cancelarColetaEmAndamento = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const usuarioId = req.usuario.id;
+
+    const [[s]] = await db.query(`
+      select doador_id, solicitante_id, status, doacao_id
+      from solicitacoes_coleta
+      where id = ?
+    `, [id]);
+
+    if (!s) {
+      return res.status(404).json({ erro: 'coleta não encontrada' });
+    }
+
+    if (s.doador_id !== usuarioId) {
+      return res.status(403).json({
+        erro: 'apenas o doador pode cancelar a coleta'
+      });
+    }
+
+    if (s.status !== 'confirmada') {
+      return res.status(400).json({
+        erro: 'apenas coletas em andamento podem ser canceladas'
+      });
+    }
+
+    // cancela a coleta
+    await db.query(`
+      update solicitacoes_coleta
+      set status = 'cancelada'
+      where id = ?
+    `, [id]);
+
+    // 🔁 libera a doação novamente
+    await db.query(`
+      update doacoes
+      set status = 'ativo'
+      where id = ?
+    `, [s.doacao_id]);
+
+    // notifica o solicitante
+    await criarNotificacao(
+      s.solicitante_id,
+      'cancelada',
+      'a coleta foi cancelada pelo doador.'
     );
 
     res.json({ sucesso: true });
 
   } catch (err) {
-    console.error('erro ao cancelar coleta:', err);
-    res.status(500).json({ erro: 'erro ao cancelar coleta' });
+    console.error('❌ erro ao cancelar coleta em andamento:', err);
+    res.status(500).json({
+      erro: 'erro interno ao cancelar coleta'
+    });
   }
 };
 
-/* historico de coletas */
+
+/* histórico */
 exports.historico = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
@@ -334,9 +355,7 @@ exports.historico = async (req, res) => {
         sc.status,
         d.nome_material,
         d.quantidade,
-        d.imagem,
-        sc.doador_id,
-        sc.solicitante_id
+        d.imagem
       from solicitacoes_coleta sc
       join doacoes d on d.id = sc.doacao_id
       where sc.status = 'concluida'
@@ -347,33 +366,33 @@ exports.historico = async (req, res) => {
     res.json(rows);
 
   } catch (err) {
-    console.error('erro historico coleta:', err);
+    console.error(err);
     res.status(500).json({ erro: 'erro ao buscar histórico' });
   }
 };
+
+/* admin */
 exports.listarColetasAdmin = async (req, res) => {
   try {
     const [rows] = await db.query(`
-      SELECT
+      select
         sc.id,
         d.nome_material,
         d.quantidade,
-        u1.nome AS doador_nome,
-        u2.nome AS solicitante_nome,
+        u1.nome as doador_nome,
+        u2.nome as solicitante_nome,
         sc.status
-      FROM solicitacoes_coleta sc
-      JOIN doacoes d ON d.id = sc.doacao_id
-      JOIN usuarios u1 ON u1.id = sc.doador_id
-      JOIN usuarios u2 ON u2.id = sc.solicitante_id
-      ORDER BY sc.id DESC
+      from solicitacoes_coleta sc
+      join doacoes d on d.id = sc.doacao_id
+      join usuarios u1 on u1.id = sc.doador_id
+      join usuarios u2 on u2.id = sc.solicitante_id
+      order by sc.id desc
     `);
 
     res.json(rows);
 
   } catch (err) {
-    console.error('Erro ao listar coletas admin:', err);
-    res.status(500).json({ erro: 'Erro ao listar coletas' });
+    console.error(err);
+    res.status(500).json({ erro: 'erro ao listar coletas' });
   }
 };
-
-

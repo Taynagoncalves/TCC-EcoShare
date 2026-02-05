@@ -1,6 +1,7 @@
 // carrega automaticamente ao abrir a página
 document.addEventListener('DOMContentLoaded', carregarColetas);
 
+
 async function carregarColetas() {
   try {
     const res = await fetch('/coletas/andamento', {
@@ -39,7 +40,7 @@ async function carregarColetas() {
   }
 }
 
-// card do doador
+//CARD DOADOR
 function cardDoador(c) {
   const telefone = limparTelefone(c.solicitante_telefone);
 
@@ -51,38 +52,49 @@ function cardDoador(c) {
       >
 
       <div class="info">
-        <span class="status">Em andamento</span>
-        <h4>${c.nome_material} - ${c.quantidade} unidades</h4>
+        <!-- STATUS -->
+        <span class="status andamento">🟡 Coleta em andamento</span>
 
-        <p><strong>Quem vai coletar:</strong> ${c.solicitante_nome}</p>
+        <!-- TÍTULO -->
+        <h4>${c.nome_material} — ${c.quantidade} unidades</h4>
 
-        <a 
-          href="https://wa.me/55${telefone}?text=${mensagemWhatsApp('doador', c)}"
-          target="_blank"
-          class="btn whatsapp"
-        >
-          Falar com o Coletor
-        </a>
+        <!-- INFORMAÇÃO -->
+        <p>
+          <strong>Quem vai coletar:</strong> ${c.solicitante_nome}
+        </p>
 
-        <button 
-          class="btn verde"
-          onclick="concluirColeta(${c.solicitacao_id})"
-        >
-          Concluir Coleta
-        </button>
+        <!-- AÇÕES -->
+        <div class="acoes">
+          <a 
+            href="https://wa.me/55${telefone}?text=${mensagemWhatsApp('doador', c)}"
+            target="_blank"
+            class="btn whatsapp"
+          >
+             Falar com o Coletor
+          </a>
 
-        <button 
-          class="btn vermelho"
-          onclick="cancelarColeta(${c.solicitacao_id})"
-        >
-          Cancelar Solicitação
-        </button>
+          <button 
+            class="btn verde"
+            onclick="concluirColeta(${c.solicitacao_id})"
+          >
+           Concluir coleta
+          </button>
+
+          <button 
+            class="btn vermelho"
+            onclick="cancelarColeta(${c.solicitacao_id})"
+          >
+            Cancelar coleta (sem pontos)
+          </button>
+        </div>
       </div>
     </div>
   `;
 }
 
-// card do solicitante
+
+// CARD — SOLICITANTE
+
 function cardSolicitante(c) {
   const telefone = limparTelefone(c.doador_telefone);
 
@@ -95,6 +107,7 @@ function cardSolicitante(c) {
 
       <div class="info">
         <span class="status">Em andamento</span>
+
         <h4>${c.nome_material} - ${c.quantidade} unidades</h4>
 
         <a 
@@ -109,7 +122,9 @@ function cardSolicitante(c) {
   `;
 }
 
-// concluir coleta (doador)
+
+// CONCLUIR COLETA (DOADOR)
+
 async function concluirColeta(id) {
   try {
     const res = await fetch(`/coletas/concluir/${id}`, {
@@ -123,8 +138,7 @@ async function concluirColeta(id) {
       Swal.fire({
         icon: 'error',
         title: 'Erro',
-        text: data.erro || 'Erro ao concluir coleta',
-        confirmButtonColor: '#347142'
+        text: data.erro || 'Erro ao concluir coleta'
       });
       return;
     }
@@ -144,28 +158,32 @@ async function concluirColeta(id) {
     Swal.fire({
       icon: 'error',
       title: 'Erro',
-      text: 'Erro inesperado ao concluir coleta',
-      confirmButtonColor: '#347142'
+      text: 'Erro inesperado ao concluir coleta'
     });
   }
 }
 
-// cancelar coleta (solicitante)
+
+// CANCELAR COLETA EM ANDAMENTO
+
 async function cancelarColeta(id) {
   const confirmacao = await Swal.fire({
-    title: 'Cancelar solicitação?',
-    text: 'Essa ação não poderá ser desfeita',
+    title: 'Cancelar coleta?',
+    html: `
+      <p>Esta ação irá cancelar a coleta em andamento.</p>
+      <p><strong>⚠️ Nenhum ponto será ganho.</strong></p>
+    `,
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonText: 'Sim, cancelar',
-    cancelButtonText: 'Voltar',
-    confirmButtonColor: '#d33'
+    confirmButtonText: 'Sim, cancelar coleta',
+    cancelButtonText: 'Manter coleta',
+    confirmButtonColor: '#d32f2f'
   });
 
   if (!confirmacao.isConfirmed) return;
 
   try {
-    const res = await fetch(`/coletas/cancelar/${id}`, {
+    const res = await fetch(`/coletas/cancelar-andamento/${id}`, {
       method: 'PUT',
       credentials: 'include'
     });
@@ -176,16 +194,16 @@ async function cancelarColeta(id) {
       Swal.fire({
         icon: 'error',
         title: 'Erro',
-        text: data.erro || 'Erro ao cancelar solicitação',
-        confirmButtonColor: '#347142'
+        text: data.erro || 'Erro ao cancelar coleta'
       });
       return;
     }
 
     Swal.fire({
       icon: 'success',
-      title: 'Solicitação cancelada',
-      timer: 1800,
+      title: 'Coleta cancelada',
+      text: 'A coleta foi cancelada e nenhum ponto foi contabilizado.',
+      timer: 2000,
       showConfirmButton: false
     });
 
@@ -196,13 +214,13 @@ async function cancelarColeta(id) {
     Swal.fire({
       icon: 'error',
       title: 'Erro',
-      text: 'Erro inesperado ao cancelar',
-      confirmButtonColor: '#347142'
+      text: 'Erro inesperado ao cancelar coleta'
     });
   }
 }
 
-// utilitarios
+
+// UTILITÁRIOS
 function limparTelefone(telefone) {
   if (!telefone) return '';
   return telefone.replace(/\D/g, '');
