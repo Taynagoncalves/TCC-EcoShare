@@ -43,7 +43,7 @@ exports.me = async (req, res) => {
   try {
     const [[usuario]] = await db.query(
       `
-      SELECT id, nome, email, telefone, tipo, pontos
+      SELECT id, nome, email, telefone, tipo, pontos, data_nascimento, foto
       FROM usuarios
       WHERE id = ?
       `,
@@ -197,5 +197,76 @@ exports.alterarTipoUsuario = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ erro: 'Erro ao alterar tipo' });
+  }
+};
+
+/* =========================
+   EDITAR PERFIL (nome, email, telefone, data_nascimento)
+========================= */
+exports.atualizarPerfil = async (req, res) => {
+  try {
+    const usuarioId = req.usuario.id;
+    const { nome, email, telefone, data_nascimento } = req.body;
+
+    // validações básicas (sem travar seu TCC)
+    if (!nome || !email) {
+      return res.status(400).json({ erro: 'Nome e e-mail são obrigatórios.' });
+    }
+
+    // normaliza
+    const nomeFinal = String(nome).trim();
+    const emailFinal = String(email).trim().toLowerCase();
+    const telefoneFinal = telefone ? String(telefone).trim() : null;
+    const dataFinal = data_nascimento ? String(data_nascimento).trim() : null; // YYYY-MM-DD
+
+    await db.query(
+      `
+      UPDATE usuarios
+      SET nome = ?, email = ?, telefone = ?, data_nascimento = ?
+      WHERE id = ?
+      `,
+      [nomeFinal, emailFinal, telefoneFinal, dataFinal, usuarioId]
+    );
+
+    // devolve atualizado
+    const [[usuario]] = await db.query(
+      `
+      SELECT id, nome, email, telefone, data_nascimento, tipo, pontos, foto
+      FROM usuarios
+      WHERE id = ?
+      `,
+      [usuarioId]
+    );
+
+    res.json({ sucesso: true, usuario });
+  } catch (err) {
+    console.error('ERRO atualizarPerfil:', err);
+    res.status(500).json({ erro: 'Erro ao atualizar perfil' });
+  }
+};
+
+/* =========================
+   ATUALIZAR FOTO (multer)
+========================= */
+exports.atualizarFoto = async (req, res) => {
+  try {
+    const usuarioId = req.usuario.id;
+
+    if (!req.file) {
+      return res.status(400).json({ erro: 'Envie uma imagem.' });
+    }
+
+    // caminho público (ajuste caso seu express static seja diferente)
+    const fotoPath = `/uploads/avatars/${req.file.filename}`;
+
+    await db.query(
+      'UPDATE usuarios SET foto = ? WHERE id = ?',
+      [fotoPath, usuarioId]
+    );
+
+    res.json({ sucesso: true, foto: fotoPath });
+  } catch (err) {
+    console.error('ERRO atualizarFoto:', err);
+    res.status(500).json({ erro: 'Erro ao atualizar foto' });
   }
 };

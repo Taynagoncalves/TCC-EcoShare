@@ -7,8 +7,17 @@ function irParaMinhasPublicacoes() {
 function irParaAdmin() {
   window.location.href = '/admin/lojas';
 }
+
 function irParaCuponsResgatados() {
   window.location.href = '/cupons-resgatados';
+}
+
+function irParaHistorico() {
+  window.location.href = '/historico';
+}
+
+function irParaAdmin() {
+  window.location.href = '/admin';
 }
 
 function deslogar() {
@@ -41,10 +50,6 @@ async function carregarUsuario() {
   } catch (err) {
     console.error('erro ao carregar usuario', err);
   }
-}
-
-function irParaAdmin() {
-  window.location.href = '/admin';
 }
 
 // init

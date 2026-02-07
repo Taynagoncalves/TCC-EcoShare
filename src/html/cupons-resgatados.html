@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Cupons Resgatados</title>
-
+ <link rel="stylesheet" href="../css/menu.css">
   <link rel="stylesheet" href="../css/configuracoes.css">
   
 </head>
@@ -11,8 +11,10 @@
 
   <div class="config-container">
     <h2>Cupons Resgatados</h2>
-
-    <div id="listaCupons">
+   <label>Apresente seu cupom para a loja parceira na hora que for resgatar seu benefícios.</label>
+    <br>
+    <br>
+   <div id="listaCupons">
       <p>Carregando cupons...</p>
     </div>
 
@@ -20,8 +22,29 @@
       Voltar
     </button>
   </div>
+<nav class="menu">
+  <div class="menu-item" data-rota="telahome" onclick="location.href='/telahome'">
+    <img src="../icons/home.png">
+    <span>Home</span>
+  </div>
 
- 
+  <div class="menu-item" data-rota="resgate" onclick="location.href='/resgate'">
+    <img src="../icons/cupom.png">
+    <span>Resgate</span>
+  </div>
+
+  <div class="menu-item" data-rota="perfil" onclick="location.href='/perfil'">
+    <img src="../icons/user.png">
+    <span>Perfil</span>
+  </div>
+
+  <div class="menu-item" data-rota="configuracoes" onclick="location.href='/configuracoes'">
+    <img src="../icons/config.png">
+    <span>Config</span>
+  </div>
+</nav>
+
+  <script src="../js/menu.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="/js/cupons-resgatados.js"></script>
 </body>

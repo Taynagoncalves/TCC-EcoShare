@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="../css/perfil.css">
   <link rel="stylesheet" href="../css/telahome.css">
   <link rel="stylesheet" href="../css/menu.css">
-
 </head>
 <body>
 
@@ -19,53 +18,76 @@
   <h2>Meu Perfil</h2>
 
   <div class="avatar">
-    <img src="../icons/user.png" class="avatar-img">
-    <span class="editar">✎</span>
+    <img id="avatarImg" src="../icons/user.png" class="avatar-img" alt="Foto do usuário">
+    <span class="editar" id="btnTrocarFoto" title="Trocar foto">
+  <img src="/icons/cameraPerfil.png" alt="Trocar foto" class="icon-camera">
+</span>
+
+    <input id="inputFoto" type="file" accept="image/png,image/jpeg,image/webp" hidden>
   </div>
 
   <div class="pontos">
     <span id="pontosUsuario"></span>
-
   </div>
 
-<div class="dados">
-  <input id="nome" disabled placeholder="Nome">
-  <input id="email" disabled placeholder="E-mail">
-
-  <div class="linha-dupla">
-    <input id="telefone" disabled placeholder="Telefone">
-    <input id="dataNascimento" type="date" disabled>
+  <div class="acoes-perfil">
+    <button class="btn-perfil" id="btnEditar">Editar perfil</button>
+    <button class="btn-perfil salvar" id="btnSalvar" hidden>Salvar</button>
+    <button class="btn-perfil cancelar" id="btnCancelar" hidden>Cancelar</button>
   </div>
-</div>
 
+  <div class="dados">
+    <div class="campo">
+      <label for="nome">Nome</label>
+      <input id="nome" disabled>
+    </div>
+
+    <div class="campo">
+      <label for="email">E-mail</label>
+      <input id="email" disabled>
+    </div>
+
+    <div class="linha-dupla">
+      <div class="campo">
+        <label for="telefone">Telefone</label>
+        <input id="telefone" disabled>
+      </div>
+
+      <div class="campo">
+        <label for="dataNascimento">Data de nascimento</label>
+        <input id="dataNascimento" type="date" disabled>
+      </div>
+    </div>
+  </div>
 </section>
 
+<!-- MENU INFERIOR (IGUAL AO DA HOME) -->
 <nav class="menu">
-  <div class="menu-item" data-rota="telahome" onclick="location.href='/telahome'">
+  <div class="menu-item ativo" onclick="location.href='/telahome'">
     <img src="../icons/home.png">
     <span>Home</span>
   </div>
 
-  <div class="menu-item" data-rota="resgate" onclick="location.href='/resgate'">
+  <div class="menu-item" onclick="location.href='/resgate'">
     <img src="../icons/cupom.png">
     <span>Resgate</span>
   </div>
 
-  <div class="menu-item" data-rota="perfil" onclick="location.href='/perfil'">
+  <div class="menu-item" onclick="location.href='/perfil'">
     <img src="../icons/user.png">
     <span>Perfil</span>
   </div>
 
-  <div class="menu-item" data-rota="configuracoes" onclick="location.href='/configuracoes'">
+  <div class="menu-item" onclick="location.href='/configuracoes'">
     <img src="../icons/config.png">
     <span>Configurações</span>
   </div>
 </nav>
 
-<script src="../js/menu.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/perfil.js"></script>
-
 <script src="../js/telahome.js"></script>
+<script src="../js/menu.js"></script>
+
 </body>
 </html>

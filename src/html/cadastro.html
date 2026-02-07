@@ -5,8 +5,6 @@
   <title>EcoShare | Cadastro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../css/cadastro.css">
-  <link rel="stylesheet" href="../css/menu.css">
-
   
 </head>
 <body>
@@ -18,14 +16,14 @@
   <main class="center-container">
     <h2>Cadastro</h2>
 
-    <!-- 🔴 FORM PRECISA DE ID -->
+    <!--FORM PRECISA DE ID -->
     <form id="formCadastro" class="cadastro-form">
 
       <input type="text" name="nome" placeholder="Nome Completo" required>
 
       <input type="email" name="email" placeholder="Email" required>
 
-      <!-- 🔴 CAMPO TELEFONE / WHATSAPP -->
+      <!--CAMPO TELEFONE / WHATSAPP -->
       <input
         type="text"
         name="telefone"
@@ -45,8 +43,12 @@
         <img src="../icons/olhofechado.png" onclick="toggleSenha('confirmarSenha', this)">
       </div>
 
-      <input type="text" name="cep" placeholder="CEP" required>
-      <input type="text" name="endereco" placeholder="Endereço" required>
+      <input type="text" name="cep" id="cep" placeholder="CEP" required>
+
+      <input type="text" name="endereco" id="endereco" placeholder="Endereço" required>
+
+      <input type="text" name="bairro" id="bairro" placeholder="Bairro" required>
+
       <input type="text" name="numero" placeholder="Número" required>
       <input type="text" name="complemento" placeholder="Complemento (ex: bloco, ap.)">
 

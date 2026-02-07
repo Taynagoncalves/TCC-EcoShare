@@ -83,42 +83,65 @@ async function resgatar(lojaId) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({
-        loja_id: lojaId
-      })
+      body: JSON.stringify({ loja_id: lojaId })
     });
 
     const data = await res.json();
 
+    // ERROS DE REGRA (ATENÇÃO)
     if (!res.ok) {
-      Swal.fire({
-        icon: 'error',
-        title: 'erro',
-        text: data.erro || 'erro ao resgatar cupom',
-        confirmButtonColor: '#347142'
-      });
+      const mensagem = data.erro || 'Não foi possível resgatar o cupom';
+
+      // erros esperados → warning
+      if (
+        mensagem.includes('pontos insuficientes') ||
+        mensagem.includes('já resgatou')
+      ) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Atenção',
+          text: mensagem,
+          confirmButtonColor: '#347142'
+        });
+      } 
+      // erros 
+      else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro',
+          text: mensagem,
+          confirmButtonColor: '#347142'
+        });
+      }
+
       return;
     }
 
+    // SUCESSO
     Swal.fire({
       icon: 'success',
-      title: 'cupom resgatado',
-      text: `código: ${data.codigo}`,
+      title: 'Cupom resgatado 🎉',
+      html: `
+        <strong>Código do cupom:</strong><br>
+        <span style="font-size:18px">${data.codigo}</span><br><br>
+        <small>Pontos restantes: ${data.pontos_restantes}</small>
+      `,
       confirmButtonColor: '#347142'
     });
 
     carregarPontosTopo();
 
   } catch (err) {
-    console.error(err);
+    // ❌ erro inesperado (rede / servidor)
     Swal.fire({
       icon: 'error',
-      title: 'erro',
-      text: 'erro inesperado ao resgatar',
+      title: 'Erro inesperado',
+      text: 'Não foi possível concluir o resgate.',
       confirmButtonColor: '#347142'
     });
   }
 }
+
 
 // filtrar lojas pelo nome
 function filtrarLojas(texto) {

@@ -6,7 +6,7 @@ async function carregarHistorico() {
 
   try {
     // 🔹 buscar histórico
-    const res = await fetch('/api/historico');
+    const res = await fetch('/coletas/historico');
     const dados = await res.json();
 
     // 🔹 buscar usuário logado

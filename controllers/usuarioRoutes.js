@@ -6,7 +6,39 @@ const verificarAdmin = require('./verificarAdmin');
 const verificarAutenticacao = require('./verificarAutenticacao');
 const usuarioController = require('./usuarioController');
 
-// dados do usuário logado
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
+
+// =========================
+// MULTER (UPLOAD FOTO)
+// =========================
+const uploadDir = path.join(__dirname, '..', 'uploads', 'avatars');
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname || '').toLowerCase();
+    const safeExt = ['.png', '.jpg', '.jpeg', '.webp'].includes(ext) ? ext : '.jpg';
+    cb(null, `user_${req.usuario.id}_${Date.now()}${safeExt}`);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  const ok = ['image/png', 'image/jpeg', 'image/webp'].includes(file.mimetype);
+  cb(ok ? null : new Error('Formato inválido (use PNG/JPG/WEBP)'), ok);
+};
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 3 * 1024 * 1024 } // 3MB
+});
+
+// =========================
+// DADOS DO USUÁRIO LOGADO
+// =========================
 router.get(
   '/me',
   verificarAutenticacao,
@@ -21,7 +53,8 @@ router.get(
           telefone,
           data_nascimento,
           tipo,
-          pontos
+          pontos,
+          foto
         FROM usuarios
         WHERE id = ?
         `,
@@ -38,6 +71,25 @@ router.get(
       res.status(500).json({ erro: 'erro ao buscar usuário' });
     }
   }
+);
+
+// =========================
+// EDITAR DADOS DO PERFIL
+// =========================
+router.put(
+  '/me',
+  verificarAutenticacao,
+  usuarioController.atualizarPerfil
+);
+
+// =========================
+// ATUALIZAR FOTO DO PERFIL
+// =========================
+router.put(
+  '/me/foto',
+  verificarAutenticacao,
+  upload.single('foto'),
+  usuarioController.atualizarFoto
 );
 
 // pontos do usuário

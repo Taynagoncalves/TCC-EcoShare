@@ -1,9 +1,22 @@
-const path = window.location.pathname;
+document.addEventListener('DOMContentLoaded', () => {
+  const itens = document.querySelectorAll('.menu-item');
 
-document.querySelectorAll('.menu-item').forEach(item => {
-  const rota = item.getAttribute('data-rota');
+  const rotaAtual = window.location.pathname
+    .replace('/', '')
+    .split('?')[0];
 
-  if (rota && path.includes(rota)) {
-    item.classList.add('ativo');
-  }
+  itens.forEach(item => {
+    const rota = item.dataset.rota;
+
+    // marca a aba ativa
+    if (rota === rotaAtual) {
+      item.classList.add('ativo');
+    }
+
+    // animação ao clicar
+    item.addEventListener('click', () => {
+      itens.forEach(i => i.classList.remove('ativo'));
+      item.classList.add('ativo');
+    });
+  });
 });
