@@ -20,18 +20,18 @@
 .logo {
   height: 200px;
 }
-
-.icon-notificacao {
-  height: 26px;
-  cursor: pointer;
+img.logo{
+  width: 200px;
+  left: 50px;
 }
+
 
 .titulo-centro {
   flex: 1;
   text-align: center;
   font-size: 22px;
   font-weight: 600;
-  color: #222;
+  color: #2e7d32;
 }
 
 /* =========================
