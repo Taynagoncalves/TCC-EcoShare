@@ -139,3 +139,6 @@ MODIFY status ENUM(
   'cancelada',
   'concluida'
 ) DEFAULT 'pendente';
+
+ALTER TABLE usuarios
+ADD COLUMN foto VARCHAR(255) DEFAULT NULL;

@@ -1,8 +1,6 @@
 const db = require('../models/db');
 
-/* =========================
-   BUSCAR PONTOS
-========================= */
+
 exports.buscarPontos = async (req, res) => {
   try {
     const [[usuario]] = await db.query(
@@ -17,9 +15,7 @@ exports.buscarPontos = async (req, res) => {
   }
 };
 
-/* =========================
-   DEBITAR PONTOS
-========================= */
+
 exports.debitarPontos = async (req, res) => {
   try {
     const { pontos } = req.body;
@@ -36,9 +32,7 @@ exports.debitarPontos = async (req, res) => {
   }
 };
 
-/* =========================
-   DADOS DO USUÁRIO
-========================= */
+
 exports.me = async (req, res) => {
   try {
     const [[usuario]] = await db.query(
@@ -57,9 +51,7 @@ exports.me = async (req, res) => {
   }
 };
 
-/* =========================
-   RESGATAR CUPOM (🔥 ESSENCIAL)
-========================= */
+
 exports.resgatarCupom = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
@@ -102,7 +94,7 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-    // 🔒 Verifica se já resgatou (tabela correta)
+  
     const [[jaResgatou]] = await db.query(
       'SELECT id FROM resgates WHERE usuario_id = ? AND loja_id = ?',
       [usuarioId, loja_id]
@@ -114,18 +106,18 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-    // ✅ PRIMEIRO: debita pontos (se falhar, nada acontece)
+    
     await db.query(
       'UPDATE usuarios SET pontos = pontos - ? WHERE id = ?',
       [custo, usuarioId]
     );
 
-    // 🔹 Gera código
+
     const codigo =
       loja.nome.charAt(0).toUpperCase() +
       Math.random().toString(36).substring(2, 8).toUpperCase();
 
-    // ✅ DEPOIS: registra resgate
+  
     await db.query(
       `
       INSERT INTO resgates (usuario_id, loja_id, pontos_usados, codigo, usado)
@@ -160,9 +152,7 @@ exports.listarUsuarios = async (req, res) => {
   }
 };
 
-/* =========================
-   ADMIN — BLOQUEAR / DESBLOQUEAR
-========================= */
+
 exports.alterarStatusUsuario = async (req, res) => {
   try {
     const { id } = req.params;
@@ -180,9 +170,7 @@ exports.alterarStatusUsuario = async (req, res) => {
   }
 };
 
-/* =========================
-   ADMIN — ALTERAR TIPO
-========================= */
+
 exports.alterarTipoUsuario = async (req, res) => {
   try {
     const { id } = req.params;
