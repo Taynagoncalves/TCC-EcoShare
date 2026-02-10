@@ -52,5 +52,53 @@ async function carregarUsuario() {
   }
 }
 
+// =========================
+// NOTIFICAÇÕES (TOGGLE)
+// =========================
+async function carregarPreferenciaNotificacoes() {
+  const toggle = document.getElementById('toggle-notificacoes');
+  if (!toggle) return;
+
+  try {
+    const res = await fetch('/usuarios/me/notificacoes', {
+      credentials: 'include'
+    });
+
+    if (!res.ok) return;
+
+    const data = await res.json();
+    // data = { notificacoes_ativas: true/false }
+    toggle.checked = !!data.notificacoes_ativas;
+  } catch (err) {
+    console.error('erro ao carregar preferencia de notificacoes', err);
+  }
+}
+
+async function atualizarPreferenciaNotificacoes(ativas) {
+  try {
+    await fetch('/usuarios/me/notificacoes', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ ativas: !!ativas })
+    });
+  } catch (err) {
+    console.error('erro ao atualizar preferencia de notificacoes', err);
+  }
+}
+
+function bindToggleNotificacoes() {
+  const toggle = document.getElementById('toggle-notificacoes');
+  if (!toggle) return;
+
+  toggle.addEventListener('change', () => {
+    atualizarPreferenciaNotificacoes(toggle.checked);
+  });
+}
+
 // init
-document.addEventListener('DOMContentLoaded', carregarUsuario);
+document.addEventListener('DOMContentLoaded', () => {
+  carregarUsuario();
+  carregarPreferenciaNotificacoes();
+  bindToggleNotificacoes();
+});

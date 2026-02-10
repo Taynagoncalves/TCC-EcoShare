@@ -7,7 +7,7 @@ const path = require('path');
 ========================= */
 exports.criarDoacao = async (req, res) => {
   try {
-    const {
+    let {
       nome_material,
       quantidade,
       tipo_material,
@@ -16,6 +16,15 @@ exports.criarDoacao = async (req, res) => {
       dias_semana,
       horarios
     } = req.body;
+
+    // valida nome do material
+    if (!nome_material || nome_material.trim().length === 0) {
+      return res.status(400).json({ erro: 'nome do material inválido' });
+    }
+
+    // normaliza
+    nome_material = nome_material.trim();
+
 
     const usuario_id = req.usuario.id;
     const imagem = req.file ? req.file.filename : null;

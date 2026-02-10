@@ -22,6 +22,7 @@ const storage = multer.diskStorage({
     const ext = path.extname(file.originalname || '').toLowerCase();
     const safeExt = ['.png', '.jpg', '.jpeg', '.webp'].includes(ext) ? ext : '.jpg';
     cb(null, `user_${req.usuario.id}_${Date.now()}${safeExt}`);
+
   }
 });
 
@@ -69,6 +70,55 @@ router.get(
     } catch (err) {
       console.error('erro usuário logado:', err);
       res.status(500).json({ erro: 'erro ao buscar usuário' });
+    }
+  }
+);
+
+// =========================
+// PREFERÊNCIA DE NOTIFICAÇÕES
+// =========================
+router.get(
+  '/me/notificacoes',
+  verificarAutenticacao,
+  async (req, res) => {
+    try {
+      const [[row]] = await db.query(
+        'SELECT notificacoes_ativas FROM usuarios WHERE id = ?',
+        [req.usuario.id]
+      );
+
+      if (!row) {
+        return res.status(404).json({ erro: 'usuário não encontrado' });
+      }
+
+      res.json({ notificacoes_ativas: !!row.notificacoes_ativas });
+    } catch (err) {
+      console.error('erro ao buscar preferência de notificações:', err);
+      res.status(500).json({ erro: 'erro ao buscar preferência de notificações' });
+    }
+  }
+);
+
+router.put(
+  '/me/notificacoes',
+  verificarAutenticacao,
+  async (req, res) => {
+    try {
+      const { ativas } = req.body || {};
+
+      if (typeof ativas !== 'boolean') {
+        return res.status(400).json({ erro: 'campo "ativas" deve ser boolean' });
+      }
+
+      await db.query(
+        'UPDATE usuarios SET notificacoes_ativas = ? WHERE id = ?',
+        [ativas, req.usuario.id]
+      );
+
+      res.json({ ok: true, notificacoes_ativas: ativas });
+    } catch (err) {
+      console.error('erro ao atualizar preferência de notificações:', err);
+      res.status(500).json({ erro: 'erro ao atualizar preferência de notificações' });
     }
   }
 );

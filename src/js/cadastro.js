@@ -24,6 +24,49 @@ if (inputNome) {
   });
 }
 
+const inputTelefone = document.querySelector('input[name="telefone"]');
+
+function aplicarMascaraTelefone(valor) {
+  // só dígitos
+  let v = valor.replace(/\D/g, "");
+
+  // limita (DDD + 9 dígitos = 11)
+  if (v.length > 11) v = v.slice(0, 11);
+
+  // aplica máscara
+  if (v.length <= 10) {
+    // (99) 9999-9999
+    v = v.replace(/^(\d{2})(\d)/, "($1) $2");
+    v = v.replace(/(\d{4})(\d)/, "$1-$2");
+  } else {
+    // (99) 99999-9999
+    v = v.replace(/^(\d{2})(\d)/, "($1) $2");
+    v = v.replace(/(\d{5})(\d)/, "$1-$2");
+  }
+
+  return v;
+}
+
+if (inputTelefone) {
+  inputTelefone.addEventListener("input", () => {
+    inputTelefone.value = aplicarMascaraTelefone(inputTelefone.value);
+  });
+
+  // bloqueia teclas que não fazem sentido (mas ainda deixa backspace, setas, etc.)
+  inputTelefone.addEventListener("keydown", (e) => {
+    const permitidos = [
+      "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End",
+    ];
+    if (permitidos.includes(e.key)) return;
+
+    // deixa CTRL+A/C/V/X
+    if (e.ctrlKey || e.metaKey) return;
+
+    // bloqueia qualquer coisa que não seja número
+    if (!/^\d$/.test(e.key)) e.preventDefault();
+  });
+}
+
 // ==============================
 // BUSCAR CEP AUTOMATICAMENTE
 // ==============================

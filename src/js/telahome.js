@@ -60,7 +60,7 @@ function renderizarDoacoes(doacoes) {
   lista.innerHTML = '';
 
   if (!doacoes || doacoes.length === 0) {
-    lista.innerHTML = '<p>nenhuma doação encontrada.</p>';
+    lista.innerHTML = '<p>Nenhuma doação encontrada.</p>';
     return;
   }
 
@@ -72,24 +72,31 @@ function renderizarDoacoes(doacoes) {
       <div class="card-img-wrapper">
         <img 
           src="${d.imagem ? `/uploads/${d.imagem}` : '/imagens/sem-imagem.png'}"
-          alt="${d.nome_material}"
+          alt="${d.nome_material || d.tipo_material}"
         >
       </div>
 
-      <div class="card-info">
-        <p><strong>bairro:</strong> ${d.bairro}</p>
-        <p><strong>material:</strong> ${d.tipo_material}</p>
-        <p><strong>quantidade:</strong> ${d.quantidade}</p>
+      <div class="card-body">
+        <div class="card-nome-material">
+          ${d.nome_material || d.tipo_material}
+        </div>
+
+        <div class="card-info">
+          <p><span class="label-verde">Bairro:</span> ${d.bairro}</p>
+          <p><span class="label-verde">Material:</span> ${d.tipo_material}</p>
+          <p><span class="label-verde">Quantidade:</span> ${d.quantidade}</p>
+        </div>
       </div>
 
       <button class="btn-ver-mais" onclick="verDetalhes(${d.id})">
-        ver mais
+        Ver mais
       </button>
     `;
 
     lista.appendChild(card);
   });
 }
+
 
 
 // busca sem números
@@ -424,3 +431,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+function capitalizar(texto) {
+  return texto
+    ? texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase()
+    : '';
+}

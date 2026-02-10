@@ -1,12 +1,6 @@
-// ==========================
-// DETECTA MODO EDIÇÃO
-// ==========================
 const params = new URLSearchParams(window.location.search);
 const idEdicao = params.get('id');
 
-// ==========================
-// CARREGAR BAIRROS
-// ==========================
 async function carregarBairros() {
   try {
     const res = await fetch('/bairros', {
@@ -40,9 +34,6 @@ async function carregarBairros() {
 
 carregarBairros();
 
-// ==========================
-// CARREGAR DOAÇÃO PARA EDIÇÃO
-// ==========================
 async function carregarEdicao(id) {
   try {
     const res = await fetch(`/doacoes/${id}/editar`, {
@@ -56,18 +47,15 @@ async function carregarEdicao(id) {
 
     const d = await res.json();
 
-    // título e botão
     document.querySelector('.topo h2').innerText = 'Editar Doação';
     document.querySelector('.btn-publicar').innerText = 'Salvar Alterações';
 
-    // preencher campos
     document.querySelector('[name=nome_material]').value = d.nome_material;
     document.querySelector('[name=quantidade]').value = d.quantidade;
     document.querySelector('[name=tipo_material]').value = d.tipo_material;
     document.querySelector('[name=descricao]').value = d.descricao || '';
     document.querySelector('[name=horarios]').value = d.horarios;
 
-    // bairro (aguarda carregar)
     const intervalo = setInterval(() => {
       const select = document.getElementById('bairroSelect');
       if (select.options.length > 1) {
@@ -76,17 +64,13 @@ async function carregarEdicao(id) {
       }
     }, 100);
 
-    // dias
     if (d.dias_semana) {
       d.dias_semana.split(',').forEach(dia => {
-        const cb = document.querySelector(
-          `.dias-grid input[value="${dia.trim()}"]`
-        );
+        const cb = document.querySelector(`.dias-grid input[value="${dia.trim()}"]`);
         if (cb) cb.checked = true;
       });
     }
 
-    // imagem preview
     if (d.imagem) {
       previewImagem.src = `/uploads/${d.imagem}`;
       previewImagem.style.display = 'block';
@@ -101,9 +85,6 @@ if (idEdicao) {
   carregarEdicao(idEdicao);
 }
 
-// ==========================
-// PREVIEW DA IMAGEM
-// ==========================
 const inputImagem = document.querySelector('input[name="imagem"]');
 const previewImagem = document.getElementById('previewImagem');
 
@@ -133,15 +114,24 @@ if (inputImagem) {
   });
 }
 
-// ==========================
-// ENVIO DO FORMULÁRIO
-// ==========================
 document.getElementById('formDoacao').addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const formData = new FormData(e.target);
 
-  // dias selecionados
+  const nomeMaterial = formData.get('nome_material');
+  if (!nomeMaterial || nomeMaterial.trim().length === 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Nome inválido',
+      text: 'Informe um nome válido para o material.',
+      confirmButtonColor: '#347142'
+    });
+    return;
+  }
+
+  formData.set('nome_material', nomeMaterial.trim());
+
   const diasSelecionados = Array.from(
     document.querySelectorAll('.dias-grid input[type="checkbox"]:checked')
   ).map(cb => cb.value);
@@ -158,7 +148,6 @@ document.getElementById('formDoacao').addEventListener('submit', async (e) => {
 
   formData.set('dias_semana', diasSelecionados.join(', '));
 
-  // valida quantidade
   const quantidade = Number(formData.get('quantidade'));
   if (!quantidade || quantidade <= 0) {
     Swal.fire({
@@ -170,7 +159,6 @@ document.getElementById('formDoacao').addEventListener('submit', async (e) => {
     return;
   }
 
-  // valida horário
   if (!formData.get('horarios')) {
     Swal.fire({
       icon: 'warning',
@@ -181,7 +169,6 @@ document.getElementById('formDoacao').addEventListener('submit', async (e) => {
     return;
   }
 
-  // imagem obrigatória apenas ao CRIAR
   if (!idEdicao && !inputImagem.files[0]) {
     Swal.fire({
       icon: 'warning',
