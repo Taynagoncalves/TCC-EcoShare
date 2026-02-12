@@ -126,18 +126,19 @@ exports.meusCupons = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
 
-    const [rows] = await db.query(`
-      SELECT
-        r.id,
-        r.codigo,
-        r.pontos_usados,
-        r.usado,
-        l.nome AS loja_nome
-      FROM resgates r
-      JOIN lojas l ON l.id = r.loja_id
-      WHERE r.usuario_id = ?
-      ORDER BY r.id DESC
-    `, [usuarioId]);
+const [rows] = await db.query(`
+  SELECT
+    r.id,
+    r.codigo,
+    r.pontos_usados,
+    r.usado,
+    l.nome AS loja_nome,
+    l.endereco AS loja_endereco
+  FROM resgates r
+  JOIN lojas l ON l.id = r.loja_id
+  WHERE r.usuario_id = ?
+  ORDER BY r.id DESC
+`, [usuarioId]);
 
     res.json(rows);
   } catch (err) {

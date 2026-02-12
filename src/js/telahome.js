@@ -394,11 +394,41 @@ async function limparNotificacoes(e) {
     alert('não foi possível limpar as notificações.');
   }
 }
+async function carregarPreferenciaNotificacoesHome() {
+  const status = document.getElementById('statusNotificacoes');
+  if (!status) return;
+
+
+  try {
+    const res = await fetch('/usuarios/me/notificacoes', {
+      credentials: 'include'
+    });
+    if (!res.ok) return;
+
+
+    const data = await res.json();
+    const ativas = !!(data.notificacoes_ativas ?? data.ativas);
+
+
+    status.classList.remove('ligado', 'desligado');
+
+
+    if (ativas) {
+      status.textContent = 'Notificações ligadas';
+      status.classList.add('ligado');
+    } else {
+      status.textContent = 'Notificações desligadas';
+      status.classList.add('desligado');
+    }
+  } catch (e) {}
+}
 
 // inicialização
 document.addEventListener('DOMContentLoaded', () => {
   carregarDoacoes();
+  carregarFotoTopo();
   carregarNotificacoes();
+  carregarPreferenciaNotificacoesHome();
 
   setInterval(carregarNotificacoes, 10000);
 
@@ -435,4 +465,22 @@ function capitalizar(texto) {
   return texto
     ? texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase()
     : '';
+}
+async function carregarFotoTopo() {
+  try {
+    const res = await fetch('/usuarios/me', { credentials: 'include' });
+    if (!res.ok) return;
+
+    const usuario = await res.json();
+
+    const foto = document.getElementById('fotoTopo');
+    if (!foto) return;
+
+    foto.src = usuario.foto && usuario.foto.trim() !== ''
+      ? usuario.foto
+      : '/icons/user.png';
+
+  } catch (err) {
+    console.error('erro ao carregar foto topo', err);
+  }
 }

@@ -220,6 +220,23 @@ input:checked + .slider:before {
   margin-left: 10px;
 }
 
+.cupom-acoes {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-localizacao {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  transition: transform .15s;
+}
+
+.btn-localizacao:hover {
+  transform: scale(1.15);
+}
+
 /* =========================
    MOBILE REAL
 ========================= */

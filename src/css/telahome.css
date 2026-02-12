@@ -13,25 +13,37 @@ body {
 
 .topo {
   background: #fff;
-  padding: 7px 7px;
+  padding: 10px 14px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   border-bottom: 1px solid #eee;
-  z-index: 1;
+  position: relative;
 }
 
+/* logo menor */
 .logo {
-  width: 160px;
+  width: 135px;
 }
 
+/* barra menor e mais moderna */
 .search {
   flex: 1;
-  padding: 10px 16px;
+  max-width: 680px;
+  height: 42px;
+  padding: 0 18px;
   border-radius: 25px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+  border: 1px solid #dcdcdc;
+  font-size: 15px;
+  transition: .15s;
 }
+
+.search:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46,125,50,0.12);
+  outline: none;
+}
+
 
 .icon {
   width: 30px;
@@ -182,21 +194,28 @@ body {
 ========================= */
 .btn-add {
   position: fixed;
-  right: 20px;
-  bottom: 90px;
-  width: 56px;
-  height: 56px;
+  right: 22px;
+  bottom: 95px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  background: #2e7d32;
+  background: linear-gradient(135deg,#2e7d32,#1b5e20);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+  transition: .15s;
+  z-index: 999;
 }
 
 .btn-add img {
-  width: 22px;
+  width: 30px;
+}
+
+.btn-add:hover {
+  transform: scale(1.12);
+  box-shadow: 0 18px 35px rgba(0,0,0,0.45);
 }
 
 /* =========================
@@ -292,26 +311,34 @@ body {
    RESPONSIVO
 ========================= */
 @media (max-width: 768px) {
+
   .logo {
-    width: 120px;
+    width: 105px;
   }
 
   .search {
-    font-size: 13px;
+    height: 38px;
+    font-size: 14px;
   }
 
-  .publicacoes {
-    grid-template-columns: 1fr;
-    padding: 0 14px;
+  .foto-topo {
+    width: 46px;
+    height: 46px;
+  }
+
+  .icon-notificacao {
+    width: 39px;
+    height: 26px;
   }
 
   .btn-add {
-    width: 52px;
-    height: 52px;
-    right: 16px;
+    width: 62px;
+    height: 62px;
     bottom: 100px;
+    right: 18px;
   }
 }
+
 /* MODAL OVERLAY */
 .modal-overlay {
   position: fixed;
@@ -472,8 +499,8 @@ body {
    ÍCONE DE NOTIFICAÇÃO
 ========================= */
 .icon-notificacao {
-  width: 28px;
-  height: 28px;
+  width: 35px;
+  height: 35px;
   object-fit: contain;
   cursor: pointer;
   position: relative;
@@ -640,7 +667,9 @@ body {
   position: relative;
   cursor: pointer;
 }
-
+.icon-notificacao:hover {
+  transform: scale(1.12);
+}
 .badge {
   position: absolute;
   top: -6px;
@@ -1057,6 +1086,23 @@ body {
   font-size: 14px;
   font-weight: 600;
 }
+.foto-topo {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #2e7d32;
+  background: #fff;
+}
+
+/* posição */
+.perfil-topo {
+  right: 20px;
+  top: 18px;
+}
+.foto-topo:hover {
+  transform: scale(1.08);
+}
 /* =========================
    LABELS VERDES (PADRÃO)
 ========================= */
@@ -1072,33 +1118,18 @@ body {
   margin-bottom: 6px;
   text-transform: capitalize;
 }
-@media (max-width: 768px) {
-  .card {
-    width: 100%;
-    max-width: 100%;
-    overflow: hidden;
-  }
-
-  .card-img-wrapper,
-  .card-img-wrapper img {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-  }
-
-  .card-body,
-  .card-info {
-    width: 100%;
-  }
-
-  .btn-ver-mais {
-    width: 100%;
-    box-sizing: border-box;
-  }
+.status-notificacoes {
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
-@media (max-width: 768px) {
-  .publicacoes {
-    grid-template-columns: 1fr !important;
-    padding: 0 12px;
-  }
+
+
+.status-notificacoes.ligado {
+  color: #2e7d32;
+}
+
+
+.status-notificacoes.desligado {
+  color: #c62828;
 }

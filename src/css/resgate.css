@@ -1,4 +1,4 @@
-/* ===== RESET ===== */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
@@ -9,156 +9,105 @@
 body {
   background: #f4f7f6;
   color: #333;
-  padding-top: 64px; /*altura do topo */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding-top: 0;
 }
 
+
+
+/* ===== TOPO COM BANNER ===== */
 .topo {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  background: #fff;
-  padding: 8px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid #ddd;
-  z-index: 1000;
-}
-
-
-.topo img {
   height: 200px;
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 22px;
 }
 
+/* imagem ocupa tudo */
+.topo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/imagens/banner-resgate.png") center/cover no-repeat;
+  z-index: 0;
+}
+
+/* transparência profissional */
+.topo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.15) 0%,
+    rgba(0,0,0,0.35) 55%,
+    rgba(0,0,0,0.60) 100%
+  );
+  z-index: 1;
+}
+
+/* elementos acima do banner */
+.topo > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* pontos flutuando */
 .saldo {
   background: #347142;
   color: #fff;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 14px;
+  padding: 8px 22px;
+  border-radius: 25px;
   font-weight: 600;
-
+  font-size: 15px;
   position: absolute;
-  top: 180px;          /*  MAIS PRA BAIXO */
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
 }
 
-/* garante espaço para o menu inferior */
+/* ===== CONTEUDO ===== */
 .conteudo {
   max-width: 1100px;
-  margin: 24px auto;
-  padding: 0 16px 160px; /*  espaço maior para o menu */
-  margin-top: 72px; /* altura real do topo */
+  margin: 0 auto;
+  padding: 20px 16px 160px;
 }
 
+/* TITULO */
 .titulo {
   background: #347142;
   color: #fff;
   text-align: center;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 18px;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 20px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
+/* BUSCA */
 .buscar {
   width: 100%;
-  padding: 12px 18px;
+  padding: 14px 20px;
   border-radius: 30px;
   border: 1px solid #ccc;
-  margin-bottom: 20px;
-}
-
-
-.logo-loja {
-  width: 90px;
-  height: 90px;
-  max-width: 90px;
-  max-height: 90px;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 2px solid #347142;
-  background: #f5f5f5;
-  flex-shrink: 0; /* 🔒 não estica */
-}
-
-
-
-.cupom-card {
+  margin-bottom: 22px;
   background: #fff;
-  border: 2px solid #347142;
-  border-radius: 16px;
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.cupom-card {
-  overflow: hidden; /* 🔒 impede a imagem de vazar */
 }
 
-.cupom-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-}
-
-/* ===== TEXTO ===== */
-.cupom-info h3 {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1b5e20;
-  margin-bottom: 6px;
-}
-
-.cupom-info .descricao {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 16px;
-}
-
-/* ===== AÇÃO ===== */
-.cupom-acao {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.cupom-acao .pontos {
-  font-weight: 700;
-  color: #347142;
-  font-size: 15px;
-}
-
-.cupom-acao button {
-  background: #347142;
-  color: #fff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.cupom-acao button:hover {
-  background: #2b5f37;
-}
+/* LISTA CUPONS */
 .lista-cupons {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
-  position: relative;
-  z-index: 1;
 }
 
-
-/* ===== CARD ===== */
+/* CARD */
 .cupom-card {
   background: #fff;
   border: 2px solid #347142;
@@ -175,23 +124,24 @@ body {
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* ===== TOPO ===== */
+/* TOPO CARD */
 .cupom-topo {
   display: flex;
   gap: 14px;
   align-items: center;
   margin-bottom: 14px;
 }
+
 .logo-loja {
-  width: 90px;          /* 🔥 maior */
-  height: 90px;         /* 🔥 maior */
-  border-radius: 12px;  /* quadrado com cantos suaves */
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
   object-fit: cover;
   border: 2px solid #347142;
   background: #f5f5f5;
 }
 
-/* ===== INFO ===== */
+/* INFO */
 .cupom-info h3 {
   font-size: 18px;
   font-weight: 700;
@@ -204,7 +154,7 @@ body {
   color: #666;
 }
 
-/* ===== RODAPÉ ===== */
+/* RODAPÉ */
 .cupom-rodape {
   display: flex;
   justify-content: space-between;
@@ -233,8 +183,9 @@ body {
   background: #2b5f37;
 }
 
-/* ===== MOBILE ===== */
+/* MOBILE */
 @media (max-width: 600px) {
+
   .cupom-topo {
     align-items: flex-start;
   }
@@ -247,33 +198,5 @@ body {
   .cupom-rodape button {
     width: 100%;
   }
+
 }
-
-/* ===== CORREÇÃO DA BARRA DE BUSCA ===== */
-
-/* garante que a busca não fique escondida */
-.buscar {
-  position: relative;
-  z-index: 10;
-  background: #fff;
-}
-
-/* evita que a lista cubra a busca */
-.lista-cupons {
-  position: relative;
-  z-index: 1;
-}
-
-/* ===== MOBILE ===== */
-@media (max-width: 600px) {
-  .cupom-acao {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .cupom-acao button {
-    width: 100%;
-  }
-}
-
-

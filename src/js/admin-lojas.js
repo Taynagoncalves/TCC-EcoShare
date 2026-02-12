@@ -12,26 +12,8 @@ async function carregarLojas() {
 
     if (!res.ok) throw new Error('Erro ao buscar lojas');
 
-    const lojas = await res.json();
-    lista.innerHTML = '';
-
-    if (!lojas || lojas.length === 0) {
-      lista.innerHTML = '<p>Nenhuma loja cadastrada.</p>';
-      return;
-    }
-
-    lojas.forEach(l => {
-      lista.innerHTML += `
-        <div class="loja">
-          <strong>${l.nome}</strong><br/>
-          ${l.descricao || ''}<br/>
-          <span><b>Pontos necessários:</b> ${l.pontos}</span><br/>
-          <button onclick="excluirLoja(${l.id})">
-            Excluir
-          </button>
-        </div>
-      `;
-    });
+    lojasCache = await res.json();
+    renderizarLojas(lojasCache);
 
   } catch (err) {
     console.error(err);
@@ -44,12 +26,74 @@ async function carregarLojas() {
   }
 }
 
+function renderizarLojas(lojas) {
+  lista.innerHTML = '';
+
+  if (!lojas || lojas.length === 0) {
+    lista.innerHTML = '<p>Nenhuma loja encontrada.</p>';
+    return;
+  }
+
+  lojas.forEach(l => {
+    lista.innerHTML += `
+      <div class="loja-card">
+        <h3>${l.nome}</h3>
+        <p>${l.descricao || ''}</p>
+        <p class="label">${l.endereco || 'Endereço não informado'}</p>
+        <span class="badge">${l.pontos} pontos</span>
+
+        <button class="btn-excluir" onclick="excluirLoja(${l.id})">
+          Excluir
+        </button>
+      </div>
+    `;
+  });
+}
+document.getElementById('buscarLoja')?.addEventListener('input', e => {
+  const termo = e.target.value.toLowerCase();
+
+  const filtradas = lojasCache.filter(l =>
+    l.nome.toLowerCase().includes(termo) ||
+    (l.descricao || '').toLowerCase().includes(termo) ||
+    (l.endereco || '').toLowerCase().includes(termo)
+  );
+
+  renderizarLojas(filtradas);
+});
+
 /* =========================
    CRIAR LOJA (ADMIN)
 ========================= */
 if (form) {
   form.addEventListener('submit', async e => {
     e.preventDefault();
+
+    const enderecoInput = document.getElementById('endereco');
+    const numeroInput = document.getElementById('numero');
+
+    if (!enderecoInput.value.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Endereço obrigatório'
+      });
+      return;
+    }
+
+    if (!numeroInput.value.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Número obrigatório'
+      });
+      return;
+    }
+
+    // monta endereço final
+    if (enderecoInput.dataset.rua) {
+      enderecoInput.value =
+        `${enderecoInput.dataset.rua}, ${numeroInput.value} - ${enderecoInput.dataset.bairro} - ${enderecoInput.dataset.cidade}/${enderecoInput.dataset.uf}`;
+    } else {
+      enderecoInput.value = `${enderecoInput.value}, ${numeroInput.value}`;
+    }
 
     const formData = new FormData(form);
 
@@ -60,7 +104,15 @@ if (form) {
         credentials: 'include'
       });
 
-      const data = await res.json();
+      let data;
+      const text = await res.text();
+
+      try {
+        data = JSON.parse(text);
+      } catch {
+        console.error('Resposta não é JSON:', text);
+        throw new Error('Erro interno do servidor');
+      }
 
       if (!res.ok) {
         Swal.fire({
@@ -75,7 +127,6 @@ if (form) {
       Swal.fire({
         icon: 'success',
         title: 'Loja cadastrada!',
-        text: 'A loja já está disponível para resgate.',
         confirmButtonColor: '#347142'
       });
 
@@ -83,11 +134,12 @@ if (form) {
       carregarLojas();
 
     } catch (err) {
-      console.error(err);
+      console.error('ERRO FRONT:', err);
+
       Swal.fire({
         icon: 'error',
         title: 'Erro inesperado',
-        text: 'Não foi possível cadastrar a loja.',
+        text: 'Servidor retornou erro interno (500). Veja o terminal do Node.',
         confirmButtonColor: '#347142'
       });
     }
@@ -132,8 +184,7 @@ async function excluirLoja(id) {
     Swal.fire({
       icon: 'success',
       title: 'Loja excluída!',
-      text: 'A loja foi removida com sucesso.',
-      timer: 1600,
+      timer: 1500,
       showConfirmButton: false
     });
 
@@ -151,6 +202,58 @@ async function excluirLoja(id) {
 }
 
 /* =========================
-   INIT
+   BUSCAR CEP AUTOMÁTICO
 ========================= */
-document.addEventListener('DOMContentLoaded', carregarLojas);
+document.addEventListener('DOMContentLoaded', () => {
+
+  carregarLojas();
+
+  const campoCep = document.getElementById('cep');
+  const campoEndereco = document.getElementById('endereco');
+
+  if (!campoCep || !campoEndereco) return;
+
+  let timeoutCep;
+
+  campoCep.addEventListener('input', e => {
+
+    clearTimeout(timeoutCep);
+
+    timeoutCep = setTimeout(async () => {
+
+      let cep = e.target.value.replace(/\D/g, '');
+
+      if (cep.length !== 8) return;
+
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const data = await res.json();
+
+        if (data.erro) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'CEP não encontrado'
+          });
+          return;
+        }
+
+        // guarda dados separadamente
+        campoEndereco.dataset.rua = data.logradouro;
+        campoEndereco.dataset.bairro = data.bairro;
+        campoEndereco.dataset.cidade = data.localidade;
+        campoEndereco.dataset.uf = data.uf;
+
+        campoEndereco.value =
+          `${data.logradouro} - ${data.bairro} - ${data.localidade}/${data.uf}`;
+
+      } catch {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro ao buscar CEP'
+        });
+      }
+
+    }, 500);
+
+  });
+});

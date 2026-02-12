@@ -11,7 +11,7 @@ body {
   padding-bottom: 110px;
 }
 
-.logo-topo {
+/*.logo-topo {
   width: 100%;
   height: 200px;
   display: flex;
@@ -26,7 +26,7 @@ body {
   height: 200px;
   width: auto;
 }
-
+/*
 /* CONTAINER PRINCIPAL */
 .perfil-container {
   max-width: 420px;
@@ -36,7 +36,11 @@ body {
   background: #fff;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   text-align: center;
+
+  position: relative;
+  top: 20px; /* sobe 40px */
 }
+
 
 /* TÍTULO */
 .perfil-container h2 {

@@ -11,11 +11,12 @@ body {
 
 /* ===== CARD PRINCIPAL ===== */
 .container {
-  max-width: 520px;
+  width: 92%;
+  max-width: 680px;  /* antes era 520px */
   margin: 24px auto;
   background: #fff;
   border-radius: 16px;
-  padding: 26px 22px;
+  padding: 26px 28px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
@@ -31,7 +32,7 @@ h2 {
 form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 7px; /* ↓ menos espaço entre campos */
 }
 
 /* ===== INPUTS ===== */
@@ -39,12 +40,15 @@ input,
 select,
 textarea {
   width: 100%;
-  padding: 12px 14px;
+  padding: 7px 10px;   /* ↓ menor altura */
   border: 1px solid #cfd8dc;
-  border-radius: 10px;
-  font-size: 14px;
-  outline: none;
-  transition: border 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 8px;  /* ↓ levemente menor */
+  font-size: 12.5px;   /* ↓ leve ajuste */
+}
+
+.field label {
+  font-size: 13px;
+  margin-bottom: 3px;
 }
 
 input:focus,
@@ -56,7 +60,7 @@ textarea:focus {
 
 textarea {
   resize: none;
-  height: 100px;
+  height: 50px; /* ↓ menor */
 }
 
 /* ===== LINHAS ===== */
@@ -113,6 +117,24 @@ textarea {
 }
 
 /* ===== DIAS ===== */
+.btn-todos-dias {
+  width: 100%;
+  margin: 8px 0 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #2e7d32;
+  background: #f1f8f4;
+  color: #1b5e20;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-todos-dias:hover {
+  background: #e8f5e9;
+}
+
+
 .dias-container {
   margin-top: 10px;
 }
@@ -158,12 +180,12 @@ textarea {
 
 /* ===== BOTÕES ===== */
 .btn-publicar {
-  margin-top: 10px;
+  margin-top: 8px;
   background: #1b5e20;
   color: #fff;
-  padding: 14px;
+  padding: 11px;
   border-radius: 12px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: bold;
   border: none;
   cursor: pointer;
@@ -178,7 +200,7 @@ textarea {
   background: transparent;
   color: #1b5e20;
   border: 2px solid #1b5e20;
-  padding: 12px;
+  padding: 10px;
   border-radius: 12px;
   font-size: 14px;
   cursor: pointer;
@@ -218,8 +240,10 @@ textarea {
 /* ===== MOBILE ===== */
 @media (max-width: 768px) {
   .container {
-    margin: 16px 12px;
-    padding: 22px;
+    width: 94%;
+    max-width: 100%;
+    margin: 14px auto;
+    padding: 20px;
   }
 
   h2 {

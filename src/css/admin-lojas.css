@@ -155,3 +155,51 @@ button[type="submit"]:hover {
 .btn-excluir:hover {
   background: #b71c1c;
 }
+/* ===== BUSCA LOJAS ===== */
+.buscar-loja {
+  width: 100%;
+  max-width: 700px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 2px solid #c8e6c9;
+  margin-bottom: 25px;
+  font-size: 15px;
+  outline: none;
+  transition: all .2s;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+
+.buscar-loja:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+/* ===== FORMULÁRIO EM GRID ===== */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 20px;
+}
+
+/* campos grandes ocupam tudo */
+.form-grid .full {
+  grid-column: 1 / -1;
+}
+
+/* botão ocupa tudo */
+.form-grid button {
+  grid-column: 1 / -1;
+}
+
+/* upload ocupa tudo */
+.form-grid input[type="file"] {
+  grid-column: 1 / -1;
+}
+
+/* mobile */
+@media (max-width: 700px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

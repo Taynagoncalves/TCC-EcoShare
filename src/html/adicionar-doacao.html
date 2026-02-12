@@ -54,21 +54,34 @@
 
     <!-- Dias -->
     <div class="dias-container">
-      <p class="label">Selecione os dias disponíveis para a entrega do material</p>
-      <div class="dias-grid">
-        <label class="dia-item"><input type="checkbox" value="Segunda"><span>Seg</span></label>
-        <label class="dia-item"><input type="checkbox" value="Terça"><span>Ter</span></label>
-        <label class="dia-item"><input type="checkbox" value="Quarta"><span>Qua</span></label>
-        <label class="dia-item"><input type="checkbox" value="Quinta"><span>Qui</span></label>
-        <label class="dia-item"><input type="checkbox" value="Sexta"><span>Sex</span></label>
-        <label class="dia-item"><input type="checkbox" value="Sábado"><span>Sáb</span></label>
-        <label class="dia-item"><input type="checkbox" value="Domingo"><span>Dom</span></label>
-      </div>
-    </div>
+
+  <div class="dias-header">
+    <p class="label">
+      Selecione os dias disponíveis para a entrega do material
+    </p>
+
+    <button type="button"
+            class="btn-todos-dias"
+            id="btnTodosDias">
+      Selecionar todos
+    </button>
+  </div>
+
+  <div class="dias-grid">
+    <label class="dia-item"><input type="checkbox" value="Segunda"><span>Seg</span></label>
+    <label class="dia-item"><input type="checkbox" value="Terça"><span>Ter</span></label>
+    <label class="dia-item"><input type="checkbox" value="Quarta"><span>Qua</span></label>
+    <label class="dia-item"><input type="checkbox" value="Quinta"><span>Qui</span></label>
+    <label class="dia-item"><input type="checkbox" value="Sexta"><span>Sex</span></label>
+    <label class="dia-item"><input type="checkbox" value="Sábado"><span>Sáb</span></label>
+    <label class="dia-item"><input type="checkbox" value="Domingo"><span>Dom</span></label>
+  </div>
+
+</div>
 
     <!-- Horários -->
     <div class="field">
-      <label>Horário disponível</label>
+      <label>Horário disponível para entrega</label>
       <select name="horarios" required>
         <option value="">Selecione</option>
         <option value="07:00 às 12:00">07:00 às 12:00</option>
@@ -79,7 +92,7 @@
 
     <!-- Bairro -->
     <div class="field">
-      <label>Bairro</label>
+      <label>Bairro para entrega</label>
       <select name="bairro_id" id="bairroSelect" required>
         <option value="">Selecione seu bairro</option>
       </select>

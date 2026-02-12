@@ -23,15 +23,24 @@ async function carregarCupons() {
       const div = document.createElement('div');
       div.className = 'cupom-item';
 
-   div.innerHTML = `
+div.innerHTML = `
   <div class="cupom-item-info">
     <strong>${c.loja_nome}</strong>
     <span>${c.pontos_usados} pontos</span>
   </div>
 
-  <button onclick="verCodigo('${c.codigo}')">
-    Ver código
-  </button>
+  <div class="cupom-acoes">
+    <button onclick="verCodigo('${c.codigo}')">
+      Ver código
+    </button>
+
+    <img 
+      src="/icons/localizacao.png"
+      class="btn-localizacao"
+      onclick="verEndereco('${c.loja_endereco}')"
+      title="Ver endereço da loja"
+    >
+  </div>
 `;
 
 
@@ -57,6 +66,26 @@ function verCodigo(codigo) {
 
 function voltarConfiguracoes() {
   window.location.href = '/configuracoes';
+}
+function verEndereco(endereco) {
+  if (!endereco || endereco === 'null') {
+    Swal.fire({
+      icon: 'info',
+      title: 'Endereço indisponível',
+      text: 'A loja ainda não cadastrou um endereço.'
+    });
+    return;
+  }
+
+  Swal.fire({
+    title: 'Endereço da loja',
+    html: `<b>${endereco}</b><br><br>
+           <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}" target="_blank">
+           Abrir no Google Maps
+           </a>`,
+    icon: 'info',
+    confirmButtonColor: '#347142'
+  });
 }
 
 document.addEventListener('DOMContentLoaded', carregarCupons);
