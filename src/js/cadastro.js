@@ -7,10 +7,10 @@ function toggleSenha(id, icon) {
 
   if (input.type === "password") {
     input.type = "text";
-    icon.src = "./icons/olhoaberto.png";
+    icon.src = "../icons/olhoaberto.png";
   } else {
     input.type = "password";
-    icon.src = "./icons/olhofechado.png";
+    icon.src = "../icons/olhofechado.png";
   }
 }
 
@@ -24,26 +24,22 @@ if (inputNome) {
   });
 }
 
+// ==============================
+// MÁSCARA + BLOQUEAR LETRAS NO TELEFONE
+// ==============================
 const inputTelefone = document.querySelector('input[name="telefone"]');
 
 function aplicarMascaraTelefone(valor) {
-  // só dígitos
   let v = valor.replace(/\D/g, "");
-
-  // limita (DDD + 9 dígitos = 11)
   if (v.length > 11) v = v.slice(0, 11);
 
-  // aplica máscara
   if (v.length <= 10) {
-    // (99) 9999-9999
     v = v.replace(/^(\d{2})(\d)/, "($1) $2");
     v = v.replace(/(\d{4})(\d)/, "$1-$2");
   } else {
-    // (99) 99999-9999
     v = v.replace(/^(\d{2})(\d)/, "($1) $2");
     v = v.replace(/(\d{5})(\d)/, "$1-$2");
   }
-
   return v;
 }
 
@@ -52,63 +48,67 @@ if (inputTelefone) {
     inputTelefone.value = aplicarMascaraTelefone(inputTelefone.value);
   });
 
-  // bloqueia teclas que não fazem sentido (mas ainda deixa backspace, setas, etc.)
   inputTelefone.addEventListener("keydown", (e) => {
-    const permitidos = [
-      "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End",
-    ];
+    const permitidos = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"];
     if (permitidos.includes(e.key)) return;
-
-    // deixa CTRL+A/C/V/X
     if (e.ctrlKey || e.metaKey) return;
-
-    // bloqueia qualquer coisa que não seja número
     if (!/^\d$/.test(e.key)) e.preventDefault();
   });
 }
 
 // ==============================
-// BUSCAR CEP AUTOMATICAMENTE
+// BUSCAR CEP AUTOMATICAMENTE + RESTRINGIR CASCAVEL-PR
 // ==============================
 const cepInput = document.getElementById("cep");
 const enderecoInput = document.getElementById("endereco");
 const bairroInput = document.getElementById("bairro");
 
+let cepEhDeCascavel = false;
+
+async function validarCepCascavel(cepLimpo) {
+  const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+  const data = await res.json();
+
+  if (data.erro) return { ok: false, msg: "CEP inválido" };
+  if (data.localidade !== "Cascavel" || data.uf !== "PR") {
+    return { ok: false, msg: "Permitido apenas para moradores de Cascavel - PR." };
+  }
+  return { ok: true, data };
+}
+
 if (cepInput) {
   cepInput.addEventListener("input", async () => {
     let valor = cepInput.value.replace(/\D/g, "");
-
-    // limita a 8 números
     if (valor.length > 8) valor = valor.slice(0, 8);
 
-    // aplica máscara 00000-000
-    if (valor.length > 5) {
-      valor = valor.replace(/(\d{5})(\d)/, "$1-$2");
-    }
-
+    if (valor.length > 5) valor = valor.replace(/(\d{5})(\d)/, "$1-$2");
     cepInput.value = valor;
 
-    // buscar endereço automaticamente ao completar 8 dígitos
+    cepEhDeCascavel = false;
+
     if (valor.replace(/\D/g, "").length === 8) {
       try {
         const cepLimpo = valor.replace(/\D/g, "");
-        const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
-        const data = await res.json();
+        const result = await validarCepCascavel(cepLimpo);
 
-        if (data.erro) {
+        if (!result.ok) {
+          enderecoInput.value = "";
+          bairroInput.value = "";
+          cepInput.value = "";
           Swal.fire({
-            icon: "error",
-            title: "CEP inválido",
-            text: "Não foi possível encontrar esse CEP",
+            icon: "warning",
+            title: "Cadastro restrito",
+            text: result.msg,
             confirmButtonColor: "#347142"
           });
           return;
         }
 
-        enderecoInput.value = data.logradouro || "";
-        bairroInput.value = data.bairro || "";
+        enderecoInput.value = result.data.logradouro || "";
+        bairroInput.value = result.data.bairro || "";
+        cepEhDeCascavel = true;
 
-      } catch (err) {
+      } catch {
         Swal.fire({
           icon: "error",
           title: "Erro",
@@ -119,29 +119,19 @@ if (cepInput) {
     }
   });
 }
+
 // ==============================
 // ENVIO DO FORMULÁRIO
 // ==============================
-const form = document.querySelector("form");
+const form = document.getElementById("formCadastro");
 if (form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const dados = {
-      nome: e.target.nome.value,
-      email: e.target.email.value,
-      telefone: e.target.telefone.value,
-      data_nascimento: e.target.data_nascimento.value,
-      senha: e.target.senha.value,
-      cep: e.target.cep.value,
-      endereco: e.target.endereco.value,
-      bairro: e.target.bairro.value,
-      numero: e.target.numero.value,
-      complemento: e.target.complemento.value
-    };
+    const senha = e.target.senha.value;
+    const confirmarSenha = document.getElementById("confirmarSenha")?.value || "";
 
-    // validação de senha
-    if (!dados.senha || dados.senha.length < 6) {
+    if (!senha || senha.length < 6) {
       Swal.fire({
         icon: "warning",
         title: "Senha inválida",
@@ -150,6 +140,68 @@ if (form) {
       });
       return;
     }
+
+    if (senha !== confirmarSenha) {
+      Swal.fire({
+        icon: "warning",
+        title: "Senhas diferentes",
+        text: "A senha e a confirmação precisam ser iguais.",
+        confirmButtonColor: "#347142"
+      });
+      return;
+    }
+
+    // ✅ se não validou ainda, valida aqui (evita travar cadastro por clique rápido)
+    const cepLimpo = String(e.target.cep.value || "").replace(/\D/g, "");
+    if (!cepLimpo || cepLimpo.length !== 8) {
+      Swal.fire({
+        icon: "warning",
+        title: "CEP inválido",
+        text: "Digite um CEP válido de Cascavel - PR.",
+        confirmButtonColor: "#347142"
+      });
+      return;
+    }
+
+    if (!cepEhDeCascavel) {
+      try {
+        const result = await validarCepCascavel(cepLimpo);
+        if (!result.ok) {
+          Swal.fire({
+            icon: "warning",
+            title: "Cadastro restrito",
+            text: result.msg,
+            confirmButtonColor: "#347142"
+          });
+          return;
+        }
+        // completa campos se necessário
+        enderecoInput.value = enderecoInput.value || (result.data.logradouro || "");
+        bairroInput.value = bairroInput.value || (result.data.bairro || "");
+        cepEhDeCascavel = true;
+      } catch {
+        Swal.fire({
+          icon: "error",
+          title: "Erro",
+          text: "Erro ao validar o CEP",
+          confirmButtonColor: "#347142"
+        });
+        return;
+      }
+    }
+
+    const dados = {
+      nome: e.target.nome.value.trim(),
+      email: e.target.email.value.trim(),
+      telefone: e.target.telefone.value.replace(/\D/g, ""),
+      data_nascimento: e.target.data_nascimento.value,
+      senha,
+      cep: cepLimpo,
+      endereco: e.target.endereco.value.trim(),
+      bairro: e.target.bairro.value.trim(),
+      numero: e.target.numero.value.trim(),
+      complemento: (e.target.complemento.value || "").trim()
+    };
 
     try {
       const res = await fetch("/cadastro", {
@@ -176,11 +228,9 @@ if (form) {
         text: "Sua conta foi criada com sucesso.",
         confirmButtonText: "Ir para login",
         confirmButtonColor: "#347142"
-      }).then(() => {
-        window.location.href = "/login";
-      });
+      }).then(() => window.location.href = "/login");
 
-    } catch (err) {
+    } catch {
       Swal.fire({
         icon: "error",
         title: "Erro",
@@ -189,4 +239,46 @@ if (form) {
       });
     }
   });
+}
+
+const senhaInput = document.getElementById("senha");
+const senhaAviso = document.getElementById("senhaAviso");
+
+if (senhaInput) {
+  senhaInput.addEventListener("input", () => {
+    const valor = senhaInput.value;
+
+    if (valor.length > 0 && valor.length < 6) {
+      senhaAviso.style.display = "block";
+      senhaAviso.classList.add("erro");
+      senhaInput.classList.add("input-erro");
+    } else {
+      senhaAviso.style.display = "none";
+      senhaAviso.classList.remove("erro");
+      senhaInput.classList.remove("input-erro");
+    }
+  });
+}
+
+const confirmarSenhaInput = document.getElementById("confirmarSenha");
+const confirmarSenhaAviso = document.getElementById("confirmarSenhaAviso");
+
+function validarConfirmacaoSenha() {
+  const senha = senhaInput.value;
+  const confirmar = confirmarSenhaInput.value;
+
+  if (confirmar.length > 0 && confirmar !== senha) {
+    confirmarSenhaAviso.style.display = "block";
+    confirmarSenhaAviso.classList.add("erro");
+    confirmarSenhaInput.classList.add("input-erro");
+  } else {
+    confirmarSenhaAviso.style.display = "none";
+    confirmarSenhaAviso.classList.remove("erro");
+    confirmarSenhaInput.classList.remove("input-erro");
+  }
+}
+
+if (confirmarSenhaInput) {
+  confirmarSenhaInput.addEventListener("input", validarConfirmacaoSenha);
+  senhaInput.addEventListener("input", validarConfirmacaoSenha);
 }

@@ -11,32 +11,31 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 14px; /* era 40px - agora sobe */
+  padding-top: 14px;
   background: #ffffff;
 }
 
-
 .top-logo{
-  margin-bottom: -40px; /* diminui o espaço abaixo da logo */
+  margin-bottom: -40px;
   text-align: center;
 }
 
 .top-logo img{
-  width: 130px; /* um pouco menor pra ganhar espaço */
+  width: 130px;
 }
+
 .center-container {
   width: 100%;
   max-width: 420px;
   padding: 0 20px;
   text-align: center;
-
-  margin-top: -30px; /* antes -20px → sobe mais um pouco */
+  margin-top: -30px;
 }
 
 /* TÍTULO */
 .center-container h2{
   color: #2e7d32;
-  margin-bottom: 12px; /* era 18px */
+  margin-bottom: 12px;
   margin-top: 0;
   font-size: 24px;
 }
@@ -45,16 +44,16 @@ body {
 .cadastro-form {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* ↓ menos espaço entre inputs */
+  gap: 10px;
 }
 
 /* INPUTS */
 .cadastro-form input {
   width: 100%;
-  padding: 7px 5px;      /* ↓ menos altura */
+  padding: 7px 5px;
   border: none;
   border-bottom: 1px solid #ccc;
-  font-size: 13px;      /* ↓ levemente menor */
+  font-size: 13px;
   outline: none;
   background: transparent;
 }
@@ -78,6 +77,23 @@ body {
 .password-group img {
   width: 22px;
   cursor: pointer;
+}
+
+/* ✅ AVISO SENHA */
+.senha-info {
+  font-size: 11px;
+  display: none;
+  margin-top: 4px;   /* pequeno espaço abaixo do input */
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+.senha-info.erro {
+  color: #d32f2f; /* vermelho */
+}
+
+.input-erro {
+  border-bottom: 1px solid #d32f2f !important;
 }
 
 /* BOTÃO */

@@ -27,7 +27,7 @@
     "jsonwebtoken": "^9.0.3",
     "middleware": "^1.0.0",
     "multer": "^2.0.2",
-    "mysql2": "^3.17.0",
+    "mysql2": "^3.17.1",
     "nodemailer": "^7.0.13",
     "path": "^0.12.7",
     "router": "^2.2.0",

@@ -5,7 +5,6 @@
   <title>EcoShare | Cadastro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../css/cadastro.css">
-  
 </head>
 <body>
 
@@ -16,35 +15,42 @@
   <main class="center-container">
     <h2>Cadastro</h2>
 
-    <!--FORM PRECISA DE ID -->
     <form id="formCadastro" class="cadastro-form">
 
       <input type="text" name="nome" placeholder="Nome Completo" required>
 
       <input type="email" name="email" placeholder="Email" required>
 
-      <!--CAMPO TELEFONE / WHATSAPP -->
       <input
-          type="text"
-          name="telefone"
-          placeholder="Telefone / WhatsApp"
-          required
-          inputmode="numeric"
-          autocomplete="tel"
-          maxlength="15"
-        />
+        type="text"
+        name="telefone"
+        placeholder="Telefone / WhatsApp"
+        required
+        inputmode="numeric"
+        autocomplete="tel"
+        maxlength="15"
+      />
 
       <input type="date" name="data_nascimento" required>
 
       <div class="password-group">
         <input type="password" name="senha" id="senha" placeholder="Senha" required>
-        <img src="../icons/olhofechado.png" onclick="toggleSenha('senha', this)">
+        <img src="../icons/olhofechado.png" onclick="toggleSenha('senha', this)" alt="Mostrar senha">
       </div>
 
+      <!-- ✅ AVISO ABAIXO DA SENHA -->
+      <small class="senha-info" id="senhaAviso" style="display: none;">
+        A senha deve ter no mínimo 6 caracteres.
+      </small>
+
       <div class="password-group">
-        <input type="password" id="confirmarSenha" placeholder="Confirmar Senha" required>
-        <img src="../icons/olhofechado.png" onclick="toggleSenha('confirmarSenha', this)">
-      </div>
+      <input type="password" name="confirmarSenha" id="confirmarSenha" placeholder="Confirmar Senha" required>
+      <img src="../icons/olhofechado.png" onclick="toggleSenha('confirmarSenha', this)" alt="Mostrar senha">
+    </div>
+
+    <small class="senha-info" id="confirmarSenhaAviso">
+      As senhas precisam ser iguais.
+    </small>
 
       <input type="text" name="cep" id="cep" placeholder="CEP" required>
 
@@ -53,6 +59,7 @@
       <input type="text" name="bairro" id="bairro" placeholder="Bairro" required>
 
       <input type="text" name="numero" placeholder="Número" required>
+
       <input type="text" name="complemento" placeholder="Complemento (ex: bloco, ap.)">
 
       <button type="submit">Criar Conta</button>
