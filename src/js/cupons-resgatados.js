@@ -1,3 +1,5 @@
+const lista = document.getElementById('listaCupons');
+
 async function carregarCupons() {
   try {
     const res = await fetch('/resgates/meus', {
@@ -5,55 +7,70 @@ async function carregarCupons() {
     });
 
     if (!res.ok) {
-      document.getElementById('listaCupons').innerHTML =
-        '<p>Erro ao carregar cupons.</p>';
+      lista.innerHTML = '<p>Erro ao carregar cupons.</p>';
       return;
     }
 
     const cupons = await res.json();
-    const lista = document.getElementById('listaCupons');
     lista.innerHTML = '';
 
-    if (cupons.length === 0) {
+    if (!cupons || cupons.length === 0) {
       lista.innerHTML = '<p>Você ainda não resgatou nenhum cupom.</p>';
       return;
     }
 
     cupons.forEach(c => {
-      const div = document.createElement('div');
-      div.className = 'cupom-item';
+      const imagem = c.loja_imagem
+        ? `/uploads/${c.loja_imagem}`
+        : '/icons/loja.png';
 
-div.innerHTML = `
-  <div class="cupom-item-info">
-    <strong>${c.loja_nome}</strong>
-    <span>${c.pontos_usados} pontos</span>
-  </div>
+      const endereco = c.loja_endereco || '';
 
-  <div class="cupom-acoes">
-    <button onclick="verCodigo('${c.codigo}')">
-      Ver código
-    </button>
+      const card = document.createElement('div');
+      card.className = 'cupom-card';
 
-    <img 
-      src="/icons/localizacao.png"
-      class="btn-localizacao"
-      onclick="verEndereco('${c.loja_endereco}')"
-      title="Ver endereço da loja"
-    >
-  </div>
-`;
+      card.innerHTML = `
+        <div class="cupom-esquerda">
+          <img src="${imagem}" class="cupom-logo">
 
+          <div class="cupom-dados">
+            <strong>${c.loja_nome}</strong>
+            <span>${c.pontos_usados} pontos</span>
+          </div>
+        </div>
 
-      lista.appendChild(div);
+        <div class="cupom-acoes">
+          <button class="btn-codigo">
+            Ver código
+          </button>
+
+          <img 
+            src="/icons/localizacao.png"
+            class="btn-localizacao"
+            title="Ver endereço da loja"
+          >
+        </div>
+      `;
+
+      /* eventos seguros */
+      card.querySelector('.btn-codigo')
+        .addEventListener('click', () => verCodigo(c.codigo));
+
+      card.querySelector('.btn-localizacao')
+        .addEventListener('click', () => verEndereco(endereco));
+
+      lista.appendChild(card);
     });
 
   } catch (err) {
     console.error(err);
-    document.getElementById('listaCupons').innerHTML =
-      '<p>Erro inesperado.</p>';
+    lista.innerHTML = '<p>Erro inesperado.</p>';
   }
 }
 
+/* =========================
+   VER CÓDIGO
+========================= */
 function verCodigo(codigo) {
   Swal.fire({
     title: 'Código do Cupom',
@@ -64,11 +81,12 @@ function verCodigo(codigo) {
   });
 }
 
-function voltarConfiguracoes() {
-  window.location.href = '/configuracoes';
-}
+/* =========================
+   ENDEREÇO
+========================= */
 function verEndereco(endereco) {
-  if (!endereco || endereco === 'null') {
+
+  if (!endereco || endereco === 'null' || endereco.trim() === '') {
     Swal.fire({
       icon: 'info',
       title: 'Endereço indisponível',
@@ -77,15 +95,24 @@ function verEndereco(endereco) {
     return;
   }
 
+  const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}`;
+
   Swal.fire({
     title: 'Endereço da loja',
-    html: `<b>${endereco}</b><br><br>
-           <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endereco)}" target="_blank">
-           Abrir no Google Maps
-           </a>`,
+    html: `
+      <b>${endereco}</b><br><br>
+      <a href="${maps}" target="_blank">Abrir no Google Maps</a>
+    `,
     icon: 'info',
     confirmButtonColor: '#347142'
   });
+}
+
+/* =========================
+   VOLTAR
+========================= */
+function voltarConfiguracoes() {
+  window.location.href = '/configuracoes';
 }
 
 document.addEventListener('DOMContentLoaded', carregarCupons);

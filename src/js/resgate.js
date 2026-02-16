@@ -18,53 +18,53 @@ async function carregarPontosTopo() {
     console.error('erro ao carregar pontos:', err);
   }
 }
+let cuponsResgatados = new Set();
 
-// carrega lojas disponíveis para resgate
 async function carregarResgate() {
   try {
-    // carrega pontos primeiro
     await carregarPontosTopo();
 
-    // rota correta de lojas (usuário)
-    const res = await fetch('/lojas', {
-      credentials: 'include'
-    });
-    if (!res.ok) throw new Error();
+    // pega lojas
+    const lojasRes = await fetch('/lojas', { credentials: 'include' });
+    if (!lojasRes.ok) throw new Error();
+    const lojas = await lojasRes.json();
 
-    const lojas = await res.json();
+    // pega cupons do usuário
+    const meusRes = await fetch('/resgates/meus', { credentials: 'include' });
+    const meus = await meusRes.json();
+
+    // guarda ids resgatados
+    cuponsResgatados.clear();
+    meus.forEach(c => cuponsResgatados.add(c.loja_id));
 
     const lista = document.getElementById('listaCupons');
-    if (!lista) return;
-
     lista.innerHTML = '';
 
-    if (lojas.length === 0) {
-      lista.innerHTML = '<p>nenhuma loja disponível no momento.</p>';
-      return;
-    }
-
     lojas.forEach(loja => {
+
+      const jaResgatado = cuponsResgatados.has(loja.id);
+
       lista.innerHTML += `
         <div class="cupom-card">
           <div class="cupom-topo">
-            <img 
-              src="${loja.imagem ? `/uploads/${loja.imagem}` : '/imagens/loja-padrao.png'}" 
-              alt="${loja.nome}" 
-              class="logo-loja"
-            >
+            <img src="${loja.imagem ? `/uploads/${loja.imagem}` : '/imagens/loja-padrao.png'}" class="logo-loja">
 
             <div class="cupom-info">
               <h3>${loja.nome}</h3>
-              <p class="descricao">
-                ${loja.descricao || 'loja parceira ecoshare'}
-              </p>
+              <p class="descricao">${loja.descricao || 'loja parceira ecoshare'}</p>
             </div>
           </div>
 
           <div class="cupom-rodape">
             <span class="pontos">${loja.pontos} pontos</span>
-            <button onclick="resgatar(${loja.id})">
-              resgatar
+
+            <button 
+              id="btn-${loja.id}"
+              class="${jaResgatado ? 'btn-resgatado' : ''}"
+              ${jaResgatado ? 'disabled' : ''}
+              onclick="resgatar(${loja.id})"
+            >
+              ${jaResgatado ? 'Resgatado' : 'Resgatar'}
             </button>
           </div>
         </div>
@@ -72,7 +72,7 @@ async function carregarResgate() {
     });
 
   } catch (err) {
-    console.error('erro ao carregar resgate:', err);
+    console.error(err);
   }
 }
 
@@ -88,11 +88,9 @@ async function resgatar(lojaId) {
 
     const data = await res.json();
 
-    // ERROS DE REGRA (ATENÇÃO)
     if (!res.ok) {
       const mensagem = data.erro || 'Não foi possível resgatar o cupom';
 
-      // erros esperados → warning
       if (
         mensagem.includes('pontos insuficientes') ||
         mensagem.includes('já resgatou')
@@ -103,9 +101,7 @@ async function resgatar(lojaId) {
           text: mensagem,
           confirmButtonColor: '#347142'
         });
-      } 
-      // erros 
-      else {
+      } else {
         Swal.fire({
           icon: 'error',
           title: 'Erro',
@@ -113,7 +109,6 @@ async function resgatar(lojaId) {
           confirmButtonColor: '#347142'
         });
       }
-
       return;
     }
 
@@ -129,10 +124,18 @@ async function resgatar(lojaId) {
       confirmButtonColor: '#347142'
     });
 
+    // 👉 ATUALIZA O BOTÃO NA HORA
+    const botao = document.getElementById(`btn-${lojaId}`);
+    if (botao) {
+      botao.innerText = 'Resgatado';
+      botao.classList.add('btn-resgatado');
+      botao.disabled = true;
+    }
+
+    // 👉 atualiza pontos
     carregarPontosTopo();
 
   } catch (err) {
-    // ❌ erro inesperado (rede / servidor)
     Swal.fire({
       icon: 'error',
       title: 'Erro inesperado',
