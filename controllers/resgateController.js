@@ -129,12 +129,11 @@ exports.meusCupons = async (req, res) => {
     const [rows] = await db.query(`
       SELECT
         r.id,
+        r.loja_id,   x
         r.codigo,
         r.pontos_usados,
         r.usado,
-        l.nome AS loja_nome,
-        l.imagem AS loja_imagem,
-        l.endereco AS loja_endereco
+        l.nome AS loja_nome
       FROM resgates r
       JOIN lojas l ON l.id = r.loja_id
       WHERE r.usuario_id = ?
@@ -147,3 +146,4 @@ exports.meusCupons = async (req, res) => {
     res.status(500).json({ erro: 'Erro ao buscar cupons' });
   }
 };
+
