@@ -77,6 +77,79 @@ tbody tr:hover {
   color: #fff;
 }
 
+.admin-voltar{
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  margin: 14px auto 6px;
+  padding: 0 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.btn-voltar-admin{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  background: #f4f8f5;
+  color: #2e7d32;
+
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+
+  border: 1px solid #cfe6d6;
+  transition: all .18s ease;
+}
+
+.btn-voltar-admin:hover{
+  background: #2e7d32;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+
+.btn-voltar-admin:active{
+  transform: scale(.96);
+}
+.filtro-admin {
+  width: 100%;
+  max-width: 420px;
+  margin: 20px 0 14px 0;
+}
+
+.filtro-admin input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  font-size: 14px;
+  outline: none;
+  transition: .2s;
+}
+
+.filtro-admin input:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 2px #e8f5e9;
+}
+.btn-exibir {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-right: 4px;
+}
+
+.btn-exibir:hover {
+  background: #125a9c;
+}
+
 @media (max-width: 768px) {
   th, td {
     font-size: 13px;

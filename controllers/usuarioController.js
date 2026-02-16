@@ -152,6 +152,41 @@ exports.listarUsuarios = async (req, res) => {
   }
 };
 
+exports.buscarUsuarioPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [rows] = await db.query(`
+      SELECT 
+        u.id,
+        u.nome,
+        u.email,
+        u.telefone,
+        u.data_nascimento,
+        u.tipo,
+        u.status,
+        u.pontos,
+        u.endereco,
+        u.numero,
+        u.cep,
+        u.complemento,
+        b.nome AS bairro
+      FROM usuarios u
+      LEFT JOIN bairros b ON b.id = u.bairro_id
+      WHERE u.id = ?
+    `, [id]);
+
+    if (!rows.length) {
+      return res.status(404).json({ erro: 'Usuário não encontrado' });
+    }
+
+    res.json(rows[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao buscar usuário' });
+  }
+};
 
 exports.alterarStatusUsuario = async (req, res) => {
   try {

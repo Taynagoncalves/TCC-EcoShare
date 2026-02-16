@@ -108,6 +108,20 @@ async function removerDoacao(id) {
     });
   }
 }
+// pesquisa doacoes
+const campoBuscaDoacoes = document.getElementById('buscaDoacoes');
+
+if (campoBuscaDoacoes) {
+  campoBuscaDoacoes.addEventListener('input', () => {
+    const termo = campoBuscaDoacoes.value.toLowerCase();
+    const linhas = document.querySelectorAll('#listaDoacoes tr');
+
+    linhas.forEach(linha => {
+      const texto = linha.innerText.toLowerCase();
+      linha.style.display = texto.includes(termo) ? '' : 'none';
+    });
+  });
+}
 
 // ==========================
 // AUXILIAR

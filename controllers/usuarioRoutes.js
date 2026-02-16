@@ -186,5 +186,12 @@ router.put(
   verificarAdmin,
   usuarioController.alterarTipoUsuario
 );
+// admin buscar usuario especifico
+router.get(
+  '/admin/:id',
+  verificarAutenticacao,
+  verificarAdmin,
+  usuarioController.buscarUsuarioPorId
+);
 
 module.exports = router;

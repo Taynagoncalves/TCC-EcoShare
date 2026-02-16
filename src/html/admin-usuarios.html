@@ -6,20 +6,36 @@
   <link rel="stylesheet" href="/css/admin-usuarios.css">
 
 </head>
+<a href="/admin" class="btn-voltar-admin">
+  ← Voltar ao painel
+</a>
 <body>
+</div>
+
 <h1>Usuários do Sistema</h1>
+<div class="filtro-admin">
+  <input
+    type="text"
+    id="buscaUsuarios"
+    placeholder="Buscar por ID ou nome do usuário..."
+  >
+</div>
 
 <div class="table-container">
   <table>
     <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Email</th>
-        <th>Tipo</th>
-        <th>Pontos</th>
-        <th>Status</th>
-        <th>Ações</th>
-      </tr>
+    <thead>
+  <tr>
+    <th>ID</th>
+    <th>Nome</th>
+    <th>Email</th>
+    <th>Tipo</th>
+    <th>Pontos</th>
+    <th>Status</th>
+    <th>Ações</th>
+  </tr>
+</thead>
+
     </thead>
     <tbody id="listaUsuarios"></tbody>
   </table>

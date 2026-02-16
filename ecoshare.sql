@@ -144,3 +144,6 @@ ALTER TABLE usuarios
 ADD COLUMN foto VARCHAR(255) DEFAULT NULL;
 
 ALTER TABLE lojas ADD endereco VARCHAR(255);
+
+ALTER TABLE usuarios
+ADD bairro_id INT NULL;

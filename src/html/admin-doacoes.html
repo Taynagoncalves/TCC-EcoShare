@@ -5,9 +5,21 @@
   <title>Admin | Doações</title>
   <link rel="stylesheet" href="../css/admin-doacoes.css">
 </head>
+
 <body>
 
+<a href="/admin" class="btn-voltar-admin">
+  ← Voltar ao painel
+</a>
+
 <h1>Administração de Doações</h1>
+<div class="filtro-admin">
+  <input
+    type="text"
+    id="buscaDoacoes"
+    placeholder="Buscar por ID ou material..."
+  >
+</div>
 
 <table>
   <thead>
@@ -25,5 +37,6 @@
 
 <script src="/js/admin-doacoes.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 </html>
