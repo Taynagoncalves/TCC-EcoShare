@@ -32,18 +32,27 @@ async function carregarDoacoes() {
     doacoes.forEach(d => {
       const tr = document.createElement('tr');
 
-      tr.innerHTML = `
-        <td>${d.id}</td>
-        <td>${d.nome_material}</td>
-        <td>${d.quantidade}</td>
-        <td>${d.usuario_nome}</td>
-        <td>${formatarStatus(d.status)}</td>
-        <td>
-          <button class="btn-remover" onclick="removerDoacao(${d.id})">
-            Remover
-          </button>
-        </td>
-      `;
+tr.innerHTML = `
+  <td>${d.id}</td>
+  <td>${d.nome_material}</td>
+  <td>${d.quantidade}</td>
+  <td>${d.usuario_nome}</td>
+  <td>${d.status}</td>
+  
+
+  <td class="acoes">
+
+    <button class="btn-exibir" onclick='abrirDoacao(${JSON.stringify(d)})'>
+      Exibir
+    </button>
+
+    <button class="btn-remover" onclick="removerDoacao(${d.id})">
+      Remover
+    </button>
+
+  </td>
+`;
+
 
       tbody.appendChild(tr);
     });
@@ -121,6 +130,45 @@ if (campoBuscaDoacoes) {
       linha.style.display = texto.includes(termo) ? '' : 'none';
     });
   });
+}
+function abrirDoacao(d) {
+
+  Swal.fire({
+    title: `Doação #${d.id}`,
+    width: 600,
+    confirmButtonColor: '#347142',
+    html: `
+      <div style="text-align:left;font-size:14px">
+
+        <b>Material:</b><br>${d.nome_material}<br><br>
+
+        <b>Tipo:</b><br>${d.tipo_material || 'Não informado'}<br><br>
+
+        <b>Quantidade:</b><br>${d.quantidade}<br><br>
+
+        <b>Doador:</b><br>${d.usuario_nome}<br><br>
+
+        <b>Status:</b><br>${d.status}<br><br>
+
+        <b>Dias disponíveis:</b><br>${d.dias_semana || 'Não informado'}<br><br>
+
+        <b>Horários:</b><br>${d.horarios || 'Não informado'}<br><br>
+
+        <b>Descrição:</b><br>${d.descricao || 'Sem descrição'}<br><br>
+
+        <hr>
+
+        <b>Imagem:</b><br><br>
+        ${
+          d.imagem
+          ? `<img src="/uploads/${d.imagem}" style="width:40%;border-radius:12px">`
+          : 'Sem imagem'
+        }
+
+      </div>
+    `
+  });
+
 }
 
 // ==========================

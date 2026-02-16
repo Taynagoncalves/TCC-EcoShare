@@ -51,22 +51,32 @@ async function carregarResgate() {
 
             <div class="cupom-info">
               <h3>${loja.nome}</h3>
-              <p class="descricao">${loja.descricao || 'loja parceira ecoshare'}</p>
-            </div>
+             <p class="categoria">
+  ${loja.categoria ? loja.categoria : 'Loja parceira EcoShare'}
+</p>
+
+<p class="descricao">
+  ${loja.descricao || ''}
+</p>
+
           </div>
 
-          <div class="cupom-rodape">
-            <span class="pontos">${loja.pontos} pontos</span>
+         <div class="cupom-rodape">
+  <div class="acoes">
+    <span class="pontos">${loja.pontos} pontos</span>
 
-            <button 
-              id="btn-${loja.id}"
-              class="${jaResgatado ? 'btn-resgatado' : ''}"
-              ${jaResgatado ? 'disabled' : ''}
-              onclick="resgatar(${loja.id})"
-            >
-              ${jaResgatado ? 'Resgatado' : 'Resgatar'}
-            </button>
-          </div>
+    <button 
+      id="btn-${loja.id}"
+      class="${jaResgatado ? 'btn-resgatado' : ''}"
+      ${jaResgatado ? 'disabled' : ''}
+      onclick="resgatar(${loja.id})"
+    >
+      ${jaResgatado ? 'Resgatado' : 'Resgatar'}
+    </button>
+  </div>
+</div>
+
+          
         </div>
       `;
     });

@@ -18,36 +18,44 @@ exports.listarLojas = async (req, res) => {
 ========================= */
 exports.criarLoja = async (req, res) => {
   try {
-    // multer envia multipart/form-data
-    const nome = req.body.nome;
-    const descricao = req.body.descricao || null;
-    const pontos = Number(req.body.pontos);
-    const endereco = req.body.endereco || null;
+    const {
+      nome,
+      categoria,
+      descricao,
+      pontos,
+      endereco
+    } = req.body;
 
     const imagem = req.file ? req.file.filename : null;
 
-    // validação
-    if (!nome || !pontos || isNaN(pontos)) {
+    if (!nome || !pontos) {
       return res.status(400).json({
         erro: 'Nome e pontos são obrigatórios'
       });
     }
 
     await db.query(
-      `INSERT INTO lojas (nome, descricao, pontos, endereco, imagem)
-       VALUES (?, ?, ?, ?, ?)`,
-      [nome, descricao, pontos, endereco, imagem]
+      `INSERT INTO lojas
+      (nome, categoria, descricao, pontos, endereco, imagem)
+      VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        nome,
+        categoria || null,
+        descricao || null,
+        Number(pontos),
+        endereco || null,
+        imagem
+      ]
     );
 
     res.json({ sucesso: true });
 
   } catch (err) {
     console.error('ERRO AO CRIAR LOJA:', err);
-    res.status(500).json({
-      erro: 'Erro interno ao cadastrar loja'
-    });
+    res.status(500).json({ erro: 'Erro ao cadastrar loja' });
   }
 };
+
 
 /* =========================
    EXCLUIR LOJA (ADMIN)

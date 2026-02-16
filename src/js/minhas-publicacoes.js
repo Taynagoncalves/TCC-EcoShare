@@ -66,19 +66,17 @@ function renderizarBotoes(d) {
     `;
   }
 
-  // ANDAMENTO → VER + EXCLUIR
+  // ANDAMENTO → APENAS EXCLUIR
   if (d.status === 'andamento') {
     return `
-      <button onclick="verDetalhes(${d.id})">Ver</button>
       <button class="btn-excluir" onclick="excluirDoacao(${d.id})">
         Excluir
       </button>
     `;
   }
 
-  //ATIVO → VER + EDITAR + EXCLUIR
+  // ATIVO → EDITAR + EXCLUIR
   return `
-    <button onclick="verDetalhes(${d.id})">Ver</button>
     <button onclick="editarDoacao(${d.id})">Editar</button>
     <button class="btn-excluir" onclick="excluirDoacao(${d.id})">
       Excluir

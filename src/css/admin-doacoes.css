@@ -94,3 +94,28 @@ button:hover {
   border-color: #2e7d32;
   box-shadow: 0 0 0 2px #e8f5e9;
 }
+/* BOTÃO EXIBIR (AZUL) */
+.btn-exibir {
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  color: #fff;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.btn-exibir:hover {
+  background: linear-gradient(135deg, #42a5f5, #1565c0);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(33,150,243,.35);
+}
+
+.btn-exibir:active {
+  transform: scale(.96);
+}
+.acoes button {
+  margin-right: 6px;
+}

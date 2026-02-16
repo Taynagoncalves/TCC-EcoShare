@@ -191,16 +191,34 @@ exports.excluirDoacao = async (req, res) => {
    ADMIN
 ========================= */
 exports.listarTodasAdmin = async (req, res) => {
-  const [rows] = await db.query(`
-    SELECT d.id, d.nome_material, d.quantidade,
-           d.status, u.nome AS usuario_nome
-    FROM doacoes d
-    JOIN usuarios u ON u.id=d.usuario_id
-    ORDER BY d.id DESC
-  `);
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        d.id,
+        d.nome_material,
+        d.tipo_material,
+        d.quantidade,
+        d.descricao,
+        d.dias_semana,
+        d.horarios,
+        d.imagem,
+        d.status,
+        b.nome AS bairro,
+        u.nome AS usuario_nome
+      FROM doacoes d
+      JOIN usuarios u ON u.id = d.usuario_id
+      LEFT JOIN bairros b ON b.id = d.bairro_id
+      ORDER BY d.id DESC
+    `);
 
-  res.json(rows);
+    res.json(rows);
+
+  } catch (err) {
+    console.error('erro admin doacoes:', err);
+    res.status(500).json({ erro: 'erro ao listar doações' });
+  }
 };
+
 
 exports.removerAdmin = async (req, res) => {
   await db.query(

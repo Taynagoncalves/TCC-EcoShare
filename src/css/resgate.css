@@ -153,20 +153,31 @@ body {
   font-size: 14px;
   color: #666;
 }
-
 /* RODAPÉ */
 .cupom-rodape {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  width: 100%;
+  margin-top: 12px;
 }
 
+/* container da direita (pontos + botão) */
+.cupom-rodape .acoes {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* alinha na direita */
+  gap: 6px;
+}
+
+/* pontos acima */
 .cupom-rodape .pontos {
   font-weight: 700;
   color: #347142;
   font-size: 15px;
 }
 
+/* botão abaixo */
 .cupom-rodape button {
   background: #347142;
   color: #fff;
@@ -182,6 +193,7 @@ body {
 .cupom-rodape button:hover {
   background: #2b5f37;
 }
+
 /* botão após resgate */
 .btn-resgatado {
   background: #bdbdbd !important;
@@ -191,6 +203,17 @@ body {
 
 .btn-resgatado:hover {
   background: #bdbdbd !important;
+}
+.categoria {
+  font-size: 13px;
+  font-weight: 600;
+  color: #050806;
+  margin-bottom: 4px;
+}
+
+.descricao {
+  font-size: 12px;
+  color: #666;
 }
 
 /* MOBILE */

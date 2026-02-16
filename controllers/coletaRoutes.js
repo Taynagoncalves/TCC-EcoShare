@@ -76,4 +76,11 @@ router.get(
   coletaController.listarColetasAdmin
 );
 
+router.get(
+  '/admin/:id',
+  verificarAutenticacao,
+  verificarAdmin,
+  coletaController.buscarColetaPorId
+);
+
 module.exports = router;

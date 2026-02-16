@@ -51,6 +51,48 @@ exports.solicitarColeta = async (req, res) => {
     res.status(500).json({ erro: 'erro ao solicitar coleta' });
   }
 };
+exports.buscarColetaPorId = async (req, res) => {
+  try {
+
+    const [rows] = await db.query(`
+      SELECT
+        c.id,
+        c.status,
+        c.criada_em AS data_solicitacao,
+
+        d.nome_material,
+        d.quantidade,
+        d.dias_semana,
+        d.horarios,
+        d.descricao,
+        d.imagem,
+
+        doador.nome AS doador_nome,
+        doador.telefone AS doador_tel,
+
+        solicitante.nome AS solicitante_nome,
+        solicitante.telefone AS solicitante_tel
+
+      FROM solicitacoes_coleta c
+
+      JOIN doacoes d ON d.id = c.doacao_id
+      JOIN usuarios doador ON doador.id = c.doador_id
+      JOIN usuarios solicitante ON solicitante.id = c.solicitante_id
+
+      WHERE c.id = ?
+    `, [req.params.id]);
+
+    if (!rows.length)
+      return res.status(404).json({ erro: 'Coleta não encontrada' });
+
+    res.json(rows[0]);
+
+  } catch (err) {
+    console.error('ERRO AO BUSCAR COLETA:', err);
+    res.status(500).json({ erro: 'Erro ao buscar coleta' });
+  }
+};
+
 
 /* listar solicitações recebidas */
 exports.listarSolicitacoes = async (req, res) => {

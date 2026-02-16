@@ -147,3 +147,6 @@ ALTER TABLE lojas ADD endereco VARCHAR(255);
 
 ALTER TABLE usuarios
 ADD bairro_id INT NULL;
+
+ALTER TABLE lojas
+ADD COLUMN categoria VARCHAR(100) AFTER nome;
