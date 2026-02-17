@@ -1207,3 +1207,121 @@ body {
 .icon-notificacao:hover {
   transform: scale(1.15);
 }
+/*
+* {
+  box-sizing: border-box;
+}
+
+img, input, button {
+  max-width: 100%;
+}
+
+/* HEADER (topo) */
+.topo{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 22px;
+}
+
+.topo .logo,
+.topo .logo-area,
+.topo .logo-container{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* área da busca no desktop */
+.topo .busca,
+.topo .search,
+.topo .search-area{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.topo .busca input,
+.topo .search input,
+.topo .search-area input{
+  width: 100%;
+  max-width: 900px;
+}
+
+/* ícone sino */
+.topo .notificacao,
+.topo .bell,
+.topo .bell-area{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* FILTROS (botões tipo Plástico/Papel/...) */
+.filtros,
+.categorias,
+.filtros-container{
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+}
+
+/* ====== AJUSTES MOBILE ====== */
+@media (max-width: 600px){
+  /* topo vira "2 linhas": logo/sino em cima, busca embaixo ocupando 100% */
+  .topo{
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      "logo . bell"
+      "search search search";
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .topo .logo,
+  .topo .logo-area,
+  .topo .logo-container{
+    grid-area: logo;
+  }
+
+  .topo .notificacao,
+  .topo .bell,
+  .topo .bell-area{
+    grid-area: bell;
+    justify-self: end;
+  }
+
+  .topo .busca,
+  .topo .search,
+  .topo .search-area{
+    grid-area: search;
+    justify-content: stretch;
+  }
+
+  .topo .busca input,
+  .topo .search input,
+  .topo .search-area input{
+    max-width: none;
+    width: 100%;
+  }
+
+  /* filtros no celular: uma linha com scroll horizontal (não quebra feio) */
+  .filtros,
+  .categorias,
+  .filtros-container{
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 16px;
+  }
+
+  .filtros::-webkit-scrollbar,
+  .categorias::-webkit-scrollbar,
+  .filtros-container::-webkit-scrollbar{
+    display: none;
+  }
+}
