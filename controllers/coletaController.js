@@ -392,17 +392,25 @@ exports.historico = async (req, res) => {
     const usuarioId = req.usuario.id;
 
     const [rows] = await db.query(`
-      select
+      SELECT
         sc.id,
         sc.status,
+        sc.doador_id,
+        sc.solicitante_id,
+
         d.nome_material,
         d.quantidade,
-        d.imagem
-      from solicitacoes_coleta sc
-      join doacoes d on d.id = sc.doacao_id
-      where sc.status = 'concluida'
-        and (sc.doador_id = ? or sc.solicitante_id = ?)
-      order by sc.id desc
+        d.imagem,
+
+        20 AS pontos_ganhos
+
+      FROM solicitacoes_coleta sc
+      JOIN doacoes d ON d.id = sc.doacao_id
+
+      WHERE sc.status = 'concluida'
+      AND (sc.doador_id = ? OR sc.solicitante_id = ?)
+
+      ORDER BY sc.id DESC
     `, [usuarioId, usuarioId]);
 
     res.json(rows);

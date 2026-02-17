@@ -2,28 +2,41 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>EcoShare | Denúncias</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Denúncias</title>
 
-  <link rel="stylesheet" href="/css/admin-denuncias.css">
+ 
+  <link rel="stylesheet" href="../css/admin-coletas.css">
+  <link rel="stylesheet" href="/css/menu.css">
 </head>
+
 <body>
 
-<header class="topo">
-  <h1>Denúncias Recebidas</h1>
-  <p>Acompanhe e modere publicações denunciadas pelos usuários</p>
-</header>
+<a href="/admin" class="btn-voltar-admin">
+  ← Voltar ao painel
+</a>
 
-<main class="container">
+<h2>Administração de Denúncias</h2>
 
-  <!-- lista de denúncias -->
-  <div id="listaDenuncias" class="denuncias-grid">
-    <!-- cards via js -->
-  </div>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Usuário</th>
+      <th>Motivo</th>
+      <th>Status</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
 
-</main>
+  <tbody id="listaDenuncias">
+    <tr>
+      <td colspan="5">Carregando...</td>
+    </tr>
+  </tbody>
+</table>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/admin-denuncias.js"></script>
+
 </body>
 </html>

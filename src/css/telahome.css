@@ -21,10 +21,7 @@ body {
   position: relative;
 }
 
-/* logo menor */
-.logo {
-  width: 135px;
-}
+
 
 /* barra menor e mais moderna */
 .search {
@@ -1157,7 +1154,7 @@ body {
 
 /* LOGO */
 .logo {
-  width: 120px;
+  width: 150px;
   justify-self: start;
 }
 
@@ -1324,4 +1321,12 @@ img, input, button {
   .filtros-container::-webkit-scrollbar{
     display: none;
   }
+}
+.notificacao-item.nao-lida {
+  font-weight: bold;
+}
+
+.notificacao-item.lida {
+  font-weight: normal;
+  opacity: 0.75;
 }

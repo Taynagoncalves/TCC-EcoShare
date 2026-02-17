@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
 const verificarAutenticacao = require('./verificarAutenticacao');
+const notificacaoController = require('./notificacaoController');
+
+router.get('/', verificarAutenticacao, notificacaoController.listar);
 
 // listar TODAS as notificações (lidas e não lidas)
 router.get('/', verificarAutenticacao, async (req, res) => {
@@ -29,5 +32,6 @@ router.delete('/limpar', verificarAutenticacao, async (req, res) => {
   );
   res.json({ ok: true });
 });
+
 
 module.exports = router;

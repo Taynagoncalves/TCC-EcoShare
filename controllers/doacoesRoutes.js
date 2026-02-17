@@ -78,5 +78,6 @@ router.delete(
   verificarAutenticacao,
   doacoesController.excluirDoacao
 );
+router.get('/:id', verificarAutenticacao, doacoesController.buscarPorId);
 
 module.exports = router;

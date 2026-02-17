@@ -11,32 +11,15 @@
 </head>
 <body>
 
-  <!-- 🔝 TOPO -->
-  <header class="topo">
-    <h1>Coletas em andamento</h1>
+ <header class="topo topo-interno">
+  <button class="btn-voltar" onclick="location.href='/telahome'">← Voltar</button>
+  <h1 class="titulo-pagina">Coletas em andamento</h1>
+</header>
 
-     <div class="notificacao-container">
-  <img
-  src="../icons/notificacao.png"
-  id="btnNotificacao"
-  class="icon-notificacao"
-  alt="Notificações"
->
+  <main class="pagina-container">
+  <div id="lista-coletas" class="lista-coletas"></div>
+</main>
 
-
-    <div id="menuNotificacao" class="menu-notificacao">
-     <a href="/solicitacoes-coleta"> Solicitações de coleta</a>
-<a href="/coletas-andamento"> Coletas em andamento</a>
-
-    </div>
-  </header>
-
-  <!-- 📦 LISTA DE COLETAS -->
-  <main>
-    <div id="lista-coletas" class="lista-coletas">
-      <!-- Cards entram via JS -->
-    </div>
-  </main>
 
 <nav class="menu">
   <div class="menu-item" data-rota="telahome" onclick="location.href='/telahome'">

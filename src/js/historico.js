@@ -5,11 +5,11 @@ async function carregarHistorico() {
   container.innerHTML = '';
 
   try {
-    // 🔹 buscar histórico
+    // buscar histórico
     const res = await fetch('/coletas/historico');
     const dados = await res.json();
 
-    // 🔹 buscar usuário logado
+    // buscar usuário logado
     const userRes = await fetch('/usuario-logado');
     const usuario = await userRes.json();
     const usuarioId = Number(usuario.id);
@@ -23,8 +23,22 @@ async function carregarHistorico() {
       return;
     }
 
+    // 🔹 LOOP ÚNICO CORRETO
     dados.forEach(h => {
+
       const ehDoador = Number(h.doador_id) === usuarioId;
+      const ehColetor = Number(h.solicitante_id) === usuarioId;
+
+      let textoAcao = '';
+      let pontosHTML = '';
+
+      if (ehDoador) {
+        textoAcao = 'Você doou';
+        pontosHTML = `<p class="pontos">+${h.pontos_ganhos || 20} pontos</p>`;
+      } 
+      else if (ehColetor) {
+        textoAcao = 'Você coletou';
+      }
 
       container.innerHTML += `
         <div class="card-historico">
@@ -39,11 +53,9 @@ async function carregarHistorico() {
             <strong>${h.nome_material}</strong> - ${h.quantidade} unidades
           </p>
 
-          <p>
-            ${ehDoador ? 'Você doou' : 'Você coletou'}
-          </p>
+          <p>${textoAcao}</p>
 
-          ${ehDoador ? '<p class="pontos">+20 pontos</p>' : ''}
+          ${pontosHTML}
         </div>
       `;
     });

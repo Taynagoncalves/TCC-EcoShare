@@ -348,6 +348,7 @@ async function carregarNotificacoes() {
 
     const naoLidas = notificacoes.filter(n => !n.lida);
 
+    // badge
     if (naoLidas.length > 0) {
       badge.textContent = naoLidas.length;
       badge.classList.remove('hidden');
@@ -356,15 +357,41 @@ async function carregarNotificacoes() {
     }
 
     notificacoes.forEach(n => {
+
       const div = document.createElement('div');
-      div.className = 'notificacao-item';
+
+      // negrito ou não
+      div.className = `notificacao-item ${n.lida ? 'lida' : 'nao-lida'}`;
+
       div.innerHTML = `
         <p>${n.mensagem}</p>
         <small>${new Date(n.criada_em).toLocaleString()}</small>
       `;
 
+      // clique
       div.onclick = async () => {
+
+        // remove negrito visual imediato
+        div.classList.remove('nao-lida');
+        div.classList.add('lida');
+
+        // marca como lida no banco
         await fetch(`/notificacoes/${n.id}/lida`, { method: 'PUT' });
+
+        // atualiza badge
+        carregarNotificacoes();
+
+        // redirecionamento
+        let destino = null;
+
+        if (n.tipo === 'solicitacao')
+          destino = '/solicitacoes-coleta';
+
+        else if (n.tipo === 'andamento')
+          destino = '/coletas-andamento';
+
+        if (destino)
+          window.location.href = destino;
       };
 
       lista.appendChild(div);
@@ -374,6 +401,7 @@ async function carregarNotificacoes() {
     console.error('erro ao carregar notificações:', err);
   }
 }
+
 
 // limpar notificações
 async function limparNotificacoes(e) {

@@ -39,6 +39,8 @@ app.use('/usuarios', require('./controllers/usuarioRoutes'));
 app.use('/resgates', require('./controllers/resgateRoutes'));
 app.use('/lojas', require('./controllers/lojasRoutes'));
 app.use('/notificacoes', require('./controllers/notificacaoRoutes'));
+app.use('/denuncia', require('./controllers/denunciaRoutes'));
+app.use('/doacoes', require('./controllers/doacoesRoutes'));
 
 /* rotas de páginas html */
 app.get('/', (req, res) => {
@@ -172,6 +174,16 @@ app.get('/usuario-logado', verificarAutenticacao, (req, res) => {
     tipo: req.usuario.tipo
   });
 });
+
+app.get(
+  '/admin/denuncias',
+  verificarAutenticacao,
+  verificarAdmin,
+  (req, res) => {
+    res.sendFile(path.join(__dirname, 'src/html/admin-denuncias.html'));
+  }
+);
+
 
 /* servidor */
 const port = process.env.PORT || 8000;

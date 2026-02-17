@@ -150,3 +150,14 @@ ADD bairro_id INT NULL;
 
 ALTER TABLE lojas
 ADD COLUMN categoria VARCHAR(100) AFTER nome;
+
+
+CREATE TABLE denuncias (
+  id INT NOT NULL AUTO_INCREMENT,
+  usuario_id INT NULL,
+  doacao_id INT NULL,
+  mensagem TEXT NULL,
+  status ENUM('pendente','analisando','resolvido') DEFAULT 'pendente',
+  criada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+);

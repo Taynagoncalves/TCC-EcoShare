@@ -10,45 +10,54 @@ async function carregarNotificacoes() {
 }
 async function carregarNotificacoes() {
   try {
-    const res = await fetch('/coletas/recebidas');
+    const res = await fetch('/notificacoes');
+    const notificacoes = await res.json();
 
-    if (!res.ok) {
-      throw new Error('Erro ao buscar notificações');
-    }
-
-    const dados = await res.json();
     const lista = document.getElementById('listaNotificacoes');
     lista.innerHTML = '';
 
-    if (!dados.length) {
-      lista.innerHTML = '<p style="padding:20px">Nenhuma notificação no momento.</p>';
+    if (!notificacoes.length) {
+      lista.innerHTML = '<p style="padding:15px">Nenhuma notificação</p>';
       return;
     }
 
-    dados.forEach(n => {
-      lista.innerHTML += `
-        <div class="card">
-          <img src="${n.imagem ? `/uploads/${n.imagem}` : '/imagens/sem-imagem.png'}">
+    notificacoes.forEach(n => {
 
-          <h3>Solicitação de Coleta</h3>
+      let rota = '#';
 
-          <p><strong>Material:</strong> ${n.nome_material}</p>
-          <p><strong>Quantidade:</strong> ${n.quantidade}</p>
-          <p><strong>Solicitante:</strong> ${n.solicitante}</p>
+      if (n.tipo === 'solicitacao')
+        rota = '/solicitacoes-coleta.html';
 
-          <div class="acoes">
-         <button class="recusar" onclick="recusar(${n.solicitacao_id})">Recusar</button>
-<button class="confirmar" onclick="confirmar(${n.solicitacao_id})">Confirmar</button>
+      else if (n.tipo === 'andamento')
+        rota = '/coletas-andamento.html';
 
-          </div>
-        </div>
+      else
+        return; // ignora outras
+
+      const div = document.createElement('div');
+      div.className = 'notificacao-item';
+      div.style.cursor = 'pointer';
+
+      div.innerHTML = `
+        <div>${n.mensagem}</div>
+        <small>${new Date(n.criada_em).toLocaleString()}</small>
       `;
+
+      // 👇 AQUI É O CLICK REAL
+      div.addEventListener('click', () => {
+        window.location.href = rota;
+      });
+
+      lista.appendChild(div);
     });
 
-  } catch (error) {
-    console.error('Erro ao carregar notificações:', error);
+  } catch (err) {
+    console.error('Erro notificações:', err);
   }
 }
+
+document.addEventListener('DOMContentLoaded', carregarNotificacoes);
+
 
 async function confirmar(id) {
   await fetch(`/coletas/${id}/confirmar`, { method: 'PUT' });

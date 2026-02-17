@@ -233,3 +233,29 @@ exports.removerAdmin = async (req, res) => {
 
   res.json({ sucesso: true });
 };
+exports.buscarPorId = async (req, res) => {
+  try {
+
+    const [rows] = await db.query(`
+      SELECT 
+        d.id,
+        d.nome_material,
+        d.quantidade,
+        d.descricao,
+        d.imagem,
+        u.nome AS doador
+      FROM doacoes d
+      LEFT JOIN usuarios u ON u.id = d.usuario_id
+      WHERE d.id = ?
+    `, [req.params.id]);
+
+    if (!rows.length)
+      return res.status(404).json({ erro: 'Doação não encontrada' });
+
+    res.json(rows[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao buscar doação' });
+  }
+};

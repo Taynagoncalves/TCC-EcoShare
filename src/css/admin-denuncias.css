@@ -1,148 +1,190 @@
-/* reset básico */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
+/* ===== BASE ===== */
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  color: #333;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f2f5f4;
+  margin: 0;
+  padding: 24px;
 }
 
-/* topo */
-.topo {
-  background: #347142;
-  color: #fff;
-  padding: 25px 30px;
+/* título */
+h2 {
+  text-align: center;
+  margin-bottom: 22px;
+  color: #2e7d32;
+  font-weight: 700;
+  letter-spacing: .3px;
 }
 
-.topo h1 {
-  font-size: 26px;
-  margin-bottom: 6px;
+/* botão voltar */
+.btn-voltar-admin {
+  display: inline-block;
+  margin-bottom: 20px;
+  text-decoration: none;
+  color: #2e7d32;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: .15s;
 }
 
-.topo p {
-  font-size: 14px;
-  opacity: 0.9;
+.btn-voltar-admin:hover {
+  background: #eaf3ee;
 }
 
-/* container */
-.container {
-  padding: 30px;
-}
-
-/* grid de cards */
-.denuncias-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
-}
-
-/* card */
-.denuncia-card {
+/* ===== TABELA ===== */
+table {
+  width: 100%;
+  max-width: 1100px;
+  margin: auto;
+  border-collapse: collapse;
   background: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.12);
 }
 
-.denuncia-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 22px rgba(0,0,0,0.08);
+/* cabeçalho */
+thead {
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  color: white;
 }
 
-/* cabeçalho do card */
-.denuncia-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+th {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 14px;
+  letter-spacing: .4px;
 }
 
-.denuncia-id {
-  font-weight: bold;
-  color: #347142;
+td {
+  padding: 14px;
+  font-size: 14px;
 }
 
+/* linhas */
+tbody tr {
+  transition: background .15s, transform .1s;
+}
+
+tbody tr:nth-child(even) {
+  background: #f7f9f8;
+}
+
+tbody tr:hover {
+  background: #eef6f1;
+  transform: scale(1.002);
+}
+
+/* ===== STATUS ===== */
 .status {
+  padding: 6px 12px;
+  border-radius: 999px;
   font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-weight: bold;
+  font-weight: 700;
+  display: inline-block;
+  letter-spacing: .3px;
 }
 
 .status.pendente {
-  background: #ffe8e8;
-  color: #c0392b;
+  background: #fff3cd;
+  color: #8a6d00;
 }
 
-.status.analisada {
-  background: #e6f4ea;
-  color: #2e7d32;
+.status.analisando {
+  background: #d1ecf1;
+  color: #0c5460;
 }
 
-/* conteúdo */
-.denuncia-info p {
-  font-size: 14px;
-  margin-bottom: 4px;
+.status.resolvido {
+  background: #d4edda;
+  color: #155724;
 }
 
-.denuncia-info strong {
-  color: #555;
-}
-
-/* motivo */
-.motivo {
-  background: #f9f9f9;
-  border-left: 4px solid #347142;
-  padding: 10px;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-/* ações */
+/* ===== BOTÕES ===== */
 .acoes {
-  margin-top: auto;
-  display: flex;
-  gap: 10px;
+  white-space: nowrap;
 }
 
 .acoes button {
-  flex: 1;
-  padding: 8px;
-  border-radius: 6px;
   border: none;
+  padding: 8px 12px;
+  margin: 2px;
+  border-radius: 8px;
+  font-size: 13px;
   cursor: pointer;
-  font-size: 14px;
+  font-weight: 600;
+  transition: .18s;
 }
 
-.btn-ver {
-  background: #347142;
-  color: #fff;
+/* visualizar */
+.btn-exibir {
+  background: #1976d2;
+  color: white;
 }
 
-.btn-ver:hover {
-  opacity: 0.9;
+.btn-exibir:hover {
+  background: #115293;
 }
 
-.btn-status {
-  background: #999;
-  color: #fff;
+/* remover */
+.btn-recusar {
+  background: #d32f2f;
+  color: white;
 }
 
-.btn-status:hover {
-  opacity: 0.9;
+.btn-recusar:hover {
+  background: #a61d1d;
 }
 
-/* vazio */
-.vazio {
-  text-align: center;
-  color: #777;
-  grid-column: 1 / -1;
-  padding: 40px;
+/* resolver */
+.btn-concluir {
+  background: #2e7d32;
+  color: white;
+}
+
+.btn-concluir:hover {
+  background: #1b5e20;
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width: 768px) {
+
+  body {
+    padding: 12px;
+  }
+
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    margin-bottom: 16px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    background: #fff;
+  }
+
+  td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+  }
+
+  td:last-child {
+    border-bottom: none;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #2e7d32;
+    display: block;
+    margin-bottom: 4px;
+  }
+
 }
