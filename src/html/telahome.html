@@ -6,76 +6,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../css/telahome.css">
   <link rel="stylesheet" href="../css/menu.css">
-
 </head>
 <body>
+
 <div id="spinner" class="spinner-overlay">
   <div class="spinner"></div>
 </div>
 
 <!-- =========================
-     TOPO
+     HEADER FIXO (TOPO + FILTROS)
 ========================= -->
-<header class="topo">
-  <img src="../imagens/logo.png" class="logo" alt="EcoShare">
+<div class="header-fixo">
 
-<input
-  type="text"
-  id="campoBusca"
-  class="search"
-  placeholder="Buscar material..."
->
-<div class="perfil-topo" id="perfilTopo" onclick="location.href='/perfil'">
-  <img id="fotoTopo" src="/icons/user.png" class="foto-topo">
-</div>
+  <!-- TOPO -->
+  <header class="topo">
+    <img src="../imagens/logo.png" class="logo" alt="EcoShare">
 
-
-<div class="icon-notificacao-wrapper" id="btnNotificacao">
-  <img src="../icons/notificacao.png" class="icon-notificacao">
-  <span id="badgeNotificacoes" class="badge hidden">0</span>
-
-  <div id="menuNotificacao" class="menu-notificacao hidden">
-  <div id="statusNotificacoes" class="status-notificacoes">Notificações ligadas</div>
-
-    <hr>
-
-    <!-- Atalhos -->
-    <a href="/solicitacoes-coleta">Solicitações de coleta</a>
-    <a href="/coletas-andamento">Coletas em andamento</a>
-    <a href="/historico">Histórico de Doações e Coletas</a>
-
-    <hr>
- <!-- Botão limpar notificações -->
-    <button
-      id="btnLimparNotificacoes"
-      class="btn-limpar-notificacoes"
-      onclick="limparNotificacoes(event)"
+    <input
+      type="text"
+      id="campoBusca"
+      class="search"
+      placeholder="Buscar material..."
     >
-      Limpar notificações
-    </button>
-    <!-- Lista dinâmica -->
-    <div id="listaNotificacoes"></div>
-  </div>
-</div>
 
-
+    <div class="perfil-topo" id="perfilTopo" onclick="location.href='/perfil'">
+      <img id="fotoTopo" src="/icons/user.png" class="foto-topo">
     </div>
-  </div>
-</header>
 
-<!-- =========================
-     FILTROS
-========================= -->
-<section class="filtros">
-  <button onclick="limparFiltro()">Todos</button>
-  <button onclick="filtrarPorMaterial('Plástico')">Plástico</button>
-  <button onclick="filtrarPorMaterial('Papel')">Papel</button>
-  <button onclick="filtrarPorMaterial('Vidro')">Vidro</button>
-  <button onclick="filtrarPorMaterial('Eletrônico')">Eletrônico</button>
-  <button onclick="filtrarPorMaterial('Metal')">Metal</button>
-  <button onclick="filtrarPorMaterial('Outros')">Outros</button>
-</section>
+    <div class="icon-notificacao-wrapper" id="btnNotificacao">
+      <img src="../icons/notificacao.png" class="icon-notificacao">
+      <span id="badgeNotificacoes" class="badge hidden">0</span>
 
+      <div id="menuNotificacao" class="menu-notificacao hidden">
+        <div id="statusNotificacoes" class="status-notificacoes">Notificações ligadas</div>
+        <hr>
+
+        <a href="/solicitacoes-coleta">Solicitações de coleta</a>
+        <a href="/coletas-andamento">Coletas em andamento</a>
+        <a href="/historico">Histórico de Doações e Coletas</a>
+
+        <hr>
+
+        <button
+          id="btnLimparNotificacoes"
+          class="btn-limpar-notificacoes"
+          onclick="limparNotificacoes(event)"
+        >
+          Limpar notificações
+        </button>
+
+        <div id="listaNotificacoes"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- FILTROS -->
+  <section class="filtros">
+    <button onclick="limparFiltro()">Todos</button>
+    <button onclick="filtrarPorMaterial('Plástico')">Plástico</button>
+    <button onclick="filtrarPorMaterial('Papel')">Papel</button>
+    <button onclick="filtrarPorMaterial('Vidro')">Vidro</button>
+    <button onclick="filtrarPorMaterial('Eletrônico')">Eletrônico</button>
+    <button onclick="filtrarPorMaterial('Metal')">Metal</button>
+    <button onclick="filtrarPorMaterial('Outros')">Outros</button>
+  </section>
+
+</div>
 
 <!-- =========================
      PUBLICAÇÕES
@@ -87,12 +83,9 @@
   <img src="../icons/adicionar.png" alt="Adicionar">
 </button>
 
-<!-- =========================
-     MODAL ADICIONAR DOAÇÃO
-========================= -->
+<!-- MODAL ADICIONAR DOAÇÃO -->
 <div class="modal-overlay" id="modalDoacao">
   <div class="modal-doacao">
-
     <button class="close-modal" onclick="fecharModalDoacao()">✕</button>
 
     <button class="btn-modal-principal" onclick="irParaAdicionarDoacao()">
@@ -102,13 +95,10 @@
     <button class="btn-modal-principal" onclick="irParaMinhasDoacoes()">
       Ver Minhas Doações
     </button>
-
   </div>
 </div>
 
-<!-- =========================
-     MODAL VER MAIS
-========================= -->
+<!-- MODAL DETALHES -->
 <div class="modal-overlay" id="modalDetalhes">
   <div class="modal-detalhes moderno">
 
@@ -118,7 +108,6 @@
 
     <div class="detalhe-header">
       <h3 id="detalheTitulo"></h3>
-    
     </div>
 
     <div class="detalhe-bloco">
@@ -137,21 +126,13 @@
       <p id="detalheDescricao"></p>
     </div>
 
-    <button class="btn-coleta" onclick="solicitarColeta()">
-      Solicitar Coleta
-    </button>
-
-    <button class="btn-reportar" onclick="abrirDenuncia()">
-      Reportar
-    </button>
+    <button class="btn-coleta" onclick="solicitarColeta()">Solicitar Coleta</button>
+    <button class="btn-reportar" onclick="abrirDenuncia()">Reportar</button>
 
   </div>
 </div>
 
-
-<!-- =========================
-     MODAL DENÚNCIA
-========================= -->
+<!-- MODAL DENÚNCIA -->
 <div id="modalDenuncia" class="modal-denuncia">
   <div class="modal-denuncia-box">
 
@@ -179,6 +160,7 @@
   </div>
 </div>
 
+<!-- MENU INFERIOR -->
 <nav class="menu">
   <div class="menu-item" data-rota="telahome" onclick="location.href='/telahome'">
     <img src="../icons/home.png">
@@ -200,7 +182,6 @@
     <span>Configurações</span>
   </div>
 </nav>
-
 
 <script src="../js/menu.js"></script>
 <script src="../js/telahome.js"></script>

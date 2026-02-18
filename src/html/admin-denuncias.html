@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <title>Admin | Denúncias</title>
 
- 
+ <link rel="stylesheet" href="/css/admin-denuncias.css">
+
   <link rel="stylesheet" href="../css/admin-coletas.css">
   <link rel="stylesheet" href="/css/menu.css">
 </head>
@@ -16,6 +17,20 @@
 </a>
 
 <h2>Administração de Denúncias</h2>
+<div class="filtro-container">
+  <label>Filtrar denúncias</label>
+
+  <div class="filtro-select">
+    <span class="icone"></span>
+    <select id="filtroCategoria" onchange="filtrarDenuncias()">
+      <option value="">Todas as categorias</option>
+      <option value="spam">Spam</option>
+      <option value="ofensivo">Ofensivo</option>
+      <option value="fake">Informação falsa</option>
+      <option value="ilegal">Conteúdo ilegal</option>
+    </select>
+  </div>
+</div>
 
 <table>
   <thead>

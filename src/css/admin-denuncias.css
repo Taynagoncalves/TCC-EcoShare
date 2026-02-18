@@ -188,3 +188,102 @@ tbody tr:hover {
   }
 
 }
+.status {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.status.pendente {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.status.analisando {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.resolvido {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.categoria {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.categoria.spam {
+  background:#e0f2fe;
+  color:#075985;
+}
+
+.categoria.ofensivo {
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.categoria.fake {
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.categoria.ilegal {
+  background:#f3e8ff;
+  color:#6b21a8;
+}
+.filtro-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+  width: 200px; /* largura menor */
+}
+
+
+.filtro-container label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.filtro-select select {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 13px;
+  background: transparent;
+  cursor: pointer;
+  color: #111827;
+  padding: 4px 0;
+}
+
+
+.filtro-select:hover {
+  border-color: #9ca3af;
+}
+
+.filtro-select:focus-within {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22,163,74,0.15);
+}
+
+.filtro-select .icone {
+  margin-right: 6px;
+  opacity: 0.6;
+}
+
+.filtro-select select {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  background: transparent;
+  cursor: pointer;
+  color: #111827;
+}

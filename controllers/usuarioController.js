@@ -1,4 +1,5 @@
 const db = require('../models/db');
+const nodemailer = require('nodemailer');
 
 
 exports.buscarPontos = async (req, res) => {
@@ -291,5 +292,62 @@ exports.atualizarFoto = async (req, res) => {
   } catch (err) {
     console.error('ERRO atualizarFoto:', err);
     res.status(500).json({ erro: 'Erro ao atualizar foto' });
+  }
+};
+
+exports.punirUsuario = async (req, res) => {
+
+  const { tipo, motivo } = req.body;
+  const userId = req.params.id;
+
+  if (!motivo) return res.status(400).json({ erro:'Motivo obrigatório' });
+
+  try {
+
+    let bloqueadoAte = null;
+
+    if (tipo === '7dias')
+      bloqueadoAte = new Date(Date.now() + 7*24*60*60*1000);
+
+    if (tipo === 'ban')
+      bloqueadoAte = '9999-12-31 23:59:59';
+
+    await db.query(`
+      UPDATE usuarios
+      SET status='bloqueado',
+          bloqueado_ate=?,
+          motivo_bloqueio=?
+      WHERE id=?
+    `,[bloqueadoAte, motivo, userId]);
+
+    const [[usuario]] = await db.query(
+      'SELECT nome,email FROM usuarios WHERE id=?',[userId]
+    );
+
+    const transporter = nodemailer.createTransport({
+      service:'gmail',
+      auth:{
+        user:process.env.EMAIL_USER,
+        pass:process.env.EMAIL_PASS
+      }
+    });
+
+    const texto =
+      tipo === 'ban'
+      ? `Sua conta foi banida permanentemente.\nMotivo: ${motivo}`
+      : `Sua conta foi suspensa por 7 dias.\nMotivo: ${motivo}`;
+
+    await transporter.sendMail({
+      from:`EcoShare <${process.env.EMAIL_USER}>`,
+      to:usuario.email,
+      subject:'Ação administrativa em sua conta',
+      text:`Olá ${usuario.nome},\n\n${texto}\n\nEquipe EcoShare`
+    });
+
+    res.json({ sucesso:true });
+
+  } catch(err){
+    console.error(err);
+    res.status(500).json({ erro:'erro ao punir usuário' });
   }
 };

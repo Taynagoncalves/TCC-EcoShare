@@ -203,9 +203,87 @@ function fecharDetalhes() {
 
 // denúncia
 function abrirDenuncia() {
-  document.getElementById('modalDetalhes').style.display = 'none';
-  document.getElementById('modalDenuncia').style.display = 'flex';
+
+  // fecha o modal de detalhes e remove foco
+  const modal = document.getElementById('modalDetalhes');
+  if (modal) modal.style.display = 'none';
+  document.activeElement.blur();
+
+  Swal.fire({
+    title: 'Reportar publicação',
+    width: 520,
+    html: `
+      <div style="text-align:left">
+
+        <label style="font-weight:600">Categoria</label>
+        <select id="categoriaDenuncia" class="swal2-input">
+          <option value="">Selecione...</option>
+          <option value="spam">Spam</option>
+          <option value="ofensivo">Conteúdo ofensivo</option>
+          <option value="fake">Informação falsa</option>
+          <option value="ilegal">Conteúdo ilegal</option>
+        </select>
+
+        <label style="font-weight:600">Descreva o problema</label>
+        <textarea id="textoDenuncia"
+          class="swal2-textarea"
+          placeholder="Explique o motivo da denúncia"></textarea>
+
+      </div>
+    `,
+    confirmButtonText:'Enviar denúncia',
+    confirmButtonColor:'#16a34a',
+    showCancelButton:true,
+    cancelButtonText:'Cancelar',
+
+    preConfirm: async () => {
+
+  const popup = Swal.getPopup();
+  const mensagem = popup.querySelector('#textoDenuncia').value.trim();
+  const categoria = popup.querySelector('#categoriaDenuncia').value;
+
+  if (!categoria)
+    return Swal.showValidationMessage('Selecione uma categoria');
+
+  if (!mensagem)
+    return Swal.showValidationMessage('Descreva o motivo');
+
+  try {
+
+    const res = await fetch('/denuncias', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        mensagem,
+        categoria,
+        doacao_id: doacaoAtualId
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw data;
+
+    Swal.fire({
+      icon:'success',
+      title:'Denúncia enviada',
+      text:'Nossa equipe irá analisar em breve'
+    });
+
+  } catch (err) {
+
+    Swal.fire({
+      icon:'warning',
+      title:'Não foi possível enviar',
+      text: err.erro || 'erro inesperado'
+    });
+
+  }
 }
+
+  });
+}
+
 
 function fecharDenuncia() {
   document.getElementById('modalDenuncia').style.display = 'none';
@@ -230,7 +308,7 @@ async function enviarDenuncia() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         mensagem: texto,
-        doacaoId: doacaoAtualId
+        doacao_id: doacaoAtualId
       })
     });
 

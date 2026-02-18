@@ -1,3 +1,6 @@
+:root{
+  --altura-topo: 150px;
+}
 
 * {
   margin: 0;
@@ -79,7 +82,8 @@ body {
   padding: 0 20px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
+  gap: 1px;
+
 }
 
 /* =========================
@@ -87,6 +91,7 @@ body {
 ========================= */
 .card {
   background: #fff;
+  margin-top: 120px;
   border-radius: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.08);
   overflow: hidden;
@@ -1329,4 +1334,74 @@ img, input, button {
 .notificacao-item.lida {
   font-weight: normal;
   opacity: 0.75;
+}
+/* ===== compactar header ===== */
+
+.topo {
+  padding: 8px 0 !important;
+}
+
+.topo-container {
+  padding: 8px 18px !important;
+  min-height: 70px;
+}
+
+.logo {
+  width: 130px;
+}
+
+/* diminui espaço abaixo do header */
+.filtros {
+  padding-top: 6px;
+}
+
+/* remove espaço fantasma entre header e conteúdo */
+body {
+  margin-top: 0;
+}
+/* topo fixo */
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+/* filtros grudam abaixo do topo */
+.filtros {
+  position: sticky;
+  top: 70px; /* altura real do topo */
+  z-index: 999;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+.publicacoes {
+  margin-top: 10px;
+}
+/* HEADER COMPLETO FIXO */
+.header-fixo{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  z-index: 1000;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.publicacoes{
+  max-width: 1100px;
+  margin: 160px auto 20px auto;
+  padding-bottom: 0px;
+  
+  column-count: 4;
+  column-gap: 20px;
+
+}
+
+
+@media (max-width: 768px){
+  .publicacoes{
+    padding-top: 70px;
+  }
 }

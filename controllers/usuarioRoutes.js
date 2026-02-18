@@ -193,5 +193,11 @@ router.get(
   verificarAdmin,
   usuarioController.buscarUsuarioPorId
 );
+router.put(
+  '/admin/punir/:id',
+  verificarAutenticacao,
+  verificarAdmin,
+  usuarioController.punirUsuario
+);
 
 module.exports = router;

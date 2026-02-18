@@ -6,7 +6,6 @@ module.exports = async (req, res) => {
   try {
     const { email, senha } = req.body;
 
-    // Busca usuário pelo email
     const [[usuario]] = await db.query(
       'SELECT * FROM usuarios WHERE email = ?',
       [email]
@@ -18,14 +17,40 @@ module.exports = async (req, res) => {
       });
     }
 
-    // BLOQUEIO ANTES DO LOGIN
+    // verificação de bloqueio/suspensão/ban
     if (usuario.status === 'bloqueado') {
-      return res.status(403).json({
-        erro: 'Usuário bloqueado'
-      });
+
+      if (usuario.bloqueado_ate) {
+
+        const dataBloqueio = new Date(usuario.bloqueado_ate);
+        const agora = new Date();
+
+        // ban permanente (9999)
+        if (dataBloqueio.getFullYear() >= 9999) {
+          return res.status(403).json({
+            erro: 'Conta banida',
+            motivo: usuario.motivo_bloqueio
+          });
+        }
+
+        // suspensão ativa
+        if (dataBloqueio > agora) {
+          return res.status(403).json({
+            erro: 'Conta suspensa',
+            motivo: usuario.motivo_bloqueio,
+            ate: usuario.bloqueado_ate
+          });
+        }
+      }
+
+      // tempo acabou → desbloqueia automaticamente
+      await db.query(`
+        UPDATE usuarios
+        SET status='ativo', bloqueado_ate=NULL, motivo_bloqueio=NULL
+        WHERE id=?
+      `,[usuario.id]);
     }
 
-    // COMPARAÇÃO CORRETA DA SENHA (bcrypt)
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
     if (!senhaValida) {
@@ -34,20 +59,17 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Gera token
     const token = jwt.sign(
       { id: usuario.id },
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
 
-    // Salva cookie
     res.cookie('token', token, {
       httpOnly: true,
       sameSite: 'lax'
     });
 
-    // Login OK
     res.json({ sucesso: true });
 
   } catch (err) {
