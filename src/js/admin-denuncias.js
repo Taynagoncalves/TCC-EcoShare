@@ -36,24 +36,47 @@ function renderizarDenuncias(denuncias) {
   denuncias.forEach(d => {
     const tr = document.createElement('tr');
 
-    tr.innerHTML = `
-      <td>${d.denuncia_id}</td>
-      <td>${d.denunciante ?? '-'}</td>
-      <td><span class="categoria ${d.categoria}">${formatarCategoria(d.categoria)}</span></td>
-      <td><span class="status ${d.status.toLowerCase()}">${d.status}</span></td>
+tr.innerHTML = `
+  <td>${d.denuncia_id}</td>
 
-      <td class="acoes">
-        <button class="btn-exibir">Ver</button>
+  <td class="usuario-col">
+    <strong>${d.denunciante ?? 'Desconhecido'}</strong>
+    <div class="subinfo">ID ${d.denunciante_id ?? '-'}</div>
+  </td>
 
-        ${d.doacao_id != null
-          ? `<button class="btn-recusar" onclick="removerPublicacao(${d.doacao_id}, ${d.denuncia_id})">Remover Publicação</button>`
-          : ''}
+  <td>
+    <span class="categoria ${d.categoria}">
+      ${formatarCategoria(d.categoria)}
+    </span>
+  </td>
 
-        <button class="btn-concluir" onclick="resolverDenuncia(${d.denuncia_id})">
-          Marcar como resolvido
-        </button>
-      </td>
-    `;
+  <td class="resumo">
+    ${d.mensagem?.slice(0, 60) ?? '-'}
+    ${d.mensagem?.length > 60 ? '...' : ''}
+  </td>
+
+  <td>
+    <span class="status ${d.status}">
+      ${d.status}
+    </span>
+  </td>
+
+  <td class="acoes">
+    <div class="acoes-wrap">
+
+      <button class="btn-exibir">Exibir</button>
+
+      ${d.doacao_id != null
+        ? `<button class="btn-recusar" onclick="removerPublicacao(${d.doacao_id}, ${d.denuncia_id})">Remover</button>`
+        : ''}
+
+      <button class="btn-concluir" onclick="resolverDenuncia(${d.denuncia_id})">
+        Resolver
+      </button>
+
+    </div>
+  </td>
+`;
 
     tr.querySelector('.btn-exibir')
       .addEventListener('click', () => abrirDetalheDenuncia(d));
@@ -92,14 +115,14 @@ function abrirDetalheDenuncia(d) {
           </div>
 
           <div style="background:white;padding:15px;border-radius:12px;margin-bottom:15px">
-            <h3 style="margin-bottom:6px;color:#374151">📦 Doação reportada</h3>
+            <h3 style="margin-bottom:6px;color:#374151">Doação reportada</h3>
             <p><b>Doador:</b> ${d.doador} (ID ${d.doador_id})</p>
             <p><b>Material:</b> ${d.nome_material}</p>
             <p><b>Descrição:</b> ${d.descricao ?? 'sem descrição'}</p>
           </div>
 
           <div style="background:white;padding:15px;border-radius:12px">
-            <h3 style="margin-bottom:6px;color:#374151">📝 Motivo da denúncia</h3>
+            <h3 style="margin-bottom:6px;color:#374151">Motivo da denúncia</h3>
             <p style="white-space:pre-line">${d.mensagem}</p>
           </div>
 

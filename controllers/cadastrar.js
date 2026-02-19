@@ -32,6 +32,7 @@ module.exports = async (req, res) => {
   } = req.body;
 
   try {
+
     // senha mínimo 6
     if (!senha || String(senha).length < 6) {
       return res.status(400).json({ error: "A senha deve ter no mínimo 6 caracteres." });
@@ -42,6 +43,82 @@ module.exports = async (req, res) => {
     if (!telefone) return res.status(400).json({ error: "Telefone inválido" });
     if (telefone.length !== 10 && telefone.length !== 11) {
       return res.status(400).json({ error: "Telefone deve ter 10 ou 11 dígitos" });
+    }
+
+    // validar data brasileira corretamente
+    function parseDataBR(dataStr){
+      if(!/^\d{2}\/\d{2}\/\d{4}$/.test(dataStr)) return null;
+
+      const [dia, mes, ano] = dataStr.split("/").map(Number);
+
+      if(ano < 1900 || ano > new Date().getFullYear()) return null;
+      if(mes < 1 || mes > 12) return null;
+      if(dia < 1 || dia > 31) return null;
+
+      const data = new Date(ano, mes-1, dia);
+
+      if(data.getFullYear() !== ano || data.getMonth() !== mes-1 || data.getDate() !== dia)
+        return null;
+
+      return data;
+    }
+
+    function maiorDeIdade(dataStr){
+      const nasc = parseDataBR(dataStr);
+      if(!nasc) return false;
+
+      const hoje = new Date();
+
+      let idade = hoje.getFullYear() - nasc.getFullYear();
+      const m = hoje.getMonth() - nasc.getMonth();
+
+      if(m < 0 || (m === 0 && hoje.getDate() < nasc.getDate()))
+        idade--;
+
+      return idade >= 18;
+    }
+
+    if(!maiorDeIdade(data_nascimento)){
+      return res.status(400).json({
+        error: "Cadastro permitido apenas para maiores de 18 anos"
+      });
+    }
+
+    // converter para formato mysql
+    const [dia,mes,ano] = data_nascimento.split("/");
+    data_nascimento = `${ano}-${mes}-${dia}`;
+
+    // bloquear números falsos / fraude
+    function telefoneSuspeito(tel){
+
+      if (/^(\d)\1+$/.test(tel)) return true;
+      if ("01234567890123456789".includes(tel)) return true;
+      if ("98765432109876543210".includes(tel)) return true;
+
+      const unicos = new Set(tel.split(""));
+      if (unicos.size < 4) return true;
+
+      const ddd = tel.substring(0,2);
+      const dddsValidos = [
+        "11","12","13","14","15","16","17","18","19",
+        "21","22","24","27","28",
+        "31","32","33","34","35","37","38",
+        "41","42","43","44","45","46",
+        "47","48","49",
+        "51","53","54","55",
+        "61","62","63","64","65","66","67","68","69",
+        "71","73","74","75","77","79",
+        "81","82","83","84","85","86","87","88","89",
+        "91","92","93","94","95","96","97","98","99"
+      ];
+
+      if (!dddsValidos.includes(ddd)) return true;
+
+      return false;
+    }
+
+    if (telefoneSuspeito(telefone)){
+      return res.status(400).json({ error: "Telefone inválido ou suspeito" });
     }
 
     // validar CEP cascavel
@@ -77,7 +154,6 @@ module.exports = async (req, res) => {
 
     const senhaHash = await bcrypt.hash(senha, 10);
 
-    // ✅ INSERT NO PADRÃO ORIGINAL (sem bairro)
     await db.execute(
       `INSERT INTO usuarios
       (nome, email, telefone, senha, data_nascimento, cep, endereco, numero, complemento)
@@ -88,6 +164,7 @@ module.exports = async (req, res) => {
     return res.json({ message: "Cadastro realizado com sucesso" });
 
   } catch (err) {
+
     const msg = String(err?.message || "");
 
     if (msg.includes("Duplicate") && msg.includes("telefone")) {

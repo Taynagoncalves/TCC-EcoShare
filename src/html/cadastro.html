@@ -31,26 +31,31 @@
         maxlength="15"
       />
 
-      <input type="date" name="data_nascimento" required>
+      <input
+       type="text"
+       name="data_nascimento"
+       id="data_nascimento"
+       placeholder="dd/mm/aaaa"
+       maxlength="10"
+       inputmode="numeric"
+>
+
 
       <div class="password-group">
         <input type="password" name="senha" id="senha" placeholder="Senha" required>
         <img src="../icons/olhofechado.png" onclick="toggleSenha('senha', this)" alt="Mostrar senha">
       </div>
 
-      <!-- ✅ AVISO ABAIXO DA SENHA -->
-      <small class="senha-info" id="senhaAviso" style="display: none;">
-        A senha deve ter no mínimo 6 caracteres.
-      </small>
+     <div id="senhaAviso" class="erro-msg"></div>
+     <div id="confirmarSenhaAviso" class="erro-msg"></div>
+
 
       <div class="password-group">
       <input type="password" name="confirmarSenha" id="confirmarSenha" placeholder="Confirmar Senha" required>
       <img src="../icons/olhofechado.png" onclick="toggleSenha('confirmarSenha', this)" alt="Mostrar senha">
     </div>
 
-    <small class="senha-info" id="confirmarSenhaAviso">
-      As senhas precisam ser iguais.
-    </small>
+    
 
       <input type="text" name="cep" id="cep" placeholder="CEP" required>
 

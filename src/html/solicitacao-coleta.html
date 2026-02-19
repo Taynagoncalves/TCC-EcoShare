@@ -12,10 +12,15 @@
 </head>
 <body>
 
-<header class="topo topo-interno">
-  <button class="btn-voltar" onclick="location.href='/telahome'">← Voltar</button>
+
+<header class="topo-interno">
+  <button class="btn-voltar" onclick="history.back()">
+    <span class="seta">‹</span>
+  </button>
+
   <h1 class="titulo-pagina">Solicitações de coleta</h1>
 </header>
+
 
 <main class="pagina-container">
   <div class="cards" id="listaSolicitacoes"></div>

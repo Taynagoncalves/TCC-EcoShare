@@ -1,6 +1,6 @@
-// ==============================
-// MOSTRAR E OCULTAR SENHA
-// ==============================
+// ===============================
+// MOSTRAR / OCULTAR SENHA
+// ===============================
 function toggleSenha(id, icon) {
   const input = document.getElementById(id);
   if (!input) return;
@@ -14,9 +14,9 @@ function toggleSenha(id, icon) {
   }
 }
 
-// ==============================
+// ===============================
 // BLOQUEAR NÚMEROS NO NOME
-// ==============================
+// ===============================
 const inputNome = document.querySelector('input[name="nome"]');
 if (inputNome) {
   inputNome.addEventListener("input", () => {
@@ -24,261 +24,439 @@ if (inputNome) {
   });
 }
 
-// ==============================
-// MÁSCARA + BLOQUEAR LETRAS NO TELEFONE
-// ==============================
+// ===============================
+// TELEFONE MÁSCARA + ANTIFRAUDE
+// ===============================
 const inputTelefone = document.querySelector('input[name="telefone"]');
 
 function aplicarMascaraTelefone(valor) {
-  let v = valor.replace(/\D/g, "");
-  if (v.length > 11) v = v.slice(0, 11);
+  let v = valor.replace(/\D/g, "").slice(0, 11);
 
-  if (v.length <= 10) {
-    v = v.replace(/^(\d{2})(\d)/, "($1) $2");
-    v = v.replace(/(\d{4})(\d)/, "$1-$2");
-  } else {
-    v = v.replace(/^(\d{2})(\d)/, "($1) $2");
-    v = v.replace(/(\d{5})(\d)/, "$1-$2");
-  }
-  return v;
+  if (v.length <= 10)
+    return v.replace(/^(\d{2})(\d)/, "($1) $2")
+            .replace(/(\d{4})(\d)/, "$1-$2");
+  else
+    return v.replace(/^(\d{2})(\d)/, "($1) $2")
+            .replace(/(\d{5})(\d)/, "$1-$2");
 }
 
 if (inputTelefone) {
+
   inputTelefone.addEventListener("input", () => {
     inputTelefone.value = aplicarMascaraTelefone(inputTelefone.value);
   });
 
-  inputTelefone.addEventListener("keydown", (e) => {
-    const permitidos = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"];
-    if (permitidos.includes(e.key)) return;
-    if (e.ctrlKey || e.metaKey) return;
+  inputTelefone.addEventListener("keydown", e => {
+    const permitidos = ["Backspace","Delete","ArrowLeft","ArrowRight","Tab","Home","End"];
+    if (permitidos.includes(e.key) || e.ctrlKey || e.metaKey) return;
     if (!/^\d$/.test(e.key)) e.preventDefault();
   });
 }
 
-// ==============================
-// BUSCAR CEP AUTOMATICAMENTE + RESTRINGIR CASCAVEL-PR
-// ==============================
+//senha
+const senhaInput = document.getElementById("senha");
+const confirmarSenhaInput = document.getElementById("confirmarSenha");
+
+/* cria avisos dinamicamente abaixo dos inputs */
+function criarAviso(input){
+  let aviso = document.createElement("div");
+  aviso.className = "aviso-senha";
+  input.parentElement.insertAdjacentElement("afterend", aviso);
+  return aviso;
+}
+
+const avisoSenha = criarAviso(senhaInput);
+const avisoConfirmar = criarAviso(confirmarSenhaInput);
+
+/* validar senha principal */
+function validarSenha(){
+  const senha = senhaInput.value;
+
+  if(senha.length === 0){
+    avisoSenha.style.display = "none";
+    senhaInput.classList.remove("input-erro","input-ok");
+    return;
+  }
+
+  if(senha.length < 6){
+    avisoSenha.className = "aviso-senha aviso-erro";
+    avisoSenha.innerHTML = "⚠ A senha deve ter no mínimo 6 caracteres";
+    avisoSenha.style.display = "flex";
+    senhaInput.classList.add("input-erro");
+    senhaInput.classList.remove("input-ok");
+    return;
+  }
+
+  avisoSenha.className = "aviso-senha aviso-ok";
+  avisoSenha.innerHTML = "✔ Senha válida";
+  avisoSenha.style.display = "flex";
+  senhaInput.classList.add("input-ok");
+  senhaInput.classList.remove("input-erro");
+}
+
+/* validar confirmação */
+function validarConfirmacao(){
+  const senha = senhaInput.value;
+  const confirmar = confirmarSenhaInput.value;
+
+  if(confirmar.length === 0){
+    avisoConfirmar.style.display = "none";
+    confirmarSenhaInput.classList.remove("input-erro","input-ok");
+    return;
+  }
+
+  if(confirmar !== senha){
+    avisoConfirmar.className = "aviso-senha aviso-erro";
+    avisoConfirmar.innerHTML = "⚠ As senhas não coincidem";
+    avisoConfirmar.style.display = "flex";
+    confirmarSenhaInput.classList.add("input-erro");
+    confirmarSenhaInput.classList.remove("input-ok");
+    return;
+  }
+
+  avisoConfirmar.className = "aviso-senha aviso-ok";
+  avisoConfirmar.innerHTML = "✔ Senhas coincidem";
+  avisoConfirmar.style.display = "flex";
+  confirmarSenhaInput.classList.add("input-ok");
+  confirmarSenhaInput.classList.remove("input-erro");
+}
+
+senhaInput.addEventListener("input", ()=>{
+  validarSenha();
+  validarConfirmacao();
+});
+
+confirmarSenhaInput.addEventListener("input", validarConfirmacao);
+
+// ===============================
+// CEP CASCAVEL - PR (CORRIGIDO)
+// ===============================
 const cepInput = document.getElementById("cep");
 const enderecoInput = document.getElementById("endereco");
 const bairroInput = document.getElementById("bairro");
 
 let cepEhDeCascavel = false;
+let cepTimeout = null;
 
-async function validarCepCascavel(cepLimpo) {
-  const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
-  const data = await res.json();
-
-  if (data.erro) return { ok: false, msg: "CEP inválido" };
-  if (data.localidade !== "Cascavel" || data.uf !== "PR") {
-    return { ok: false, msg: "Permitido apenas para moradores de Cascavel - PR." };
-  }
-  return { ok: true, data };
+function formatarCep(valor){
+  let v = valor.replace(/\D/g,'').slice(0,8);
+  if(v.length > 5) v = v.replace(/(\d{5})(\d)/,'$1-$2');
+  return v;
 }
 
-if (cepInput) {
-  cepInput.addEventListener("input", async () => {
-    let valor = cepInput.value.replace(/\D/g, "");
-    if (valor.length > 8) valor = valor.slice(0, 8);
+async function buscarCep(cepLimpo){
 
-    if (valor.length > 5) valor = valor.replace(/(\d{5})(\d)/, "$1-$2");
-    cepInput.value = valor;
+  if(cepLimpo.length !== 8) return;
 
-    cepEhDeCascavel = false;
+  try{
+    const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+    const data = await res.json();
 
-    if (valor.replace(/\D/g, "").length === 8) {
-      try {
-        const cepLimpo = valor.replace(/\D/g, "");
-        const result = await validarCepCascavel(cepLimpo);
-
-        if (!result.ok) {
-          enderecoInput.value = "";
-          bairroInput.value = "";
-          cepInput.value = "";
-          Swal.fire({
-            icon: "warning",
-            title: "Cadastro restrito",
-            text: result.msg,
-            confirmButtonColor: "#347142"
-          });
-          return;
-        }
-
-        enderecoInput.value = result.data.logradouro || "";
-        bairroInput.value = result.data.bairro || "";
-        cepEhDeCascavel = true;
-
-      } catch {
-        Swal.fire({
-          icon: "error",
-          title: "Erro",
-          text: "Erro ao buscar o CEP",
-          confirmButtonColor: "#347142"
-        });
-      }
+    if(data.erro){
+      cepEhDeCascavel = false;
+      enderecoInput.value = "";
+      bairroInput.value = "";
+      return;
     }
+
+    if(data.localidade !== "Cascavel" || data.uf !== "PR"){
+      cepEhDeCascavel = false;
+
+      Swal.fire({
+        icon:"warning",
+        title:"Cadastro restrito",
+        text:"Permitido apenas para moradores de Cascavel - PR.",
+        confirmButtonColor:"#347142"
+      });
+
+      cepInput.value = "";
+      enderecoInput.value = "";
+      bairroInput.value = "";
+      return;
+    }
+
+    enderecoInput.value = data.logradouro || "";
+    bairroInput.value = data.bairro || "";
+    cepEhDeCascavel = true;
+
+  }catch{
+    cepEhDeCascavel = false;
+  }
+}
+
+if(cepInput){
+
+  cepInput.addEventListener("input", e=>{
+    const formatado = formatarCep(e.target.value);
+    e.target.value = formatado;
+
+    clearTimeout(cepTimeout);
+    const cepLimpo = formatado.replace(/\D/g,'');
+    cepTimeout = setTimeout(()=>buscarCep(cepLimpo), 400);
+  });
+
+  cepInput.addEventListener("paste", e=>{
+    e.preventDefault();
+    const texto = (e.clipboardData || window.clipboardData).getData("text");
+    const formatado = formatarCep(texto);
+    cepInput.value = formatado;
+    buscarCep(formatado.replace(/\D/g,''));
+  });
+
+  cepInput.addEventListener("blur", ()=>{
+    const cepLimpo = cepInput.value.replace(/\D/g,'');
+    buscarCep(cepLimpo);
   });
 }
 
-// ==============================
-// ENVIO DO FORMULÁRIO
-// ==============================
+// ===============================
+// MÁSCARA DATA NASCIMENTO
+// ===============================
+const inputData = document.getElementById("data_nascimento");
+
+function mascaraData(valor){
+  let v = valor.replace(/\D/g,"").slice(0,8);
+
+  if(v.length >= 5)
+    return v.replace(/(\d{2})(\d{2})(\d{1,4})/,"$1/$2/$3");
+  else if(v.length >= 3)
+    return v.replace(/(\d{2})(\d{1,2})/,"$1/$2");
+
+  return v;
+}
+
+if(inputData){
+  inputData.addEventListener("input",()=>{
+    inputData.value = mascaraData(inputData.value);
+  });
+
+  inputData.addEventListener("keydown",(e)=>{
+    const permitidos = ["Backspace","Delete","ArrowLeft","ArrowRight","Tab"];
+    if(permitidos.includes(e.key)) return;
+    if(!/^\d$/.test(e.key)) e.preventDefault();
+  });
+}
+
+// ===============================
+// VALIDAR DATA REAL
+// ===============================
+function dataValida(dataStr){
+  if(!/^\d{2}\/\d{2}\/\d{4}$/.test(dataStr)) return false;
+
+  const [dia,mes,ano] = dataStr.split("/").map(Number);
+
+  // ano mínimo permitido
+  if(ano < 1900) return false;
+
+  const data = new Date(ano, mes-1, dia);
+
+  // verifica se a data realmente existe
+  if(
+    data.getFullYear() !== ano ||
+    data.getMonth() !== mes-1 ||
+    data.getDate() !== dia
+  ) return false;
+
+  // não permitir datas futuras
+  const hoje = new Date();
+  if(data > hoje) return false;
+
+  return true;
+}
+
+
+// ===============================
+// VALIDAR +18 ANOS
+// ===============================
 const form = document.getElementById("formCadastro");
+// valida se a data realmente existe (ex: 31/02/2000 não passa)
+// ===============================
+// VALIDAR DATA REAL + FUTURA
+// ===============================
+function dataValida(dataStr){
+
+  if(!/^\d{2}\/\d{2}\/\d{4}$/.test(dataStr)) return false;
+
+  const [dia, mes, ano] = dataStr.split("/").map(Number);
+
+  if(ano < 1900) return false;
+
+  const data = new Date(ano, mes - 1, dia);
+
+  // verifica existência real
+  if(
+    data.getFullYear() !== ano ||
+    data.getMonth() !== mes - 1 ||
+    data.getDate() !== dia
+  ) return false;
+
+  // não permitir datas futuras
+  const hoje = new Date();
+  hoje.setHours(0,0,0,0);
+  if(data > hoje) return false;
+
+  return true;
+}
+
+
+// ===============================
+// VALIDAR +18 ANOS (CORRIGIDO)
+// ===============================
+function maiorDeIdade(dataBR){
+
+  if(!dataValida(dataBR)) return false;
+
+  const [dia, mes, ano] = dataBR.split("/").map(Number);
+
+  const nasc = new Date(ano, mes - 1, dia);
+  const hoje = new Date();
+
+  let idade = hoje.getFullYear() - nasc.getFullYear();
+
+  const mesAtual = hoje.getMonth();
+  const diaAtual = hoje.getDate();
+
+  if(
+    mesAtual < (mes - 1) ||
+    (mesAtual === (mes - 1) && diaAtual < dia)
+  ){
+    idade--;
+  }
+
+  return idade >= 18;
+}
+
+
 if (form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const senha = e.target.senha.value;
-    const confirmarSenha = document.getElementById("confirmarSenha")?.value || "";
+    const dataTexto = e.target.data_nascimento.value.trim();
 
-    if (!senha || senha.length < 6) {
+    if(!dataValida(dataTexto)){
       Swal.fire({
-        icon: "warning",
-        title: "Senha inválida",
-        text: "A senha deve ter no mínimo 6 caracteres.",
-        confirmButtonColor: "#347142"
+        icon:"warning",
+        title:"Data de nascimento inválida",
+        html:"Digite uma data <b>Valida!</b>",
+        confirmButtonColor:"#347142",
+        confirmButtonText:"Entendi",
+        background:"#fff",
+        customClass:{popup:"swal-eco"}
       });
       return;
     }
 
-    if (senha !== confirmarSenha) {
+    if(!maiorDeIdade(dataTexto)){
       Swal.fire({
-        icon: "warning",
-        title: "Senhas diferentes",
-        text: "A senha e a confirmação precisam ser iguais.",
-        confirmButtonColor: "#347142"
+        icon:"warning",
+        title:"Idade mínima não atingida",
+        html:"Você precisa ter <b>18 anos ou mais</b> para usar o EcoShare.",
+        confirmButtonColor:"#c62828",
+        confirmButtonText:"Ok",
+        background:"#fff",
+        customClass:{popup:"swal-eco"}
       });
       return;
     }
 
-    // ✅ se não validou ainda, valida aqui (evita travar cadastro por clique rápido)
-    const cepLimpo = String(e.target.cep.value || "").replace(/\D/g, "");
-    if (!cepLimpo || cepLimpo.length !== 8) {
+    if(!cepEhDeCascavel){
       Swal.fire({
-        icon: "warning",
-        title: "CEP inválido",
-        text: "Digite um CEP válido de Cascavel - PR.",
-        confirmButtonColor: "#347142"
+        icon:"warning",
+        title:"Cadastro restrito",
+        html:"No momento o EcoShare está disponível apenas para moradores de <b>Cascavel - PR</b>.",
+        confirmButtonColor:"#347142",
+        confirmButtonText:"Entendi",
+        background:"#fff",
+        customClass:{popup:"swal-eco"}
       });
       return;
     }
 
-    if (!cepEhDeCascavel) {
-      try {
-        const result = await validarCepCascavel(cepLimpo);
-        if (!result.ok) {
-          Swal.fire({
-            icon: "warning",
-            title: "Cadastro restrito",
-            text: result.msg,
-            confirmButtonColor: "#347142"
-          });
-          return;
-        }
-        // completa campos se necessário
-        enderecoInput.value = enderecoInput.value || (result.data.logradouro || "");
-        bairroInput.value = bairroInput.value || (result.data.bairro || "");
-        cepEhDeCascavel = true;
-      } catch {
-        Swal.fire({
-          icon: "error",
-          title: "Erro",
-          text: "Erro ao validar o CEP",
-          confirmButtonColor: "#347142"
-        });
-        return;
-      }
-    }
+    const tel = e.target.telefone.value.replace(/\D/g,'');
 
     const dados = {
-      nome: e.target.nome.value.trim(),
-      email: e.target.email.value.trim(),
-      telefone: e.target.telefone.value.replace(/\D/g, ""),
-      data_nascimento: e.target.data_nascimento.value,
-      senha,
-      cep: cepLimpo,
-      endereco: e.target.endereco.value.trim(),
-      bairro: e.target.bairro.value.trim(),
-      numero: e.target.numero.value.trim(),
-      complemento: (e.target.complemento.value || "").trim()
+      nome:e.target.nome.value.trim(),
+      email:e.target.email.value.trim(),
+      telefone:tel,
+      data_nascimento:dataTexto,
+      senha:e.target.senha.value,
+      cep:e.target.cep.value.replace(/\D/g,''),
+      endereco:e.target.endereco.value.trim(),
+      bairro:e.target.bairro.value.trim(),
+      numero:e.target.numero.value.trim(),
+      complemento:(e.target.complemento.value||"").trim()
     };
 
-    try {
-      const res = await fetch("/cadastro", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dados)
-      });
+   const res = await fetch("/cadastro",{
+  method:"POST",
+  headers:{ "Content-Type":"application/json" },
+  body:JSON.stringify(dados)
+});
 
-      const json = await res.json();
+const json = await res.json().catch(()=>({}));
 
-      if (!res.ok) {
-        Swal.fire({
-          icon: "error",
-          title: "Erro no cadastro",
-          text: json.error || "Não foi possível criar a conta",
-          confirmButtonColor: "#d33"
-        });
-        return;
-      }
+if(!res.ok){
 
-      Swal.fire({
-        icon: "success",
-        title: "Cadastro realizado!",
-        text: "Sua conta foi criada com sucesso.",
-        confirmButtonText: "Ir para login",
-        confirmButtonColor: "#347142"
-      }).then(() => window.location.href = "/login");
+  let titulo = "Não foi possível criar sua conta";
+  let texto = "Verifique os dados preenchidos.";
 
-    } catch {
-      Swal.fire({
-        icon: "error",
-        title: "Erro",
-        text: "Erro ao conectar com o servidor",
-        confirmButtonColor: "#347142"
-      });
+  if(json.error){
+
+    if(json.error.toLowerCase().includes("telefone")){
+      titulo = "Telefone já cadastrado";
+      texto = "Este número já pertence a uma conta EcoShare.";
+      document.querySelector('input[name="telefone"]').focus();
     }
-  });
-}
 
-const senhaInput = document.getElementById("senha");
-const senhaAviso = document.getElementById("senhaAviso");
-
-if (senhaInput) {
-  senhaInput.addEventListener("input", () => {
-    const valor = senhaInput.value;
-
-    if (valor.length > 0 && valor.length < 6) {
-      senhaAviso.style.display = "block";
-      senhaAviso.classList.add("erro");
-      senhaInput.classList.add("input-erro");
-    } else {
-      senhaAviso.style.display = "none";
-      senhaAviso.classList.remove("erro");
-      senhaInput.classList.remove("input-erro");
+    else if(json.error.toLowerCase().includes("email")){
+      titulo = "Email já cadastrado";
+      texto = "Já existe uma conta criada com este email.";
+      document.querySelector('input[name="email"]').focus();
     }
-  });
-}
 
-const confirmarSenhaInput = document.getElementById("confirmarSenha");
-const confirmarSenhaAviso = document.getElementById("confirmarSenhaAviso");
-
-function validarConfirmacaoSenha() {
-  const senha = senhaInput.value;
-  const confirmar = confirmarSenhaInput.value;
-
-  if (confirmar.length > 0 && confirmar !== senha) {
-    confirmarSenhaAviso.style.display = "block";
-    confirmarSenhaAviso.classList.add("erro");
-    confirmarSenhaInput.classList.add("input-erro");
-  } else {
-    confirmarSenhaAviso.style.display = "none";
-    confirmarSenhaAviso.classList.remove("erro");
-    confirmarSenhaInput.classList.remove("input-erro");
+    else{
+      texto = json.error;
+    }
   }
+
+  Swal.fire({
+    icon:"error",
+    title:titulo,
+    html:`<span style="color:#555">${texto}</span>`,
+    confirmButtonColor:"#c62828",
+    confirmButtonText:"Entendi",
+    background:"#fff",
+    customClass:{popup:"swal-eco"},
+    showClass:{popup:"animate__animated animate__shakeX"},
+  });
+
+  return;
 }
 
-if (confirmarSenhaInput) {
-  confirmarSenhaInput.addEventListener("input", validarConfirmacaoSenha);
-  senhaInput.addEventListener("input", validarConfirmacaoSenha);
+    if(!res.ok){
+      Swal.fire({
+        icon:"error",
+        title:"Não foi possível criar sua conta",
+        text:json.error || "Tente novamente mais tarde.",
+        confirmButtonColor:"#c62828",
+        confirmButtonText:"Fechar",
+        background:"#fff",
+        customClass:{popup:"swal-eco"}
+      });
+      return;
+    }
+
+    Swal.fire({
+      icon:"success",
+      title:"Conta criada com sucesso!",
+      html:"Agora você já pode entrar no EcoShare",
+      confirmButtonText:"Ir para login",
+      confirmButtonColor:"#347142",
+      allowOutsideClick:false,
+      background:"#fff",
+      customClass:{popup:"swal-eco"},
+      showClass:{popup:"animate__animated animate__zoomIn"},
+      hideClass:{popup:"animate__animated animate__zoomOut"}
+    }).then(()=> window.location.href="/login");
+  });
 }

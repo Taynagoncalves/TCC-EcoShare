@@ -44,27 +44,7 @@ function renderizarTabela(lista) {
       </button>
     `;
 
-    // pendente → aceitar ou recusar
-    if (c.status === 'pendente') {
-      botoes += `
-        <button class="btn-andamento" onclick="alterarStatus(${c.id}, 'andamento')">
-          Aceitar
-        </button>
-
-        <button class="btn-recusar" onclick="alterarStatus(${c.id}, 'recusada')">
-          Recusar
-        </button>
-      `;
-    }
-
-    // em andamento → concluir
-    if (c.status === 'andamento') {
-      botoes += `
-        <button class="btn-concluir" onclick="alterarStatus(${c.id}, 'concluida')">
-          Concluir
-        </button>
-      `;
-    }
+   
 
     const tr = document.createElement('tr');
 

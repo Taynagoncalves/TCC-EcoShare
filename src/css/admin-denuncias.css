@@ -287,3 +287,56 @@ tbody tr:hover {
   cursor: pointer;
   color: #111827;
 }
+/* ===== visual moderno ===== */
+
+.usuario-col strong{
+  display:block;
+  font-weight:700;
+  color:#1f2937;
+}
+
+.subinfo{
+  font-size:12px;
+  color:#6b7280;
+  margin-top:2px;
+}
+
+/* resumo */
+.resumo{
+  color:#374151;
+  max-width:260px;
+}
+
+/* ações agrupadas */
+.acoes-wrap{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+/* destacar pendentes */
+tbody tr:has(.status.pendente){
+  border-left:4px solid #ef4444;
+  background:#fff7f7;
+}
+
+/* resolvido mais suave */
+.status.resolvido{
+  background:#dcfce7;
+  color:#166534;
+}
+
+/* analisando */
+.status.analisando{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+/* animação leve */
+tbody tr{
+  transition:.18s;
+}
+
+tbody tr:hover{
+  transform:scale(1.01);
+}

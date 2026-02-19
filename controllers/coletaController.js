@@ -51,6 +51,8 @@ exports.solicitarColeta = async (req, res) => {
     res.status(500).json({ erro: 'erro ao solicitar coleta' });
   }
 };
+
+
 exports.buscarColetaPorId = async (req, res) => {
   try {
 

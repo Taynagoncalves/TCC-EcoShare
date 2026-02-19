@@ -1,144 +1,160 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, Helvetica, sans-serif;
 }
 
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 14px;
-  background: #ffffff;
+body{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding-top:14px;
+  background:#ffffff;
 }
 
+/* LOGO */
 .top-logo{
-  margin-bottom: -40px;
-  text-align: center;
+  margin-bottom:-40px;
+  text-align:center;
 }
 
 .top-logo img{
-  width: 130px;
+  width:130px;
 }
 
-.center-container {
-  width: 100%;
-  max-width: 420px;
-  padding: 0 20px;
-  text-align: center;
-  margin-top: -30px;
+/* CONTAINER */
+.center-container{
+  width:100%;
+  max-width:420px;
+  padding:0 20px;
+  text-align:center;
+  margin-top:-30px;
 }
 
-/* TÍTULO */
+/* TITULO */
 .center-container h2{
-  color: #2e7d32;
-  margin-bottom: 12px;
-  margin-top: 0;
-  font-size: 24px;
+  color:#2e7d32;
+  margin-bottom:12px;
+  font-size:24px;
 }
 
-/* FORMULÁRIO */
 .cadastro-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px; 
 }
 
-/* INPUTS */
-.cadastro-form input {
-  width: 100%;
-  padding: 7px 5px;
-  border: none;
-  border-bottom: 1px solid #ccc;
-  font-size: 13px;
-  outline: none;
-  background: transparent;
+
+/* INPUT PADRÃO */
+.cadastro-form input{
+  width:100%;
+  padding:7px 5px;
+  border:none;
+  border-bottom:1px solid #ccc;
+  font-size:13px;
+  outline:none;
+  background:transparent;
+  transition:.15s;
 }
 
-.cadastro-form input:focus {
-  border-bottom-color: #2e7d32;
+.cadastro-form input:focus{
+  border-bottom-color:#2e7d32;
 }
 
-/* GRUPO DE SENHA */
-.password-group {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #ccc;
+/* GRUPO SENHA */
+.password-group{
+  display:flex;
+  align-items:center;
+  border-bottom:1px solid #ccc;
 }
 
-.password-group input {
-  border: none;
-  flex: 1;
+.password-group input{
+  border:none;
+  flex:1;
 }
 
-.password-group img {
-  width: 22px;
-  cursor: pointer;
-}
-
-/* ✅ AVISO SENHA */
-.senha-info {
-  font-size: 11px;
-  display: none;
-  margin-top: 4px;   /* pequeno espaço abaixo do input */
-  margin-bottom: 6px;
-  text-align: left;
-}
-
-.senha-info.erro {
-  color: #d32f2f; /* vermelho */
-}
-
-.input-erro {
-  border-bottom: 1px solid #d32f2f !important;
+.password-group img{
+  width:22px;
+  cursor:pointer;
 }
 
 /* BOTÃO */
-.cadastro-form button {
-  margin-top: 25px;
-  padding: 12px;
-  background: #2e7d32;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  cursor: pointer;
-  width: 100%;
+.cadastro-form button{
+  margin-top:25px;
+  padding:12px;
+  background:#2e7d32;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  font-size:15px;
+  cursor:pointer;
+  width:100%;
 }
 
-.cadastro-form button:hover {
-  background: #256628;
+.cadastro-form button:hover{
+  background:#256628;
 }
 
 /* TEXTO FINAL */
-.footer-text {
-  margin-top: 25px;
-  font-size: 13px;
-  color: #2e7d32;
+.footer-text{
+  margin-top:25px;
+  font-size:13px;
+  color:#2e7d32;
 }
 
-/* 📱 MOBILE */
-@media (max-width: 480px) {
-  .top-logo img {
-    width: 150px;
-  }
+/* =========================
+   AVISOS DE SENHA (NOVO)
+========================= */
 
-  .center-container h2 {
-    font-size: 20px;
-  }
+.aviso-senha{
+  font-size:12px;
+  margin:2px 0 0 0;      /* quase colado no campo */
+  line-height:1.1;       /* remove altura extra */
+  display:none;
+  font-weight:500;
+  padding-left:1px;
+}
 
-  .cadastro-form input {
-    font-size: 16px;
-  }
+/* quando aparece */
+.aviso-senha.show{
+  display:block;
+}
 
-  .cadastro-form button {
-    font-size: 16px;
-  }
 
-  .footer-text {
-    font-size: 12px;
-  }
+/* erro */
+.aviso-erro{
+  color:#d32f2f;
+}
+
+/* sucesso */
+.aviso-ok{
+  color:#2e7d32;
+}
+
+/* borda erro */
+.input-erro{
+  border-bottom:2px solid #d32f2f !important;
+}
+
+/* borda sucesso */
+.input-ok{
+  border-bottom:2px solid #2e7d32 !important;
+}
+
+/* animação */
+@keyframes fadeSenha{
+  from{opacity:0; transform:translateY(-3px)}
+  to{opacity:1; transform:translateY(0)}
+}
+
+/* MOBILE */
+@media (max-width:480px){
+  .top-logo img{width:150px;}
+  .center-container h2{font-size:20px;}
+  .cadastro-form input{font-size:16px;}
+  .cadastro-form button{font-size:16px;}
+  .footer-text{font-size:12px;}
 }
