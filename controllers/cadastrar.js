@@ -63,27 +63,7 @@ module.exports = async (req, res) => {
       return data;
     }
 
-    function maiorDeIdade(dataStr){
-      const nasc = parseDataBR(dataStr);
-      if(!nasc) return false;
-
-      const hoje = new Date();
-
-      let idade = hoje.getFullYear() - nasc.getFullYear();
-      const m = hoje.getMonth() - nasc.getMonth();
-
-      if(m < 0 || (m === 0 && hoje.getDate() < nasc.getDate()))
-        idade--;
-
-      return idade >= 18;
-    }
-
-    if(!maiorDeIdade(data_nascimento)){
-      return res.status(400).json({
-        error: "Cadastro permitido apenas para maiores de 18 anos"
-      });
-    }
-
+   
     // converter para formato mysql
     const [dia,mes,ano] = data_nascimento.split("/");
     data_nascimento = `${ano}-${mes}-${dia}`;

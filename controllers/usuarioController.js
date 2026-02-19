@@ -158,24 +158,24 @@ exports.buscarUsuarioPorId = async (req, res) => {
     const { id } = req.params;
 
     const [rows] = await db.query(`
-      SELECT 
-        u.id,
-        u.nome,
-        u.email,
-        u.telefone,
-        u.data_nascimento,
-        u.tipo,
-        u.status,
-        u.pontos,
-        u.endereco,
-        u.numero,
-        u.cep,
-        u.complemento,
-        b.nome AS bairro
-      FROM usuarios u
-      LEFT JOIN bairros b ON b.id = u.bairro_id
-      WHERE u.id = ?
-    `, [id]);
+SELECT 
+  u.id,
+  u.nome,
+  u.email,
+  u.telefone,
+  u.data_nascimento,
+  u.tipo,
+  u.status,
+  u.pontos,
+  u.endereco,
+  u.numero,
+  u.cep,
+  u.complemento,
+  u.bairro
+FROM usuarios u
+WHERE u.id = ?
+`, [id]);
+
 
     if (!rows.length) {
       return res.status(404).json({ erro: 'Usuário não encontrado' });
@@ -351,3 +351,43 @@ exports.punirUsuario = async (req, res) => {
     res.status(500).json({ erro:'erro ao punir usuário' });
   }
 };
+
+exports.excluirUsuario = async (req, res) => {
+  const conn = await db.getConnection();
+
+  try {
+    const { id } = req.params;
+
+    await conn.beginTransaction();
+
+    // ===== APAGAR DEPENDÊNCIAS =====
+
+    await conn.query("DELETE FROM denuncias WHERE usuario_id = ?", [id]);
+
+    await conn.query("DELETE FROM coletas WHERE usuario_id = ?", [id]);
+    await conn.query("DELETE FROM solicitacoes WHERE usuario_id = ?", [id]);
+
+    await conn.query("DELETE FROM emprestimos WHERE usuario_id = ?", [id]);
+    await conn.query("DELETE FROM devolucoes WHERE usuario_id = ?", [id]);
+
+    await conn.query("DELETE FROM notificacoes WHERE usuario_id = ?", [id]);
+
+    // caso tenha publicações
+    await conn.query("DELETE FROM publicacoes WHERE usuario_id = ?", [id]);
+
+    // ===== AGORA APAGA O USUÁRIO =====
+    await conn.query("DELETE FROM usuarios WHERE id = ?", [id]);
+
+    await conn.commit();
+
+    res.json({ ok: true, message: "Usuário removido permanentemente" });
+
+  } catch (err) {
+    await conn.rollback();
+    console.error("ERRO excluirUsuario:", err);
+    res.status(500).json({ error: "Erro ao excluir usuário" });
+  } finally {
+    conn.release();
+  }
+};
+

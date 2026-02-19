@@ -20,7 +20,7 @@ module.exports = async (req, res, next) => {
       return res.status(401).json({ erro: 'Usuário não encontrado' });
     }
 
-    // 🔒 BLOQUEIO REAL DO USUÁRIO
+    // BLOQUEIO REAL DO USUÁRIO
     if (rows[0].status === 'bloqueado') {
       return res.status(403).json({
         erro: 'Usuário bloqueado'

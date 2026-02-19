@@ -199,3 +199,6 @@ CREATE TABLE denuncias (
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
   FOREIGN KEY (doacao_id) REFERENCES doacoes(id)
 ) ENGINE=InnoDB;
+
+ALTER TABLE usuarios 
+ADD COLUMN bairro VARCHAR(120) AFTER cep;

@@ -158,3 +158,43 @@ body{
   .cadastro-form button{font-size:16px;}
   .footer-text{font-size:12px;}
 }
+
+/* DATA NASCIMENTO */
+.aviso-data{
+  font-size: 13px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.aviso-erro{
+  color: #c62828;
+}
+
+.aviso-ok{
+  color: #2e7d32;
+}
+
+/* borda vermelha */
+.input-erro{
+  border: 2px solid #c62828 !important;
+  background: #fff5f5;
+}
+
+/* borda verde */
+.input-ok{
+  border: 2px solid #2e7d32 !important;
+  background: #f1fff3;
+}
+.aviso-data{ font-size:13px; margin-top:4px; }
+.aviso-erro{ color:#c62828; }
+.aviso-ok{ color:#2e7d32; }
+.input-erro{ border:2px solid #c62828!important; background:#fff5f5; }
+.input-ok{ border:2px solid #2e7d32!important; background:#f1fff3; }
+
+.wrapper-data{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+}

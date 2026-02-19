@@ -47,7 +47,7 @@ router.put(
   coletaController.concluirColeta
 );
 
-// ❌ cancelar solicitação pendente (SOLICITANTE)
+// cancelar solicitação pendente (SOLICITANTE)
 router.put(
   '/cancelar/:id',
   verificarAutenticacao,

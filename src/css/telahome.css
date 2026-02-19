@@ -1,7 +1,6 @@
 :root{
-  --altura-topo: 150px;
+  --altura-topo: 260px;
 }
-
 * {
   margin: 0;
   padding: 0;
@@ -59,43 +58,57 @@ body {
 }
 
 .filtros button {
-  padding: 6px 14px;
-  border-radius: 20px;
-  border: 1px solid #2e7d32;
-  background: transparent;
+  padding: 7px 16px;
+  border-radius: 22px;
+  border: 1.5px solid #2e7d32;
+  background: #ffffff;
   color: #2e7d32;
   font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
+
+  transition: all 0.25s ease;
 }
 
+/* HOVER */
 .filtros button:hover {
-  background: #2e7d32;
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
   color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(46,125,50,0.25);
+}
+
+/* Efeito quando clica */
+.filtros button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
 }
 
 /* =========================
    PUBLICAÇÕES
 ========================= */
-.publicacoes {
+.publicacoes{
   max-width: 1100px;
-  margin: 20px auto;
-  padding: 0 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1px;
+  margin: 0 auto 20px auto;
 
+  /* espaço pra não ficar atrás do header fixo */
+  padding: calc(var(--altura-topo) + 20px) 20px 0;
+
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
 }
 
 /* =========================
    CARD
 ========================= */
-.card {
+.card{
   background: #fff;
-  margin-top: 50px;
   border-radius: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.08);
   overflow: hidden;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  width: 100%;
 }
 
 .card:hover {
@@ -1375,9 +1388,6 @@ body {
   background: #fff;
   border-bottom: 1px solid #eee;
 }
-.publicacoes {
-  margin-top: 10px;
-}
 /* HEADER COMPLETO FIXO */
 .header-fixo{
   position: fixed;
@@ -1389,19 +1399,42 @@ body {
   border-bottom: 1px solid #e5e7eb;
 }
 
-.publicacoes{
-  max-width: 1100px;
-  margin: 160px auto 20px auto;
-  padding-bottom: 0px;
-  
-  column-count: 4;
-  column-gap: 20px;
-
+.menu-item span {
+  opacity: 0;
+  transition: opacity .2s ease;
 }
 
+.menu-item:hover span {
+  opacity: 1;
+}
 
+.menu-item {
+  pointer-events: none;
+}
+
+/* permite clique SOMENTE na imagem */
+.menu-item img {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+@media (max-width: 1100px){
+  .publicacoes{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* responsivo: 2 colunas */
+@media (max-width: 900px){
+  .publicacoes{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* responsivo: 1 coluna */
 @media (max-width: 768px){
   .publicacoes{
-    padding-top: 70px;
+    grid-template-columns: 1fr;
+    padding: calc(var(--altura-topo) - 20px) 16px 0;
   }
 }

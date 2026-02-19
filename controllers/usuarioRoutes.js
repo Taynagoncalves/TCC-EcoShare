@@ -199,5 +199,12 @@ router.put(
   verificarAdmin,
   usuarioController.punirUsuario
 );
+// admin excluir usuario
+router.delete(
+  '/admin/:id',
+  verificarAutenticacao,
+  verificarAdmin,
+  usuarioController.excluirUsuario
+);
 
 module.exports = router;

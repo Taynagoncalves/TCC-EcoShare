@@ -120,10 +120,16 @@ async function abrirUsuario(id) {
 
     const u = await res.json();
 
-    Swal.fire({
+    const resposta = await Swal.fire({
       title: `Usuário #${u.id}`,
       width: 520,
       confirmButtonColor: '#347142',
+
+      showDenyButton: true,
+      denyButtonText: 'Excluir usuário',
+      denyButtonColor: '#c62828',
+      confirmButtonText: 'OK',
+
       html: `
         <div style="text-align:left;font-size:14px">
 
@@ -152,6 +158,48 @@ async function abrirUsuario(id) {
         </div>
       `
     });
+
+    // =========================
+    // SE CLICOU EM EXCLUIR
+    // =========================
+    if (resposta.isDenied) {
+
+      const confirmar = await Swal.fire({
+        icon: 'warning',
+        title: 'Excluir usuário?',
+        text: 'Essa ação não poderá ser desfeita!',
+        showCancelButton: true,
+        confirmButtonText: 'Excluir',
+        confirmButtonColor: '#c62828',
+        cancelButtonText: 'Cancelar',
+        cancelButtonColor: '#6c757d'
+      });
+
+      if (!confirmar.isConfirmed) return;
+
+      const del = await fetch(`/usuarios/admin/${u.id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      const json = await del.json().catch(() => ({}));
+
+      if (!del.ok) {
+        Swal.fire('Erro', json.erro || 'Não foi possível excluir', 'error');
+        return;
+      }
+
+      await Swal.fire({
+        icon: 'success',
+        title: 'Usuário excluído com sucesso',
+        confirmButtonColor: '#347142'
+      });
+
+      // atualiza lista automaticamente
+      if (typeof carregarUsuarios === "function") {
+        carregarUsuarios();
+      }
+    }
 
   } catch (err) {
     console.error(err);
