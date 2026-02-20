@@ -1,9 +1,8 @@
 const lista = document.getElementById('listaLojas');
 const form = document.getElementById('formLoja');
 
-/* =========================
-   CARREGAR LOJAS (ADMIN)
-========================= */
+
+// busca lojas do painel admin e guarda em memória
 async function carregarLojas() {
   try {
     const res = await fetch('/lojas/admin', {
@@ -26,6 +25,8 @@ async function carregarLojas() {
   }
 }
 
+
+// desenha os cards das lojas na tela
 function renderizarLojas(lojas) {
   lista.innerHTML = '';
 
@@ -49,6 +50,9 @@ function renderizarLojas(lojas) {
     `;
   });
 }
+
+
+// filtra lojas conforme digita na busca
 document.getElementById('buscarLoja')?.addEventListener('input', e => {
   const termo = e.target.value.toLowerCase();
 
@@ -61,9 +65,8 @@ document.getElementById('buscarLoja')?.addEventListener('input', e => {
   renderizarLojas(filtradas);
 });
 
-/* =========================
-   CRIAR LOJA (ADMIN)
-========================= */
+
+// envia formulário para criar loja
 if (form) {
   form.addEventListener('submit', async e => {
     e.preventDefault();
@@ -71,6 +74,7 @@ if (form) {
     const enderecoInput = document.getElementById('endereco');
     const numeroInput = document.getElementById('numero');
 
+    // valida endereço
     if (!enderecoInput.value.trim()) {
       Swal.fire({
         icon: 'warning',
@@ -79,6 +83,7 @@ if (form) {
       return;
     }
 
+    // valida número
     if (!numeroInput.value.trim()) {
       Swal.fire({
         icon: 'warning',
@@ -87,7 +92,7 @@ if (form) {
       return;
     }
 
-    // monta endereço final
+    // monta endereço final juntando rua + numero
     if (enderecoInput.dataset.rua) {
       enderecoInput.value =
         `${enderecoInput.dataset.rua}, ${numeroInput.value} - ${enderecoInput.dataset.bairro} - ${enderecoInput.dataset.cidade}/${enderecoInput.dataset.uf}`;
@@ -107,6 +112,7 @@ if (form) {
       let data;
       const text = await res.text();
 
+      // tenta converter resposta pra json
       try {
         data = JSON.parse(text);
       } catch {
@@ -114,6 +120,7 @@ if (form) {
         throw new Error('Erro interno do servidor');
       }
 
+      // erro retornado pela api
       if (!res.ok) {
         Swal.fire({
           icon: 'error',
@@ -146,9 +153,8 @@ if (form) {
   });
 }
 
-/* =========================
-   EXCLUIR LOJA (ADMIN)
-========================= */
+
+// remove loja do sistema
 async function excluirLoja(id) {
   const confirmacao = await Swal.fire({
     title: 'Excluir loja?',
@@ -201,9 +207,8 @@ async function excluirLoja(id) {
   }
 }
 
-/* =========================
-   BUSCAR CEP AUTOMÁTICO
-========================= */
+
+// busca endereço automático pelo cep
 document.addEventListener('DOMContentLoaded', () => {
 
   carregarLojas();
@@ -237,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        // guarda dados separadamente
+        // guarda dados separados pra depois montar endereço
         campoEndereco.dataset.rua = data.logradouro;
         campoEndereco.dataset.bairro = data.bairro;
         campoEndereco.dataset.cidade = data.localidade;

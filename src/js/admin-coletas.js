@@ -1,8 +1,7 @@
-let coletasOriginais = [];
+let coletasOriginais = []; // guarda todas as coletas vindas do servidor
 
-// ==========================
-// CARREGAR COLETAS
-// ==========================
+
+// busca todas as coletas do painel admin
 async function carregarColetas() {
   try {
     const res = await fetch('/coletas/admin', {
@@ -11,6 +10,7 @@ async function carregarColetas() {
 
     if (!res.ok) throw new Error('Erro ao buscar coletas');
 
+    // salva lista completa e mostra na tabela
     coletasOriginais = await res.json();
     renderizarTabela(coletasOriginais);
 
@@ -20,13 +20,13 @@ async function carregarColetas() {
   }
 }
 
-// ==========================
-// RENDERIZAR TABELA
-// ==========================
+
+// desenha a tabela na tela
 function renderizarTabela(lista) {
   const tbody = document.getElementById('listaColetas');
   tbody.innerHTML = '';
 
+  // se não tiver nada
   if (lista.length === 0) {
     tbody.innerHTML = `
       <tr>
@@ -36,6 +36,7 @@ function renderizarTabela(lista) {
     return;
   }
 
+  // cria uma linha para cada coleta
   lista.forEach(c => {
 
     let botoes = `
@@ -43,8 +44,6 @@ function renderizarTabela(lista) {
         Exibir
       </button>
     `;
-
-   
 
     const tr = document.createElement('tr');
 
@@ -68,9 +67,8 @@ function renderizarTabela(lista) {
   });
 }
 
-// ==========================
-// BUSCA + FILTRO
-// ==========================
+
+// aplica busca por texto e filtro por status
 function aplicarFiltros() {
   const termo = document.getElementById('busca').value.toLowerCase();
   const status = document.getElementById('filtroStatus').value;
@@ -88,6 +86,9 @@ function aplicarFiltros() {
 
   renderizarTabela(filtradas);
 }
+
+
+// abre modal com detalhes da coleta
 async function abrirColeta(id) {
 
   try {
@@ -149,6 +150,9 @@ async function abrirColeta(id) {
     Swal.fire('Erro', 'Erro ao carregar coleta', 'error');
   }
 }
+
+
+// altera status da coleta pelo admin
 async function alterarStatus(id, novoStatus) {
 
   const confirm = await Swal.fire({
@@ -189,9 +193,8 @@ async function alterarStatus(id, novoStatus) {
   }
 }
 
-// ==========================
-// STATUS FORMATADO
-// ==========================
+
+// traduz status 
 function formatarStatus(status) {
   if (status === 'pendente') return 'Pendente';
   if (status === 'andamento') return 'Em andamento';
@@ -200,10 +203,11 @@ function formatarStatus(status) {
   return status;
 }
 
-// ==========================
-// EVENTOS
-// ==========================
+
+// eventos de busca e filtro
 document.getElementById('busca').addEventListener('input', aplicarFiltros);
 document.getElementById('filtroStatus').addEventListener('change', aplicarFiltros);
 
+
+// carrega dados ao abrir a página
 document.addEventListener('DOMContentLoaded', carregarColetas);

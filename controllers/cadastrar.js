@@ -20,17 +20,19 @@ function viaCep(cepLimpo) {
 
 module.exports = async (req, res) => {
   let {
-    nome,
-    email,
-    telefone,
-    senha,
-    data_nascimento,
-    cep,
-    endereco,
-    numero,
-    complemento
-  } = req.body;
-
+  nome,
+  email,
+  telefone,
+  senha,
+  data_nascimento,
+  cep,
+  endereco,
+  bairro,
+  cidade,
+  estado,
+  numero,
+  complemento
+} = req.body;
   try {
 
     // senha mínimo 6
@@ -49,7 +51,12 @@ module.exports = async (req, res) => {
     function parseDataBR(dataStr){
       if(!/^\d{2}\/\d{2}\/\d{4}$/.test(dataStr)) return null;
 
-      const [dia, mes, ano] = dataStr.split("/").map(Number);
+      if(!data_nascimento || !/^\d{2}\/\d{2}\/\d{4}$/.test(data_nascimento)){
+      return res.status(400).json({ error:"Data de nascimento inválida" });
+}
+
+       const [dia,mes,ano] = data_nascimento.split("/");
+       data_nascimento = `${ano}-${mes}-${dia}`;
 
       if(ano < 1900 || ano > new Date().getFullYear()) return null;
       if(mes < 1 || mes > 12) return null;
@@ -101,18 +108,31 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: "Telefone inválido ou suspeito" });
     }
 
-    // validar CEP cascavel
-    const cepLimpo = String(cep || "").replace(/\D/g, "");
-    if (!cepLimpo || cepLimpo.length !== 8) {
-      return res.status(400).json({ error: "CEP inválido" });
-    }
+     // validar CEP cascavel
+const cepLimpo = String(cep || "").replace(/\D/g, "");
+if (!cepLimpo || cepLimpo.length !== 8) {
+  return res.status(400).json({ error: "CEP inválido" });
+}
 
-    const data = await viaCep(cepLimpo);
+let data;
+try {
+  data = await viaCep(cepLimpo);
+} catch (e) {
+  return res.status(400).json({ error: "Não foi possível consultar o CEP" });
+}
 
-    if (data.erro) return res.status(400).json({ error: "CEP inválido" });
-    if (data.localidade !== "Cascavel" || data.uf !== "PR") {
-      return res.status(400).json({ error: "Cadastro permitido apenas para Cascavel - PR" });
-    }
+if (!data || data.erro)
+  return res.status(400).json({ error: "CEP inválido" });
+
+if (data.localidade !== "Cascavel" || data.uf !== "PR") {
+  return res.status(400).json({ error: "Cadastro permitido apenas para Cascavel - PR" });
+}
+
+// usa endereço oficial do correio
+endereco = data.logradouro || endereco;
+bairro   = data.bairro || bairro;
+cidade   = data.localidade || cidade;
+estado   = data.uf || estado;
 
     // duplicidade telefone
     const [rowsTel] = await db.execute(
@@ -134,13 +154,25 @@ module.exports = async (req, res) => {
 
     const senhaHash = await bcrypt.hash(senha, 10);
 
-    await db.execute(
-      `INSERT INTO usuarios
-      (nome, email, telefone, senha, data_nascimento, cep, endereco, numero, complemento)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [nome, email, telefone, senhaHash, data_nascimento, cepLimpo, endereco, numero, complemento]
-    );
-
+   await db.execute(
+  `INSERT INTO usuarios
+  (nome, email, telefone, senha, data_nascimento, cep, endereco, bairro, cidade, estado, numero, complemento)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  [
+    nome,
+    email,
+    telefone,
+    senhaHash,
+    data_nascimento,
+    cepLimpo,
+    endereco,
+    bairro,
+    cidade,
+    estado,
+    numero,
+    complemento
+  ]
+);
     return res.json({ message: "Cadastro realizado com sucesso" });
 
   } catch (err) {

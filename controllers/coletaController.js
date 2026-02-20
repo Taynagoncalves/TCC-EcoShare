@@ -363,7 +363,7 @@ exports.cancelarColetaEmAndamento = async (req, res) => {
       where id = ?
     `, [id]);
 
-    // 🔁 libera a doação novamente
+    // libera a doação novamente
     await db.query(`
       update doacoes
       set status = 'ativo'
@@ -380,7 +380,7 @@ exports.cancelarColetaEmAndamento = async (req, res) => {
     res.json({ sucesso: true });
 
   } catch (err) {
-    console.error('❌ erro ao cancelar coleta em andamento:', err);
+    console.error('erro ao cancelar coleta em andamento:', err);
     res.status(500).json({
       erro: 'erro interno ao cancelar coleta'
     });

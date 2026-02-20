@@ -4,9 +4,13 @@ const db = require('../models/db');
 const verificarAutenticacao = require('./verificarAutenticacao');
 const notificacaoController = require('./notificacaoController');
 
+// retorna as ultimas notificações usando o controller
 router.get('/', verificarAutenticacao, notificacaoController.listar);
 
-// listar TODAS as notificações (lidas e não lidas)
+
+// aqui existe outra rota com o mesmo caminho "/"
+// ela faz quase a mesma coisa mas traz todas sem limite
+// na prática essa sobrescreve a de cima dependendo da ordem de carregamento
 router.get('/', verificarAutenticacao, async (req, res) => {
   const [rows] = await db.query(
     'SELECT * FROM notificacoes WHERE usuario_id = ? ORDER BY criada_em DESC',
@@ -15,7 +19,8 @@ router.get('/', verificarAutenticacao, async (req, res) => {
   res.json(rows);
 });
 
-// marcar UMA notificação como lida
+
+// marca apenas uma notificação como lida
 router.put('/:id/lida', verificarAutenticacao, async (req, res) => {
   await db.query(
     'UPDATE notificacoes SET lida = true WHERE id = ? AND usuario_id = ?',
@@ -24,7 +29,8 @@ router.put('/:id/lida', verificarAutenticacao, async (req, res) => {
   res.json({ ok: true });
 });
 
-// LIMPAR TODAS AS NOTIFICAÇÕES (APAGAR DEFINITIVAMENTE)
+
+// apaga todas notificações do usuário para sempre
 router.delete('/limpar', verificarAutenticacao, async (req, res) => {
   await db.query(
     'DELETE FROM notificacoes WHERE usuario_id = ?',
@@ -32,6 +38,5 @@ router.delete('/limpar', verificarAutenticacao, async (req, res) => {
   );
   res.json({ ok: true });
 });
-
 
 module.exports = router;

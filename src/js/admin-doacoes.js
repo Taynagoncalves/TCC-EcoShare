@@ -1,6 +1,4 @@
-// ==========================
-// CARREGAR DOAÇÕES (ADMIN)
-// ==========================
+// busca todas doações para o painel admin
 async function carregarDoacoes() {
   try {
     const res = await fetch('/doacoes/admin', {
@@ -18,6 +16,7 @@ async function carregarDoacoes() {
 
     tbody.innerHTML = '';
 
+    // caso não exista nenhuma
     if (!Array.isArray(doacoes) || doacoes.length === 0) {
       tbody.innerHTML = `
         <tr>
@@ -29,30 +28,29 @@ async function carregarDoacoes() {
       return;
     }
 
+    // cria linha para cada doação
     doacoes.forEach(d => {
       const tr = document.createElement('tr');
 
-tr.innerHTML = `
-  <td>${d.id}</td>
-  <td>${d.nome_material}</td>
-  <td>${d.quantidade}</td>
-  <td>${d.usuario_nome}</td>
-  <td>${d.status}</td>
-  
+      tr.innerHTML = `
+        <td>${d.id}</td>
+        <td>${d.nome_material}</td>
+        <td>${d.quantidade}</td>
+        <td>${d.usuario_nome}</td>
+        <td>${d.status}</td>
 
-  <td class="acoes">
+        <td class="acoes">
 
-    <button class="btn-exibir" onclick='abrirDoacao(${JSON.stringify(d)})'>
-      Exibir
-    </button>
+          <button class="btn-exibir" onclick='abrirDoacao(${JSON.stringify(d)})'>
+            Exibir
+          </button>
 
-    <button class="btn-remover" onclick="removerDoacao(${d.id})">
-      Remover
-    </button>
+          <button class="btn-remover" onclick="removerDoacao(${d.id})">
+            Remover
+          </button>
 
-  </td>
-`;
-
+        </td>
+      `;
 
       tbody.appendChild(tr);
     });
@@ -68,9 +66,8 @@ tr.innerHTML = `
   }
 }
 
-// ==========================
-// REMOVER DOAÇÃO (ADMIN)
-// ==========================
+
+// remove uma doação pelo admin
 async function removerDoacao(id) {
   const confirmacao = await Swal.fire({
     title: 'Remover doação?',
@@ -97,6 +94,7 @@ async function removerDoacao(id) {
       throw new Error(data.erro || 'Erro ao remover doação');
     }
 
+    // aviso de sucesso
     await Swal.fire({
       icon: 'success',
       title: 'Removida!',
@@ -105,6 +103,7 @@ async function removerDoacao(id) {
       showConfirmButton: false
     });
 
+    // recarrega lista
     carregarDoacoes();
 
   } catch (err) {
@@ -117,7 +116,9 @@ async function removerDoacao(id) {
     });
   }
 }
-// pesquisa doacoes
+
+
+// campo de busca da tabela
 const campoBuscaDoacoes = document.getElementById('buscaDoacoes');
 
 if (campoBuscaDoacoes) {
@@ -125,12 +126,16 @@ if (campoBuscaDoacoes) {
     const termo = campoBuscaDoacoes.value.toLowerCase();
     const linhas = document.querySelectorAll('#listaDoacoes tr');
 
+    // mostra só as linhas que contém o texto digitado
     linhas.forEach(linha => {
       const texto = linha.innerText.toLowerCase();
       linha.style.display = texto.includes(termo) ? '' : 'none';
     });
   });
 }
+
+
+// abre modal com detalhes da doação
 function abrirDoacao(d) {
 
   Swal.fire({
@@ -171,9 +176,8 @@ function abrirDoacao(d) {
 
 }
 
-// ==========================
-// AUXILIAR
-// ==========================
+
+// traduz status pra texto
 function formatarStatus(status) {
   if (status === 'ativo') return 'Ativa';
   if (status === 'andamento') return 'Em andamento';
@@ -181,7 +185,6 @@ function formatarStatus(status) {
   return status || '-';
 }
 
-// ==========================
-// INIT
-// ==========================
+
+// inicia carregamento ao abrir página
 document.addEventListener('DOMContentLoaded', carregarDoacoes);

@@ -10,73 +10,80 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 
-// =========================
-// MULTER (UPLOAD FOTO)
-// =========================
+
+// configura pasta onde ficam as fotos de perfil
 const uploadDir = path.join(__dirname, '..', 'uploads', 'avatars');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
+
+// define como a foto será salva
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
+
+  // nomeia o arquivo com id do usuario + data pra não repetir nome
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname || '').toLowerCase();
     const safeExt = ['.png', '.jpg', '.jpeg', '.webp'].includes(ext) ? ext : '.jpg';
     cb(null, `user_${req.usuario.id}_${Date.now()}${safeExt}`);
-
   }
 });
 
+
+// aceita apenas imagens
 const fileFilter = (req, file, cb) => {
   const ok = ['image/png', 'image/jpeg', 'image/webp'].includes(file.mimetype);
   cb(ok ? null : new Error('Formato inválido (use PNG/JPG/WEBP)'), ok);
 };
 
+
+// limita tamanho para 3mb
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 3 * 1024 * 1024 } // 3MB
+  limits: { fileSize: 3 * 1024 * 1024 }
 });
 
-// =========================
-// DADOS DO USUÁRIO LOGADO
-// =========================
-router.get(
-  '/me',
-  verificarAutenticacao,
-  async (req, res) => {
-    try {
-      const [[usuario]] = await db.query(
-        `
-        SELECT 
-          id,
-          nome,
-          email,
-          telefone,
-          data_nascimento,
-          tipo,
-          pontos,
-          foto
-        FROM usuarios
-        WHERE id = ?
-        `,
-        [req.usuario.id]
-      );
 
-      if (!usuario) {
-        return res.status(404).json({ erro: 'usuário não encontrado' });
-      }
+// retorna dados do usuario logado
+router.get('/me', verificarAutenticacao, async (req, res) => {
 
-      res.json(usuario);
-    } catch (err) {
-      console.error('erro usuário logado:', err);
-      res.status(500).json({ erro: 'erro ao buscar usuário' });
+  try {
+
+    // resposta fake pro admin fixo
+    if (req.usuario && req.usuario.tipo === 'admin' && req.usuario.id === 0) {
+      return res.json({
+        id: 0,
+        nome: 'Administrador',
+        email: 'admin@ecoshare.com',
+        telefone: '',
+        data_nascimento: null,
+        tipo: 'admin',
+        pontos: 0,
+        foto: null
+      });
     }
-  }
-);
 
-// =========================
-// PREFERÊNCIA DE NOTIFICAÇÕES
-// =========================
+    // usuario normal
+    const [[usuario]] = await db.query(`
+      SELECT id,nome,email,telefone,data_nascimento,tipo,pontos,foto
+      FROM usuarios
+      WHERE id = ?
+    `,[req.usuario.id]);
+
+    if (!usuario) {
+      return res.status(404).json({ erro: 'usuário não encontrado' });
+    }
+
+    res.json(usuario);
+
+  } catch (err) {
+    console.error('erro usuário logado:', err);
+    res.status(500).json({ erro: 'erro ao buscar usuário' });
+  }
+});
+
+
+// retorna se notificações estão ligadas
 router.get(
   '/me/notificacoes',
   verificarAutenticacao,
@@ -99,6 +106,8 @@ router.get(
   }
 );
 
+
+// liga ou desliga notificações
 router.put(
   '/me/notificacoes',
   verificarAutenticacao,
@@ -123,18 +132,16 @@ router.put(
   }
 );
 
-// =========================
-// EDITAR DADOS DO PERFIL
-// =========================
+
+// altera nome email telefone e data nascimento
 router.put(
   '/me',
   verificarAutenticacao,
   usuarioController.atualizarPerfil
 );
 
-// =========================
-// ATUALIZAR FOTO DO PERFIL
-// =========================
+
+// troca foto de perfil
 router.put(
   '/me/foto',
   verificarAutenticacao,
@@ -142,28 +149,32 @@ router.put(
   usuarioController.atualizarFoto
 );
 
-// pontos do usuário
+
+// retorna pontos do usuario
 router.get(
   '/pontos',
   verificarAutenticacao,
   usuarioController.buscarPontos
 );
 
-// debitar pontos
+
+// remove pontos manualmente
 router.post(
   '/debitar-pontos',
   verificarAutenticacao,
   usuarioController.debitarPontos
 );
 
-// resgatar cupom
+
+// resgata cupom usando pontos
 router.post(
   '/resgatar',
   verificarAutenticacao,
   usuarioController.resgatarCupom
 );
 
-// admin listar usuários
+
+// admin lista todos usuarios
 router.get(
   '/admin',
   verificarAutenticacao,
@@ -171,7 +182,8 @@ router.get(
   usuarioController.listarUsuarios
 );
 
-// admin bloquear / desbloquear
+
+// admin altera status ativo bloqueado etc
 router.put(
   '/admin/:id/status',
   verificarAutenticacao,
@@ -179,27 +191,35 @@ router.put(
   usuarioController.alterarStatusUsuario
 );
 
-// admin alterar tipo
+
+// admin muda tipo comum admin etc
 router.put(
   '/admin/:id/tipo',
   verificarAutenticacao,
   verificarAdmin,
   usuarioController.alterarTipoUsuario
 );
-// admin buscar usuario especifico
+
+
+// admin vê dados completos de um usuario
 router.get(
   '/admin/:id',
   verificarAutenticacao,
   verificarAdmin,
   usuarioController.buscarUsuarioPorId
 );
+
+
+// admin pune usuario (suspende ou bane)
 router.put(
   '/admin/punir/:id',
   verificarAutenticacao,
   verificarAdmin,
   usuarioController.punirUsuario
 );
-// admin excluir usuario
+
+
+// admin exclui usuario permanentemente
 router.delete(
   '/admin/:id',
   verificarAutenticacao,

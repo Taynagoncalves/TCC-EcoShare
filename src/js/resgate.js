@@ -11,7 +11,7 @@ async function carregarPontosTopo() {
 
     const saldo = document.getElementById('saldoPontos');
     if (saldo) {
-      saldo.innerText = `${data.pontos} pts`;
+      saldo.innerText = `${data.pontos} Pontos`;
     }
 
   } catch (err) {
@@ -52,18 +52,18 @@ async function carregarResgate() {
             <div class="cupom-info">
               <h3>${loja.nome}</h3>
              <p class="categoria">
-  ${loja.categoria ? loja.categoria : 'Loja parceira EcoShare'}
-</p>
+             ${loja.categoria ? loja.categoria : 'Loja parceira EcoShare'}
+           </p>
 
-<p class="descricao">
-  ${loja.descricao || ''}
-</p>
+             <p class="descricao">
+               ${loja.descricao || ''}
+            </p>
 
           </div>
 
          <div class="cupom-rodape">
-  <div class="acoes">
-    <span class="pontos">${loja.pontos} pontos</span>
+         <div class="acoes">
+         <span class="pontos">${loja.pontos} pontos</span>
 
     <button 
       id="btn-${loja.id}"
@@ -74,10 +74,6 @@ async function carregarResgate() {
       ${jaResgatado ? 'Resgatado' : 'Resgatar'}
     </button>
   </div>
-</div>
-
-          
-        </div>
       `;
     });
 
@@ -134,7 +130,7 @@ async function resgatar(lojaId) {
       confirmButtonColor: '#347142'
     });
 
-    // 👉 ATUALIZA O BOTÃO NA HORA
+    // ATUALIZA O BOTÃO NA HORA
     const botao = document.getElementById(`btn-${lojaId}`);
     if (botao) {
       botao.innerText = 'Resgatado';
@@ -142,7 +138,7 @@ async function resgatar(lojaId) {
       botao.disabled = true;
     }
 
-    // 👉 atualiza pontos
+    // atualiza pontos
     carregarPontosTopo();
 
   } catch (err) {

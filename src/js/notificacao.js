@@ -43,7 +43,7 @@ async function carregarNotificacoes() {
         <small>${new Date(n.criada_em).toLocaleString()}</small>
       `;
 
-      // 👇 AQUI É O CLICK REAL
+     
       div.addEventListener('click', () => {
         window.location.href = rota;
       });

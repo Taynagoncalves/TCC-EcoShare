@@ -1,8 +1,10 @@
+// busca lista de usuários pro painel admin
 async function carregarUsuarios() {
   const tbody = document.getElementById('listaUsuarios');
 
   if (!tbody) return;
 
+  // mensagem enquanto carrega
   tbody.innerHTML = `
     <tr>
       <td colspan="6" style="text-align:center">
@@ -21,6 +23,7 @@ async function carregarUsuarios() {
     const usuarios = await res.json();
     tbody.innerHTML = '';
 
+    // nenhum usuário
     if (!usuarios || usuarios.length === 0) {
       tbody.innerHTML = `
         <tr>
@@ -32,48 +35,48 @@ async function carregarUsuarios() {
       return;
     }
 
+    // cria linha na tabela
     usuarios.forEach(u => {
       const tr = document.createElement('tr');
 
       tr.innerHTML = `
-  <td>${u.id}</td>
-  <td>${u.nome}</td>
-  <td>${u.email}</td>
-  <td>${u.tipo}</td>
-  <td>${u.pontos ?? 0}</td>
+        <td>${u.id}</td>
+        <td>${u.nome}</td>
+        <td>${u.email}</td>
+        <td>${u.tipo}</td>
+        <td>${u.pontos ?? 0}</td>
 
-  <td>
-    <span class="badge ${u.status}">
-      ${u.status}
-    </span>
-  </td>
+        <td>
+          <span class="badge ${u.status}">
+            ${u.status}
+          </span>
+        </td>
 
-  <td class="actions">
+        <td class="actions">
 
-  <button
-  class="btn-exibir"
-  onclick="abrirUsuario(${u.id})"
->
-  Exibir
-</button>
+          <button
+            class="btn-exibir"
+            onclick="abrirUsuario(${u.id})"
+          >
+            Exibir
+          </button>
 
-    <button
-      class="btn-status"
-      onclick="confirmarStatus(${u.id}, '${u.status}')"
-    >
-      ${u.status === 'ativo' ? 'Bloquear' : 'Ativar'}
-    </button>
+          <button
+            class="btn-status"
+            onclick="confirmarStatus(${u.id}, '${u.status}')"
+          >
+            ${u.status === 'ativo' ? 'Bloquear' : 'Ativar'}
+          </button>
 
-    <button
-      class="btn-tipo"
-      onclick="confirmarTipo(${u.id}, '${u.tipo}')"
-    >
-      ${u.tipo === 'admin' ? 'Remover Admin' : 'Tornar Admin'}
-    </button>
+          <button
+            class="btn-tipo"
+            onclick="confirmarTipo(${u.id}, '${u.tipo}')"
+          >
+            ${u.tipo === 'admin' ? 'Remover Admin' : 'Tornar Admin'}
+          </button>
 
-  </td>
-`;
-
+        </td>
+      `;
 
       tbody.appendChild(tr);
     });
@@ -96,17 +99,22 @@ async function carregarUsuarios() {
     });
   }
 }
+
+
+// formata data para padrão brasileiro
 function formatarDataBR(dataISO) {
   if (!dataISO) return 'Não informado';
 
   const data = new Date(dataISO);
 
-  // evita problema de fuso (dia anterior)
+  // corrige fuso
   data.setMinutes(data.getMinutes() + data.getTimezoneOffset());
 
   return data.toLocaleDateString('pt-BR');
 }
 
+
+// abre modal com dados completos do usuário
 async function abrirUsuario(id) {
   try {
     const res = await fetch(`/usuarios/admin/${id}`, {
@@ -124,27 +132,19 @@ async function abrirUsuario(id) {
       title: `Usuário #${u.id}`,
       width: 520,
       confirmButtonColor: '#347142',
-
       showDenyButton: true,
       denyButtonText: 'Excluir usuário',
       denyButtonColor: '#c62828',
       confirmButtonText: 'OK',
-
       html: `
         <div style="text-align:left;font-size:14px">
 
           <b>Nome:</b><br>${u.nome || 'Não informado'}<br><br>
-
           <b>Email:</b><br>${u.email || 'Não informado'}<br><br>
-
           <b>Telefone:</b><br>${u.telefone || 'Não informado'}<br><br>
-
           <b>Data nascimento:</b><br>${formatarDataBR(u.data_nascimento)}<br><br>
-
           <b>Pontos:</b><br>${u.pontos ?? 0}<br><br>
-
           <b>Tipo:</b><br>${u.tipo || 'usuario'}<br><br>
-
           <b>Status:</b><br>${u.status || 'ativo'}<br><br>
 
           <hr>
@@ -159,9 +159,7 @@ async function abrirUsuario(id) {
       `
     });
 
-    // =========================
-    // SE CLICOU EM EXCLUIR
-    // =========================
+    // se clicou excluir
     if (resposta.isDenied) {
 
       const confirmar = await Swal.fire({
@@ -195,10 +193,7 @@ async function abrirUsuario(id) {
         confirmButtonColor: '#347142'
       });
 
-      // atualiza lista automaticamente
-      if (typeof carregarUsuarios === "function") {
-        carregarUsuarios();
-      }
+      carregarUsuarios();
     }
 
   } catch (err) {
@@ -208,10 +203,7 @@ async function abrirUsuario(id) {
 }
 
 
-
-/* =========================
-   ALTERAR STATUS
-========================= */
+// altera status ativo/bloqueado
 function confirmarStatus(id, statusAtual) {
   const novoStatus = statusAtual === 'ativo' ? 'bloqueado' : 'ativo';
 
@@ -264,9 +256,8 @@ function confirmarStatus(id, statusAtual) {
   });
 }
 
-/* =========================
-   ALTERAR TIPO
-========================= */
+
+// altera tipo usuario/admin
 function confirmarTipo(id, tipoAtual) {
   const novoTipo = tipoAtual === 'admin' ? 'usuario' : 'admin';
 
@@ -317,7 +308,9 @@ function confirmarTipo(id, tipoAtual) {
     }
   });
 }
-// pesquisa usuarios
+
+
+// busca usuário por id ou nome
 const campoBuscaUsuarios = document.getElementById('buscaUsuarios');
 
 if (campoBuscaUsuarios) {
@@ -329,29 +322,26 @@ if (campoBuscaUsuarios) {
     linhas.forEach(linha => {
 
       const colunas = linha.querySelectorAll('td');
-
-      // evita a linha "nenhum usuário"
       if (colunas.length < 2) return;
 
       const id = colunas[0].innerText.toLowerCase();
       const nome = colunas[1].innerText.toLowerCase();
 
-      // busca SOMENTE nessas duas colunas
       const encontrado =
         id.startsWith(termo) || nome.includes(termo);
 
       linha.style.display = encontrado ? '' : 'none';
     });
-campoBuscaUsuarios.addEventListener('keypress', e => {
-  const permitido = /[a-zA-Z0-9\s]/;
-  if (!permitido.test(e.key)) e.preventDefault();
-});
+
+    // bloqueia caracteres especiais
+    campoBuscaUsuarios.addEventListener('keypress', e => {
+      const permitido = /[a-zA-Z0-9\s]/;
+      if (!permitido.test(e.key)) e.preventDefault();
+    });
 
   });
 }
 
 
-/* =========================
-   INIT
-========================= */
+// inicia carregamento ao abrir página
 document.addEventListener('DOMContentLoaded', carregarUsuarios);

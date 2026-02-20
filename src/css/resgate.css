@@ -215,7 +215,20 @@ body {
   font-size: 12px;
   color: #666;
 }
+.saldo{
+  background:#347142;
+  color:#fff;
+  padding:8px 22px;
+  border-radius:25px;
+  font-weight:600;
+  font-size:15px;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
 
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:18px;
+}
 /* MOBILE */
 @media (max-width: 600px) {
 
@@ -232,4 +245,11 @@ body {
     width: 100%;
   }
 
+}
+@media (max-width:600px){
+  .saldo{
+    bottom:14px;
+    font-size:14px;
+    padding:7px 20px;
+  }
 }

@@ -6,11 +6,9 @@ const doacoesController = require('./doacoesController');
 const verificarAutenticacao = require('./verificarAutenticacao');
 const verificarAdmin = require('./verificarAdmin');
 
-/* =========================
-   ROTAS ADMIN (PRIMEIRO)
-========================= */
+/* rotas usadas pelo admin */
 
-// listar todas as doações (ADMIN)
+// mostra todas as doações do sistema inteiro, só entra quem estiver logado e for admin
 router.get(
   '/admin',
   verificarAutenticacao,
@@ -18,7 +16,7 @@ router.get(
   doacoesController.listarTodasAdmin
 );
 
-// remover doação (ADMIN)
+// apaga qualquer doação, não precisa ser dono, mas precisa ser admin
 router.delete(
   '/admin/:id',
   verificarAutenticacao,
@@ -26,11 +24,10 @@ router.delete(
   doacoesController.removerAdmin
 );
 
-/* =========================
-   ROTAS DO USUÁRIO
-========================= */
 
-// criar doação
+/* rotas normais do usuario */
+
+// cria uma nova doação e permite enviar uma imagem
 router.post(
   '/',
   verificarAutenticacao,
@@ -38,27 +35,27 @@ router.post(
   doacoesController.criarDoacao
 );
 
-// listar doações (home)
+// lista as doações públicas que aparecem na home
 router.get(
   '/',
   doacoesController.listarDoacoes
 );
 
-// listar minhas doações
+// lista apenas as doações do usuario logado
 router.get(
   '/minhas-doacoes',
   verificarAutenticacao,
   doacoesController.minhasDoacoes
 );
 
-// buscar doação para edição
+// busca dados de uma doação para preencher o formulario de edição
 router.get(
   '/:id/editar',
   verificarAutenticacao,
   doacoesController.buscarParaEdicao
 );
 
-// editar doação
+// salva as alterações da edição e permite trocar a imagem
 router.put(
   '/:id',
   verificarAutenticacao,
@@ -66,18 +63,22 @@ router.put(
   doacoesController.editarDoacao
 );
 
-// detalhes da doação (SEMPRE POR ÚLTIMO)
+// mostra os detalhes completos de uma doação
+// fica por ultimo porque qualquer coisa /:id pode bater aqui
 router.get(
   '/:id',
   doacoesController.detalhesDoacao
 );
 
-// excluir doação (usuário)
+// exclui uma doação do proprio usuario
 router.delete(
   '/:id',
   verificarAutenticacao,
   doacoesController.excluirDoacao
 );
+
+// busca info resumida da doação para solicitar coleta
+// exige login
 router.get('/:id', verificarAutenticacao, doacoesController.buscarPorId);
 
 module.exports = router;

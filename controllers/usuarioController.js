@@ -2,14 +2,23 @@ const db = require('../models/db');
 const nodemailer = require('nodemailer');
 
 
+/* retorna quantos pontos o usuario tem */
 exports.buscarPontos = async (req, res) => {
   try {
+
+    // admin fixo não usa sistema de pontos
+    if (req.usuario && req.usuario.tipo === 'admin' && req.usuario.id === 0) {
+      return res.json({ pontos: 0 });
+    }
+
+    // busca pontos no banco
     const [[usuario]] = await db.query(
       'SELECT pontos FROM usuarios WHERE id = ?',
       [req.usuario.id]
     );
 
-    res.json({ pontos: usuario.pontos || 0 });
+    res.json({ pontos: usuario?.pontos || 0 });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ erro: 'Erro ao buscar pontos' });
@@ -17,6 +26,7 @@ exports.buscarPontos = async (req, res) => {
 };
 
 
+/* remove pontos do usuario */
 exports.debitarPontos = async (req, res) => {
   try {
     const { pontos } = req.body;
@@ -34,18 +44,33 @@ exports.debitarPontos = async (req, res) => {
 };
 
 
+/* retorna dados do usuario logado */
 exports.me = async (req, res) => {
   try {
-    const [[usuario]] = await db.query(
-      `
+
+    // dados fake do admin fixo
+    if (req.usuario && req.usuario.tipo === "admin" && req.usuario.id === 0) {
+      return res.json({
+        id: 0,
+        nome: "Administrador",
+        email: "admin@ecoshare.com",
+        telefone: "",
+        tipo: "admin",
+        pontos: 1000,
+        data_nascimento: null,
+        foto: null
+      });
+    }
+
+    // usuario normal
+    const [[usuario]] = await db.query(`
       SELECT id, nome, email, telefone, tipo, pontos, data_nascimento, foto
       FROM usuarios
       WHERE id = ?
-      `,
-      [req.usuario.id]
-    );
+    `,[req.usuario.id]);
 
     res.json(usuario);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ erro: 'Erro ao buscar usuário' });
@@ -53,6 +78,7 @@ exports.me = async (req, res) => {
 };
 
 
+/* outra versão de resgate de cupom direto pelo usuario */
 exports.resgatarCupom = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
@@ -62,7 +88,7 @@ exports.resgatarCupom = async (req, res) => {
       return res.status(400).json({ erro: 'Loja inválida' });
     }
 
-    // 🔹 Usuário
+    // pega pontos do usuario
     const [[usuario]] = await db.query(
       'SELECT pontos FROM usuarios WHERE id = ?',
       [usuarioId]
@@ -72,7 +98,7 @@ exports.resgatarCupom = async (req, res) => {
       return res.status(404).json({ erro: 'Usuário não encontrado' });
     }
 
-    // 🔹 Loja (coluna correta: pontos)
+    // pega valor do cupom
     const [[loja]] = await db.query(
       'SELECT id, nome, pontos FROM lojas WHERE id = ?',
       [loja_id]
@@ -83,7 +109,7 @@ exports.resgatarCupom = async (req, res) => {
     }
 
     const pontosUsuario = Number(usuario.pontos);
-    const custo = Number(loja.pontos); // ✅ CERTO
+    const custo = Number(loja.pontos);
 
     if (isNaN(custo) || custo <= 0) {
       return res.status(400).json({ erro: 'Cupom com valor inválido' });
@@ -95,7 +121,7 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-  
+    // impede pegar duas vezes
     const [[jaResgatou]] = await db.query(
       'SELECT id FROM resgates WHERE usuario_id = ? AND loja_id = ?',
       [usuarioId, loja_id]
@@ -107,18 +133,18 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-    
+    // desconta pontos
     await db.query(
       'UPDATE usuarios SET pontos = pontos - ? WHERE id = ?',
       [custo, usuarioId]
     );
 
-
+    // gera codigo simples
     const codigo =
       loja.nome.charAt(0).toUpperCase() +
       Math.random().toString(36).substring(2, 8).toUpperCase();
 
-  
+    // salva resgate
     await db.query(
       `
       INSERT INTO resgates (usuario_id, loja_id, pontos_usados, codigo, usado)
@@ -139,6 +165,8 @@ exports.resgatarCupom = async (req, res) => {
   }
 };
 
+
+/* lista todos usuarios para o painel admin */
 exports.listarUsuarios = async (req, res) => {
   try {
     const [usuarios] = await db.query(`
@@ -153,6 +181,8 @@ exports.listarUsuarios = async (req, res) => {
   }
 };
 
+
+/* busca um usuario específico pelo id */
 exports.buscarUsuarioPorId = async (req, res) => {
   try {
     const { id } = req.params;
@@ -176,7 +206,6 @@ FROM usuarios u
 WHERE u.id = ?
 `, [id]);
 
-
     if (!rows.length) {
       return res.status(404).json({ erro: 'Usuário não encontrado' });
     }
@@ -189,6 +218,8 @@ WHERE u.id = ?
   }
 };
 
+
+/* muda status do usuario tipo ativo bloqueado etc */
 exports.alterarStatusUsuario = async (req, res) => {
   try {
     const { id } = req.params;
@@ -207,6 +238,7 @@ exports.alterarStatusUsuario = async (req, res) => {
 };
 
 
+/* muda tipo do usuario comum admin etc */
 exports.alterarTipoUsuario = async (req, res) => {
   try {
     const { id } = req.params;
@@ -224,25 +256,24 @@ exports.alterarTipoUsuario = async (req, res) => {
   }
 };
 
-/* =========================
-   EDITAR PERFIL (nome, email, telefone, data_nascimento)
-========================= */
+
+/* atualiza nome email telefone e data nascimento do perfil */
 exports.atualizarPerfil = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
     const { nome, email, telefone, data_nascimento } = req.body;
 
-    // validações básicas (sem travar seu TCC)
     if (!nome || !email) {
       return res.status(400).json({ erro: 'Nome e e-mail são obrigatórios.' });
     }
 
-    // normaliza
+    // limpa formatação
     const nomeFinal = String(nome).trim();
     const emailFinal = String(email).trim().toLowerCase();
     const telefoneFinal = telefone ? String(telefone).trim() : null;
-    const dataFinal = data_nascimento ? String(data_nascimento).trim() : null; // YYYY-MM-DD
+    const dataFinal = data_nascimento ? String(data_nascimento).trim() : null;
 
+    // atualiza no banco
     await db.query(
       `
       UPDATE usuarios
@@ -252,7 +283,7 @@ exports.atualizarPerfil = async (req, res) => {
       [nomeFinal, emailFinal, telefoneFinal, dataFinal, usuarioId]
     );
 
-    // devolve atualizado
+    // retorna dados atualizados
     const [[usuario]] = await db.query(
       `
       SELECT id, nome, email, telefone, data_nascimento, tipo, pontos, foto
@@ -269,9 +300,8 @@ exports.atualizarPerfil = async (req, res) => {
   }
 };
 
-/* =========================
-   ATUALIZAR FOTO (multer)
-========================= */
+
+/* atualiza foto de perfil */
 exports.atualizarFoto = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
@@ -280,7 +310,7 @@ exports.atualizarFoto = async (req, res) => {
       return res.status(400).json({ erro: 'Envie uma imagem.' });
     }
 
-    // caminho público (ajuste caso seu express static seja diferente)
+    // salva caminho da imagem
     const fotoPath = `/uploads/avatars/${req.file.filename}`;
 
     await db.query(
@@ -295,6 +325,8 @@ exports.atualizarFoto = async (req, res) => {
   }
 };
 
+
+/* aplica punição no usuario e manda email avisando */
 exports.punirUsuario = async (req, res) => {
 
   const { tipo, motivo } = req.body;
@@ -306,12 +338,15 @@ exports.punirUsuario = async (req, res) => {
 
     let bloqueadoAte = null;
 
+    // suspensão de 7 dias
     if (tipo === '7dias')
       bloqueadoAte = new Date(Date.now() + 7*24*60*60*1000);
 
+    // ban permanente
     if (tipo === 'ban')
       bloqueadoAte = '9999-12-31 23:59:59';
 
+    // aplica punição no banco
     await db.query(`
       UPDATE usuarios
       SET status='bloqueado',
@@ -320,10 +355,12 @@ exports.punirUsuario = async (req, res) => {
       WHERE id=?
     `,[bloqueadoAte, motivo, userId]);
 
+    // pega email do usuario
     const [[usuario]] = await db.query(
       'SELECT nome,email FROM usuarios WHERE id=?',[userId]
     );
 
+    // envia aviso por email
     const transporter = nodemailer.createTransport({
       service:'gmail',
       auth:{
@@ -352,30 +389,25 @@ exports.punirUsuario = async (req, res) => {
   }
 };
 
+
+/* remove o usuario definitivamente do sistema */
 exports.excluirUsuario = async (req, res) => {
   const conn = await db.getConnection();
 
   try {
     const { id } = req.params;
 
+    // começa transação para não quebrar integridade do banco
     await conn.beginTransaction();
 
-    // ===== APAGAR DEPENDÊNCIAS =====
-
+    // remove tudo relacionado ao usuario
     await conn.query("DELETE FROM denuncias WHERE usuario_id = ?", [id]);
-
-    await conn.query("DELETE FROM coletas WHERE usuario_id = ?", [id]);
-    await conn.query("DELETE FROM solicitacoes WHERE usuario_id = ?", [id]);
-
-    await conn.query("DELETE FROM emprestimos WHERE usuario_id = ?", [id]);
-    await conn.query("DELETE FROM devolucoes WHERE usuario_id = ?", [id]);
-
     await conn.query("DELETE FROM notificacoes WHERE usuario_id = ?", [id]);
+    await conn.query("DELETE FROM resgates WHERE usuario_id = ?", [id]);
+    await conn.query("DELETE FROM solicitacoes_coleta WHERE solicitante_id = ? OR doador_id = ?", [id, id]);
+    await conn.query("DELETE FROM doacoes WHERE usuario_id = ?", [id]);
 
-    // caso tenha publicações
-    await conn.query("DELETE FROM publicacoes WHERE usuario_id = ?", [id]);
-
-    // ===== AGORA APAGA O USUÁRIO =====
+    // por último apaga o usuario
     await conn.query("DELETE FROM usuarios WHERE id = ?", [id]);
 
     await conn.commit();
@@ -383,6 +415,7 @@ exports.excluirUsuario = async (req, res) => {
     res.json({ ok: true, message: "Usuário removido permanentemente" });
 
   } catch (err) {
+    // se algo falhar volta tudo
     await conn.rollback();
     console.error("ERRO excluirUsuario:", err);
     res.status(500).json({ error: "Erro ao excluir usuário" });
@@ -390,4 +423,3 @@ exports.excluirUsuario = async (req, res) => {
     conn.release();
   }
 };
-

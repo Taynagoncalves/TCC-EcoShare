@@ -1,14 +1,12 @@
 const db = require('../models/db');
 
-/* =========================
-   RESGATAR CUPOM
-========================= */
+/* resgata um cupom usando pontos do usuário */
 exports.resgatarCupom = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
     const loja_id = Number(req.body.loja_id);
 
-    /* valida id da loja */
+    // verifica se o id da loja é válido
     if (!loja_id || isNaN(loja_id)) {
       return res.status(400).json({
         ok: false,
@@ -16,7 +14,7 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-    /* busca usuário */
+    // pega os pontos atuais do usuario
     const [[usuario]] = await db.query(
       'SELECT pontos FROM usuarios WHERE id = ?',
       [usuarioId]
@@ -29,7 +27,7 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-    /* busca loja */
+    // pega dados da loja e quanto custa o cupom
     const [[loja]] = await db.query(
       'SELECT nome, pontos FROM lojas WHERE id = ?',
       [loja_id]
@@ -45,7 +43,7 @@ exports.resgatarCupom = async (req, res) => {
     const pontosUsuario = Number(usuario.pontos);
     const custo = Number(loja.pontos);
 
-    /* bloqueia custo inválido */
+    // impede custo errado
     if (isNaN(custo) || custo <= 0) {
       return res.status(400).json({
         ok: false,
@@ -53,7 +51,7 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-    /* bloqueia saldo insuficiente */
+    // verifica se tem pontos suficientes
     if (pontosUsuario < custo) {
       return res.status(400).json({
         ok: false,
@@ -61,7 +59,7 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-    /* verifica se já resgatou */
+    // impede resgatar duas vezes o mesmo cupom
     const [[existe]] = await db.query(
       'SELECT id FROM resgates WHERE usuario_id = ? AND loja_id = ?',
       [usuarioId, loja_id]
@@ -74,7 +72,7 @@ exports.resgatarCupom = async (req, res) => {
       });
     }
 
-    /* gera código do cupom (3 letras da loja + sufixo aleatório) */
+    // gera codigo tipo 3 primeira letra do nome da loja 
     const prefixo = loja.nome
       .trim()
       .substring(0, 3)
@@ -87,7 +85,7 @@ exports.resgatarCupom = async (req, res) => {
 
     const codigo = `${prefixo}-${sufixo}`;
 
-    /* desconta os pontos do usuário */
+    // desconta os pontos do usuario
     await db.query(
       `
       UPDATE usuarios
@@ -97,7 +95,7 @@ exports.resgatarCupom = async (req, res) => {
       [custo, usuarioId]
     );
 
-    /* registra o resgate */
+    // registra que ele ganhou esse cupom
     await db.query(
       `
       INSERT INTO resgates 
@@ -107,7 +105,7 @@ exports.resgatarCupom = async (req, res) => {
       [usuarioId, loja_id, custo, codigo]
     );
 
-    /* sucesso */
+    // retorna sucesso e pontos restantes
     return res.json({
       ok: true,
       codigo,
@@ -122,10 +120,14 @@ exports.resgatarCupom = async (req, res) => {
     });
   }
 };
+
+
+/* lista todos cupons já resgatados pelo usuario */
 exports.meusCupons = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;
 
+    // junta resgates com dados da loja
     const [rows] = await db.query(`
       SELECT
         r.id,
@@ -149,4 +151,3 @@ exports.meusCupons = async (req, res) => {
     res.status(500).json({ erro: 'Erro ao buscar cupons' });
   }
 };
-

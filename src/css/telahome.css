@@ -10,7 +10,7 @@
 
 body {
   background: #f5f5f5;
-  padding-bottom: 80px; /* espaço para menu inferior */
+  padding-bottom: 80px; 
 }
 
 .topo {
@@ -24,8 +24,6 @@ body {
 }
 
 
-
-/* barra menor e mais moderna */
 .search {
   flex: 1;
   max-width: 750px;
@@ -84,14 +82,12 @@ body {
   box-shadow: 0 3px 8px rgba(0,0,0,0.2);
 }
 
-/* =========================
-   PUBLICAÇÕES
-========================= */
+/* PUBLICAÇÕES*/
 .publicacoes{
   max-width: 1100px;
   margin: 0 auto 20px auto;
 
-  /* espaço pra não ficar atrás do header fixo */
+ 
   padding: calc(var(--altura-topo) + 20px) 20px 0;
 
   display: grid;
@@ -99,9 +95,7 @@ body {
   gap: 20px;
 }
 
-/* =========================
-   CARD
-========================= */
+/* CARD */
 .card{
   background: #fff;
   border-radius: 20px;
@@ -204,9 +198,7 @@ body {
   opacity: 0.9;
 }
 
-/* =========================
-   BOTÃO +
-========================= */
+
 .btn-add {
   position: fixed;
   right: 22px;
@@ -233,9 +225,7 @@ body {
   box-shadow: 0 18px 35px rgba(0,0,0,0.45);
 }
 
-/* =========================
-   MODAIS
-========================= */
+
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -322,9 +312,7 @@ body {
   border-radius: 10px;
 }
 
-/* =========================
-   RESPONSIVO
-========================= */
+
 @media (max-width: 768px) {
 
   .logo {
@@ -379,7 +367,7 @@ body {
   gap: 14px;
 }
 
-/* BOTÕES VERDES */
+
 .btn-modal-principal {
   width: 100%;
   max-width: 260px;
@@ -398,7 +386,7 @@ body {
   background: #2e7d32;
 }
 
-/* BOTÃO FECHAR (X VERDE) */
+
 .close-modal {
   position: absolute;
   top: 14px;
@@ -410,9 +398,7 @@ body {
   color: #1b5e20;
   cursor: pointer;
 }
-/* =========================
-   MODAL DENÚNCIA
-========================= */
+
 .modal-denuncia {
   position: fixed;
   inset: 0;
@@ -510,9 +496,7 @@ body {
 .btn-enviar-denuncia:hover {
   background: #b71c1c;
 }
-/* =========================
-   ÍCONE DE NOTIFICAÇÃO
-========================= */
+
 .icon-notificacao {
   width: 35px;
   height: 35px;
@@ -563,9 +547,7 @@ body {
 
 .menu-notificacao a:hover {
   background-color: #f0f0f0;
-}/* =========================
-   MODAL DETALHES - NOVO VISUAL
-========================= */
+}
 .modal-detalhes.moderno {
   background: #fff;
   border-radius: 20px;
@@ -676,7 +658,7 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* ===== NOTIFICAÇÕES ===== */
+
 
 .icon-notificacao-wrapper {
   position: relative;
@@ -755,7 +737,7 @@ body {
 /* Dropdown */
 .menu-notificacao {
   position: absolute;
-  top: 55px;              /* 👈 FORÇA PRA BAIXO DO ÍCONE */
+  top: 55px;             
   right: 0;
   width: 340px;
   background: #fff;
@@ -770,7 +752,7 @@ body {
   display: none;
 }
 
-/* Badge vermelho (mantém igual) */
+
 .badge {
   position: absolute;
   top: -6px;
@@ -804,7 +786,7 @@ body {
   margin: 8px 0;
 }
 
-/* 🔴 BADGE */
+
 .badge {
   position: absolute;
   top: -6px;
@@ -822,7 +804,7 @@ body {
 }
 .menu-notificacao {
   position: absolute;
-  top: 48px;      /* ABAIXO do sino */
+  top: 48px;     
   right: 0;
   width: 320px;
   background: #fff;
@@ -830,9 +812,7 @@ body {
   box-shadow: 0 8px 24px rgba(0,0,0,.15);
   z-index: 9999;
 }
-/* =========================
-   NOTIFICAÇÕES (PADRÃO ÚNICO)
-========================= */
+
 
 .icon-notificacao-wrapper {
   position: relative;
@@ -864,7 +844,7 @@ body {
 /* Dropdown de notificações */
 .menu-notificacao {
   position: absolute;
-  top: 110%;              /* 👈 SEMPRE ABAIXO do ícone */
+  top: 110%;           
   right: 0;
   width: 320px;
   max-height: 340px;
@@ -907,10 +887,7 @@ body {
 .notificacao-item:hover {
   background: #f5f5f5;
 }
-/* =========================
-   PATCH VISUAL – NOTIFICAÇÕES
-   (mais profissional)
-========================= */
+
 
 /* container */
 .menu-notificacao {
@@ -1009,9 +986,7 @@ body {
   background: #e8f3ed;
   color: #1b5e20;
 }
-/* =========================
-   MODAL DETALHES – UX PROFISSIONAL
-========================= */
+
 
 .modal-detalhes.moderno {
   background: #ffffff;
@@ -1118,9 +1093,7 @@ body {
 .foto-topo:hover {
   transform: scale(1.08);
 }
-/* =========================
-   LABELS VERDES (PADRÃO)
-========================= */
+
 .label-verde {
   color: #0f100f;
   font-weight: 700;
@@ -1148,15 +1121,13 @@ body {
 .status-notificacoes.desligado {
   color: #c62828;
 }
-/* =========================
-   TOPO CENTRALIZADO (APP STYLE)
-========================= */
+
 
 .topo {
   background: #fff;
   border-bottom: 1px solid #eee;
   display: flex;
-  justify-content: center; /* CENTRALIZA TUDO */
+  justify-content: center; 
 }
 
 /* container interno */
@@ -1222,16 +1193,7 @@ body {
 .icon-notificacao:hover {
   transform: scale(1.15);
 }
-/*
-* {
-  box-sizing: border-box;
-}
 
-img, input, button {
-  max-width: 100%;
-}
-
-/* HEADER (topo) */
 .topo{
   display: flex;
   align-items: center;
@@ -1272,7 +1234,7 @@ img, input, button {
   justify-content: flex-end;
 }
 
-/* FILTROS (botões tipo Plástico/Papel/...) */
+
 .filtros,
 .categorias,
 .filtros-container{
@@ -1285,7 +1247,7 @@ img, input, button {
 
 /* ====== AJUSTES MOBILE ====== */
 @media (max-width: 600px){
-  /* topo vira "2 linhas": logo/sino em cima, busca embaixo ocupando 100% */
+  
   .topo{
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -1323,7 +1285,7 @@ img, input, button {
     width: 100%;
   }
 
-  /* filtros no celular: uma linha com scroll horizontal (não quebra feio) */
+
   .filtros,
   .categorias,
   .filtros-container{
@@ -1380,15 +1342,15 @@ body {
   background: #fff;
   border-bottom: 1px solid #e5e7eb;
 }
-/* filtros grudam abaixo do topo */
+
 .filtros {
   position: sticky;
-  top: 70px; /* altura real do topo */
+  top: 70px;
   z-index: 999;
   background: #fff;
   border-bottom: 1px solid #eee;
 }
-/* HEADER COMPLETO FIXO */
+
 .header-fixo{
   position: fixed;
   top: 0;
@@ -1417,21 +1379,52 @@ body {
   pointer-events: auto;
   cursor: pointer;
 }
+/* estrutura do topo */
+.topo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
 
+
+.search{
+  flex:1;
+}
+
+
+.topo-direita{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* foto perfil */
+.perfil-topo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* sino */
+.icon-notificacao-wrapper{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 @media (max-width: 1100px){
   .publicacoes{
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-/* responsivo: 2 colunas */
+
 @media (max-width: 900px){
   .publicacoes{
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* responsivo: 1 coluna */
+
 @media (max-width: 768px){
   .publicacoes{
     grid-template-columns: 1fr;

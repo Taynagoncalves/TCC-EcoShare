@@ -1,6 +1,16 @@
-let todasDenuncias = [];
+let todasDenuncias = []; // guarda todas denúncias carregadas
 
-/* ---------------- categoria ---------------- */
+
+// versão padrão do alerta pra não repetir configuração
+const swal = (opts) => Swal.fire({
+  confirmButtonText: 'Confirmar',
+  cancelButtonText: 'Cancelar',
+  denyButtonText: 'Não',
+  ...opts
+});
+
+
+/* traduz o código da categoria  */
 function formatarCategoria(cat) {
   if (!cat) return '-';
 
@@ -14,15 +24,16 @@ function formatarCategoria(cat) {
   return nomes[cat] || cat;
 }
 
-/* ---------------- carregar ---------------- */
+
+/* busca denúncias no servidor */
 async function carregarDenuncias() {
   const res = await fetch('/denuncia/admin');
   todasDenuncias = await res.json();
-
   renderizarDenuncias(todasDenuncias);
 }
 
-/* ---------------- renderizar tabela ---------------- */
+
+/* monta a tabela */
 function renderizarDenuncias(denuncias) {
 
   const tbody = document.getElementById('listaDenuncias');
@@ -36,48 +47,51 @@ function renderizarDenuncias(denuncias) {
   denuncias.forEach(d => {
     const tr = document.createElement('tr');
 
-tr.innerHTML = `
-  <td>${d.denuncia_id}</td>
+    tr.innerHTML = `
+      <td>${d.denuncia_id}</td>
 
-  <td class="usuario-col">
-    <strong>${d.denunciante ?? 'Desconhecido'}</strong>
-    <div class="subinfo">ID ${d.denunciante_id ?? '-'}</div>
-  </td>
+      <td class="usuario-col">
+        <strong>${d.denunciante ?? 'Desconhecido'}</strong>
+        <div class="subinfo">ID ${d.denunciante_id ?? '-'}</div>
+      </td>
 
-  <td>
-    <span class="categoria ${d.categoria}">
-      ${formatarCategoria(d.categoria)}
-    </span>
-  </td>
+      <td>
+        <span class="categoria ${d.categoria}">
+          ${formatarCategoria(d.categoria)}
+        </span>
+      </td>
 
-  <td class="resumo">
-    ${d.mensagem?.slice(0, 60) ?? '-'}
-    ${d.mensagem?.length > 60 ? '...' : ''}
-  </td>
+      <td class="resumo">
+        ${d.mensagem?.slice(0, 60) ?? '-'}
+        ${d.mensagem?.length > 60 ? '...' : ''}
+      </td>
 
-  <td>
-    <span class="status ${d.status}">
-      ${d.status}
-    </span>
-  </td>
+      <td>
+        <span class="status ${d.status}">
+          ${d.status}
+        </span>
+      </td>
 
-  <td class="acoes">
-    <div class="acoes-wrap">
+      <td class="acoes">
+        <div class="acoes-wrap">
 
-      <button class="btn-exibir">Exibir</button>
+          <button class="btn-exibir">Exibir</button>
 
-      ${d.doacao_id != null
-        ? `<button class="btn-recusar" onclick="removerPublicacao(${d.doacao_id}, ${d.denuncia_id})">Remover</button>`
-        : ''}
+          ${
+            d.doacao_id != null
+            ? `<button class="btn-recusar" onclick="removerPublicacao(${d.doacao_id}, ${d.denuncia_id})">Remover</button>`
+            : ''
+          }
 
-      <button class="btn-concluir" onclick="resolverDenuncia(${d.denuncia_id})">
-        Resolver
-      </button>
+          <button class="btn-concluir" onclick="resolverDenuncia(${d.denuncia_id})">
+            Resolver
+          </button>
 
-    </div>
-  </td>
-`;
+        </div>
+      </td>
+    `;
 
+    // abre modal com detalhes
     tr.querySelector('.btn-exibir')
       .addEventListener('click', () => abrirDetalheDenuncia(d));
 
@@ -85,7 +99,8 @@ tr.innerHTML = `
   });
 }
 
-/* ---------------- filtro ---------------- */
+
+/* filtra por categoria */
 function filtrarDenuncias() {
   const categoria = document.getElementById('filtroCategoria').value;
 
@@ -98,9 +113,10 @@ function filtrarDenuncias() {
   renderizarDenuncias(filtradas);
 }
 
-/* ---------------- modal detalhes ---------------- */
+
+/* modal completo da denúncia */
 function abrirDetalheDenuncia(d) {
-  Swal.fire({
+  swal({
     width: 850,
     background: '#f8fafc',
     title: `<span style="font-size:22px">Denúncia #${d.denuncia_id}</span>`,
@@ -110,7 +126,7 @@ function abrirDetalheDenuncia(d) {
         <div style="flex:1;text-align:left">
 
           <div style="background:white;padding:15px;border-radius:12px;margin-bottom:15px">
-            <h3 style="margin-bottom:6px;color:#374151">👤 Denunciante</h3>
+            <h3 style="margin-bottom:6px;color:#374151">Denunciante</h3>
             <p><b>${d.denunciante}</b> (ID ${d.denunciante_id})</p>
           </div>
 
@@ -145,14 +161,15 @@ function abrirDetalheDenuncia(d) {
     `,
     showDenyButton: true,
     showCancelButton: true,
-    confirmButtonText: 'bloquear 7 dias',
-    denyButtonText: 'banir permanente',
-    cancelButtonText: 'fechar'
+    confirmButtonText: 'Bloquear 7 dias',
+    denyButtonText: 'Banir permanente',
+    cancelButtonText: 'Fechar'
   }).then(async (result) => {
 
     if (!result.isConfirmed && !result.isDenied) return;
 
-    const { value: motivo } = await Swal.fire({
+    // pede motivo antes de punir
+    const { value: motivo } = await swal({
       title: 'Motivo da punição',
       input: 'textarea',
       inputPlaceholder: 'o usuário receberá este motivo por email...',
@@ -171,16 +188,17 @@ function abrirDetalheDenuncia(d) {
       body: JSON.stringify({ tipo, motivo })
     });
 
-    Swal.fire({
+    swal({
       icon:'success',
-      title:'usuário punido com sucesso'
+      title:'Usuário punido com sucesso'
     });
   });
 }
 
-/* ---------------- remover publicação ---------------- */
+
+/* remove publicação denunciada */
 async function removerPublicacao(doacaoId, denunciaId) {
-  const confirm = await Swal.fire({
+  const confirm = await swal({
     title: 'Remover publicação?',
     text: 'Esta ação não poderá ser desfeita!',
     icon: 'warning',
@@ -195,7 +213,7 @@ async function removerPublicacao(doacaoId, denunciaId) {
   await fetch(`/doacoes/${doacaoId}`, { method: 'DELETE' });
   await resolverDenuncia(denunciaId);
 
-  Swal.fire({
+  swal({
     icon: 'success',
     title: 'Publicação removida',
     timer: 1500,
@@ -203,9 +221,10 @@ async function removerPublicacao(doacaoId, denunciaId) {
   });
 }
 
-/* ---------------- resolver denúncia ---------------- */
+
+/* marca denúncia como resolvida */
 async function resolverDenuncia(id) {
-  const confirm = await Swal.fire({
+  const confirm = await swal({
     title: 'Marcar como resolvido?',
     icon: 'question',
     showCancelButton: true,
@@ -217,7 +236,7 @@ async function resolverDenuncia(id) {
 
   await fetch(`/denuncia/${id}/resolver`, { method: 'PUT' });
 
-  Swal.fire({
+  swal({
     icon: 'success',
     title: 'Denúncia resolvida',
     timer: 1400,
@@ -227,5 +246,6 @@ async function resolverDenuncia(id) {
   carregarDenuncias();
 }
 
-/* iniciar */
+
+// inicia carregando a lista
 carregarDenuncias();

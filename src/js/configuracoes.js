@@ -52,9 +52,7 @@ async function carregarUsuario() {
   }
 }
 
-// =========================
 // NOTIFICAÇÕES (TOGGLE)
-// =========================
 async function carregarPreferenciaNotificacoes() {
   const toggle = document.getElementById('toggle-notificacoes');
   if (!toggle) return;

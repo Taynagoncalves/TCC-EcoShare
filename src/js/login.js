@@ -11,7 +11,7 @@ function toggleSenha(id, icon) {
   }
 }
 
-// 🔁 Ir para cadastro
+// Ir para cadastro
 function irParaCadastro() {
   window.location.href = "/cadastro";
 }
@@ -44,7 +44,7 @@ formLogin.addEventListener("submit", async (e) => {
 
   const json = await res.json();
 
-  // 🔒 USUÁRIO BLOQUEADO
+  // USUÁRIO BLOQUEADO
   if (res.status === 403 && json.erro === "Usuário bloqueado") {
     Swal.fire({
       icon: "error",
@@ -55,7 +55,7 @@ formLogin.addEventListener("submit", async (e) => {
     return;
   }
 
-  // ❌ ERRO DE LOGIN
+  // ERRO
   if (!res.ok) {
     Swal.fire({
       icon: "error",
@@ -66,13 +66,14 @@ formLogin.addEventListener("submit", async (e) => {
     return;
   }
 
-  // ✅ LOGIN OK
+  // LOGIN OK
   Swal.fire({
     icon: "success",
     title: "Bem-vindo!",
     timer: 1200,
     showConfirmButton: false
   }).then(() => {
-    window.location.href = "/telahome";
+
+  window.location.href = "/telahome";
   });
 });

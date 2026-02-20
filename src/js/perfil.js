@@ -1,3 +1,5 @@
+const btnTrocarFoto = document.getElementById('btnTrocarFoto');
+
 document.addEventListener('DOMContentLoaded', () => {
   carregarPerfil();
   setupEdicao();
@@ -19,9 +21,7 @@ function formatarDataBR(dataISO){
 let perfilOriginal = null;
 let modoEdicao = false;
 
-/* =====================================================
-   SETUP BOTÕES
-===================================================== */
+/* SETUP BOTÕES */
 function setupEdicao() {
 
   const btnEditar = document.getElementById('btnEditar');
@@ -55,13 +55,13 @@ function setupEdicao() {
 async function carregarPerfil() {
   try {
 
-    // ===== DADOS DO USUÁRIO =====
+    // DADOS DO USUÁRI
     const userRes = await fetch('/usuarios/me', { credentials: 'include' });
     if (!userRes.ok) throw new Error();
 
     const usuario = await userRes.json();
 
-    // ===== PONTOS DO USUÁRIO =====
+    //  PONTOS DO USUÁRIO 
     const pontosRes = await fetch('/usuarios/pontos', { credentials: 'include' });
     if (!pontosRes.ok) throw new Error();
 
@@ -70,7 +70,7 @@ async function carregarPerfil() {
     // mostra pontos na tela
     const pontosEl = document.getElementById('pontosUsuario');
     if (pontosEl) {
-      pontosEl.innerText = `${pontosData.pontos} pts`;
+      pontosEl.innerText = `${pontosData.pontos} Pontos`;
     }
 
     // guarda original
@@ -97,9 +97,7 @@ async function carregarPerfil() {
 }
 
 
-/* =====================================================
-   PREENCHER CAMPOS
-===================================================== */
+/* PREENCHER CAMPOS*/
 function setCampos(dados) {
   document.getElementById('nome').value = dados.nome;
   document.getElementById('email').value = dados.email;
@@ -124,16 +122,16 @@ function setInputsHabilitados(habilitar) {
   document.getElementById('dataNascimento').disabled = !habilitar;
 }
 
-/* =====================================================
+/* 
    NOME — bloquear números
-===================================================== */
+*/
 document.getElementById("nome").addEventListener("input", e => {
   e.target.value = e.target.value.replace(/[^A-Za-zÀ-ÿ\s]/g, "");
 });
 
-/* =====================================================
+/* 
    TELEFONE — máscara + antifraude
-===================================================== */
+ */
 const telInput = document.getElementById("telefone");
 
 function mascaraTelefone(v){
@@ -163,9 +161,9 @@ function telefoneSuspeito(t){
   return false;
 }
 
-/* =====================================================
+/* 
    DATA NASCIMENTO — máscara + validação
-===================================================== */
+ */
 const dataInput = document.getElementById("dataNascimento");
 
 function mascaraData(v){
@@ -196,30 +194,36 @@ function dataValida(str){
   return true;
 }
 
-/* =====================================================
+/* 
    BOTÕES
-===================================================== */
+ */
 function entrarEdicao(){
+  document.querySelector(".perfil-container").classList.add("modo-edicao");
   modoEdicao=true;
   setInputsHabilitados(true);
+
   btnEditar.hidden=true;
   btnSalvar.hidden=false;
   btnCancelar.hidden=false;
+
+  btnTrocarFoto.style.display="flex"; //mostra a camera se clicar em editar
 }
 
 function cancelarEdicao(){
+  document.querySelector(".perfil-container").classList.remove("modo-edicao");
   modoEdicao=false;
   setInputsHabilitados(false);
   setCampos(perfilOriginal);
+
   btnEditar.hidden=false;
   btnSalvar.hidden=true;
   btnCancelar.hidden=true;
+
+  btnTrocarFoto.style.display="none"; // ESCONDE CAMERA
 }
 
-/* =====================================================
-   SALVAR PERFIL
-===================================================== */
-async function salvarEdicao(){
+/* SALVAR PERFIL*/
+async function salvarEdicao(){ 
   try{
 
     const nome = document.getElementById('nome').value.trim();
@@ -227,19 +231,39 @@ async function salvarEdicao(){
     const telefone = document.getElementById('telefone').value.trim();
     const dataTexto = document.getElementById('dataNascimento').value.trim();
 
+    // VALIDAÇÕES 
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!emailValido.test(email))
+      return Swal.fire({
+        icon:"warning",
+        title:"Email inválido",
+        text:"Digite um email válido",
+        confirmButtonColor:"#347142"
+      });
+
     if(dataTexto && !dataValida(dataTexto))
-      return Swal.fire({icon:"warning",title:"Data inválida",confirmButtonColor:"#347142"});
+      return Swal.fire({
+        icon:"warning",
+        title:"Data inválida",
+        confirmButtonColor:"#347142"
+      });
 
     if(telefoneSuspeito(telefone))
-      return Swal.fire({icon:"warning",title:"Telefone inválido",confirmButtonColor:"#347142"});
+      return Swal.fire({
+        icon:"warning",
+        title:"Telefone inválido",
+        confirmButtonColor:"#347142"
+      });
 
+    //DATA 
     let dataSQL = null;
     if(dataTexto){
       const[d,m,a]=dataTexto.split("/");
       dataSQL=`${a}-${m}-${d}`;
     }
 
-    const res=await fetch('/usuarios/me',{
+    //ENVIO 
+    const res = await fetch('/usuarios/me',{
       method:'PUT',
       headers:{'Content-Type':'application/json'},
       credentials:'include',
@@ -248,14 +272,28 @@ async function salvarEdicao(){
 
     if(!res.ok) throw new Error();
 
+    // ATUALIZA TELA SEM RECARREGAR 
+    perfilOriginal = {
+      nome,
+      email,
+      telefone,
+      data_nascimento:dataTexto,
+      foto: perfilOriginal?.foto || ""
+    };
+
+    modoEdicao=false;
+    setInputsHabilitados(false);
+
+    btnEditar.hidden=false;
+    btnSalvar.hidden=true;
+    btnCancelar.hidden=true;
+    btnTrocarFoto.style.display="none";
+
     Swal.fire({
       icon:'success',
       title:'Perfil atualizado!',
       confirmButtonColor:'#347142'
     });
-
-    modoEdicao=false;
-    setInputsHabilitados(false);
 
   }catch{
     Swal.fire({
@@ -265,16 +303,15 @@ async function salvarEdicao(){
     });
   }
 }
-
-/* =====================================================
+/* 
    FOTO
-===================================================== */
+ */
 async function enviarFoto(file){
   try{
 
     const avatar = document.getElementById('avatarImg');
 
-    // 1️⃣ preview imediato (sem esperar servidor)
+   
     const previewURL = URL.createObjectURL(file);
     avatar.src = previewURL;
 
@@ -291,7 +328,7 @@ async function enviarFoto(file){
 
     if(!res.ok) throw new Error(data.erro || "Erro ao atualizar");
 
-    // 2️⃣ força atualizar imagem REAL do servidor (anti cache)
+    // força atualizar imagem REAL do servidor
     if(data.foto){
       const novaFoto = data.foto + "?t=" + new Date().getTime();
       avatar.src = novaFoto;

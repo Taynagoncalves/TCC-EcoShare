@@ -1,0 +1,10 @@
+
+Npm install nodemailer
+
+npm install nodemailer uuid
+
+npm install dontev
+
+npm install path
+
+npm install cookie-parser

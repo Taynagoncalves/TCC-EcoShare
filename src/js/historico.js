@@ -23,7 +23,7 @@ async function carregarHistorico() {
       return;
     }
 
-    // 🔹 LOOP ÚNICO CORRETO
+    // LOOP ÚNICO CORRETO
     dados.forEach(h => {
 
       const ehDoador = Number(h.doador_id) === usuarioId;

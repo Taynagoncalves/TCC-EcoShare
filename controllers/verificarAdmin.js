@@ -1,6 +1,9 @@
 module.exports = (req, res, next) => {
-  if (!req.usuario || req.usuario.tipo !== 'admin') {
-    return res.status(403).json({ erro: 'Acesso restrito' });
+
+  // admin fixo (token com tipo admin)
+  if (req.usuario && req.usuario.tipo === 'admin') {
+    return next();
   }
-  next();
+
+  return res.status(403).json({ erro: 'Acesso restrito' });
 };

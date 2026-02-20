@@ -11,6 +11,19 @@ module.exports = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    // ADMIN FIXO 
+    if (decoded.tipo === "admin") {
+      req.usuario = {
+        id: 0,
+        nome: "Administrador",
+        tipo: "admin",
+        pontos: 0,
+        status: "ativo"
+      };
+      return next();
+    }
+
+    // USUÁRIO NORMAL 
     const [rows] = await db.query(
       'SELECT id, nome, tipo, pontos, status FROM usuarios WHERE id = ?',
       [decoded.id]
@@ -20,14 +33,12 @@ module.exports = async (req, res, next) => {
       return res.status(401).json({ erro: 'Usuário não encontrado' });
     }
 
-    // BLOQUEIO REAL DO USUÁRIO
     if (rows[0].status === 'bloqueado') {
       return res.status(403).json({
         erro: 'Usuário bloqueado'
       });
     }
 
-    // mantém o funcionamento que já existia
     req.usuario = rows[0];
     next();
 

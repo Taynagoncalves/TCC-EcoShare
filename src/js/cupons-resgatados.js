@@ -68,9 +68,7 @@ async function carregarCupons() {
   }
 }
 
-/* =========================
-   VER CÓDIGO
-========================= */
+/*VER CÓDIGO*/
 function verCodigo(codigo) {
   Swal.fire({
     title: 'Código do Cupom',
@@ -81,9 +79,7 @@ function verCodigo(codigo) {
   });
 }
 
-/* =========================
-   ENDEREÇO
-========================= */
+/* ENDEREÇO*/
 function verEndereco(endereco) {
 
   if (!endereco || endereco === 'null' || endereco.trim() === '') {
@@ -108,9 +104,7 @@ function verEndereco(endereco) {
   });
 }
 
-/* =========================
-   VOLTAR
-========================= */
+/* VOLTAR */
 function voltarConfiguracoes() {
   window.location.href = '/configuracoes';
 }

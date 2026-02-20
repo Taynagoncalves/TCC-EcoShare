@@ -1,8 +1,6 @@
 const db = require('../models/db');
 
-/* =========================
-   USUÁRIO — ENVIAR DENÚNCIA
-========================= */
+/* USUÁRIO — ENVIAR DENÚNCIA*/
 exports.enviarDenuncia = async (req, res) => {
   const { mensagem, doacao_id, categoria } = req.body;
   const usuarioId = req.usuario.id;
@@ -43,9 +41,7 @@ exports.enviarDenuncia = async (req, res) => {
 };
 
 
-/* =========================
-   ADMIN — LISTAR DENÚNCIAS
-========================= */
+/* ADMIN — LISTAR DENÚNCIAS*/
 exports.listarAdmin = async (req, res) => {
   try {
 
@@ -94,9 +90,7 @@ exports.listarAdmin = async (req, res) => {
 };
 
 
-/* =========================
-   ADMIN — RESOLVER DENÚNCIA
-========================= */
+/* ADMIN — RESOLVER DENÚNCIA */
 exports.resolverDenuncia = async (req, res) => {
   const id = req.params.id;
 

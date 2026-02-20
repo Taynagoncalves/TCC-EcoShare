@@ -1,6 +1,6 @@
-// ===============================
+
 // MOSTRAR / OCULTAR SENHA
-// ===============================
+
 function toggleSenha(id, icon) {
   const input = document.getElementById(id);
   if (!input) return;
@@ -14,9 +14,9 @@ function toggleSenha(id, icon) {
   }
 }
 
-// ===============================
+
 // BLOQUEAR NÚMEROS NO NOME
-// ===============================
+
 const inputNome = document.querySelector('input[name="nome"]');
 if (inputNome) {
   inputNome.addEventListener("input", () => {
@@ -24,9 +24,9 @@ if (inputNome) {
   });
 }
 
-// ===============================
+
 // TELEFONE MÁSCARA
-// ===============================
+
 const inputTelefone = document.querySelector('input[name="telefone"]');
 
 function aplicarMascaraTelefone(valor) {
@@ -46,9 +46,8 @@ if (inputTelefone) {
   });
 }
 
-// ===============================
+
 // SENHA VALIDAÇÃO
-// ===============================
 const senhaInput = document.getElementById("senha");
 const confirmarSenhaInput = document.getElementById("confirmarSenha");
 
@@ -117,9 +116,8 @@ senhaInput.addEventListener("input", ()=>{ validarSenha(); validarConfirmacao();
 confirmarSenhaInput.addEventListener("input", validarConfirmacao);
 
 
-// =======================================================
+
 // DATA NASCIMENTO — MÁSCARA + VALIDAÇÃO VISUAL
-// =======================================================
 const inputData = document.getElementById("data_nascimento");
 let avisoData = null;
 
@@ -200,9 +198,78 @@ if(inputData){
 }
 
 
-// ===============================
+// CEP — MÁSCARA + BUSCA VIA CEP
+const cepInput = document.getElementById("cep");
+const enderecoInput = document.getElementById("endereco");
+const bairroInput = document.getElementById("bairro");
+const cidadeInput = document.getElementById("cidade");
+const estadoInput = document.getElementById("estado");
+const numeroInput = document.getElementById("numero");
+
+function formatarCEP(v){
+  v = v.replace(/\D/g,"").slice(0,8);
+  if(v.length > 5) v = v.replace(/^(\d{5})(\d+)/,"$1-$2");
+  return v;
+}
+
+async function consultarCEP(cep){
+  try{
+    enderecoInput.value = "Buscando...";
+    bairroInput.value = "";
+    cidadeInput.value = "";
+    estadoInput.value = "";
+
+    const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const d = await r.json();
+
+    if(d.erro){
+      Swal.fire({
+        icon:"warning",
+        title:"CEP não encontrado",
+        text:"Preencha manualmente"
+      });
+      enderecoInput.value="";
+      return;
+    }
+
+    enderecoInput.value = d.logradouro || "";
+    bairroInput.value   = d.bairro || "";
+    cidadeInput.value   = d.localidade || "";
+    estadoInput.value   = d.uf || "";
+
+    numeroInput.focus();
+
+  }catch{
+    enderecoInput.value="";
+    Swal.fire({
+      icon:"error",
+      title:"Erro ao consultar CEP"
+    });
+  }
+}
+
+if(cepInput){
+  cepInput.addEventListener("input", e=>{
+    e.target.value = formatarCEP(e.target.value);
+  });
+
+ let ultimoCepBuscado = "";
+
+cepInput.addEventListener("input", e=>{
+  const cepFormatado = formatarCEP(e.target.value);
+  e.target.value = cepFormatado;
+
+  const cepLimpo = cepFormatado.replace(/\D/g,"");
+
+  // quando completar 8 dígitos busca automaticamente
+  if(cepLimpo.length === 8 && cepLimpo !== ultimoCepBuscado){
+    ultimoCepBuscado = cepLimpo;
+    consultarCEP(cepLimpo);
+  }
+});
+}
+
 // ENVIO DO FORMULÁRIO
-// ===============================
 const form = document.getElementById("formCadastro");
 
 if (form) {
@@ -218,19 +285,23 @@ if (form) {
     }
 
     const tel = e.target.telefone.value.replace(/\D/g,'');
+       const dados = {
+       nome:e.target.nome.value.trim(),
+       email:e.target.email.value.trim(),
+       telefone:tel,
+       data_nascimento:dataTexto,
+       senha:e.target.senha.value,
 
-    const dados = {
-      nome:e.target.nome.value.trim(),
-      email:e.target.email.value.trim(),
-      telefone:tel,
-      data_nascimento:dataTexto,
-      senha:e.target.senha.value,
-      cep:e.target.cep.value.replace(/\D/g,''),
-      endereco:e.target.endereco.value.trim(),
-      bairro:e.target.bairro.value.trim(),
-      numero:e.target.numero.value.trim(),
-      complemento:(e.target.complemento.value||"").trim()
-    };
+       cep:e.target.cep.value.replace(/\D/g,''),
+
+       endereco:e.target.endereco.value.trim(),
+       bairro:e.target.bairro.value.trim(),
+       cidade:e.target.cidade.value.trim(),
+       estado:e.target.estado.value.trim(),
+
+       numero:e.target.numero.value.trim(),
+       complemento:(e.target.complemento.value||"").trim()
+};
 
     const res = await fetch("/cadastro",{
       method:"POST",

@@ -5,30 +5,35 @@ const cookieParser = require('cookie-parser');
 const db = require('./models/db');
 const app = express();
 
-/* middlewares gerais */
+
+/* configura leitura de json, formulários e cookies */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-/* arquivos estáticos */
+
+/* libera acesso aos arquivos do front (css, js, imagens etc) */
 app.use('/css', express.static(path.join(__dirname, 'src/css')));
 app.use('/js', express.static(path.join(__dirname, 'src/js')));
 app.use('/icons', express.static(path.join(__dirname, 'src/icons')));
 app.use('/imagens', express.static(path.join(__dirname, 'src/imagens')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-/* middlewares de autenticação */
+
+/* middlewares que verificam login e admin */
 const verificarAutenticacao = require('./controllers/verificarAutenticacao');
 const verificarAdmin = require('./controllers/verificarAdmin');
 
-/* rotas de autenticação */
+
+/* rotas de login cadastro senha */
 app.post('/login', require('./controllers/logar'));
 app.post('/cadastro', require('./controllers/cadastrar'));
 app.post('/logout', require('./controllers/deslogar'));
 app.post('/esqueci-senha', require('./controllers/esqueciSenha'));
 app.post('/redefinir-senha', require('./controllers/redefinirSenha'));
 
-/* rotas de funcionalidades */
+
+/* rotas das funcionalidades do sistema */
 app.use('/doacoes', require('./controllers/doacoesRoutes'));
 app.use('/denuncias', require('./controllers/denunciaRoutes'));
 app.use('/bairros', require('./controllers/bairrosRoutes'));
@@ -40,11 +45,14 @@ app.use('/notificacoes', require('./controllers/notificacaoRoutes'));
 app.use('/denuncia', require('./controllers/denunciaRoutes'));
 app.use('/doacoes', require('./controllers/doacoesRoutes'));
 
-/* rotas de páginas html */
+
+/* redireciona raiz para tela inicial */
 app.get('/', (req, res) => {
   res.redirect('/inicio');
 });
 
+
+/* páginas públicas */
 app.get('/inicio', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/inicio.html'));
 });
@@ -57,6 +65,8 @@ app.get('/cadastro', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/cadastro.html'));
 });
 
+
+/* páginas que exigem login */
 app.get('/telahome', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/telahome.html'));
 });
@@ -101,6 +111,8 @@ app.get('/cupons-resgatados', verificarAutenticacao, (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/cupons-resgatados.html'));
 });
 
+
+/* telas de recuperação de senha */
 app.get('/esqueci-senha', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/esqueci-senha.html'));
 });
@@ -109,13 +121,16 @@ app.get('/redefinir-senha', (req, res) => {
   res.sendFile(path.join(__dirname, 'src/html/redefinir-senha.html'));
 });
 
+
+/* reutiliza tela de adicionar para editar */
 app.get('/editar-doacao', verificarAutenticacao, (req, res) => {
   res.sendFile(
     path.join(__dirname, 'src/html/adicionar-doacao.html')
   );
 });
 
-/* rotas admin */
+
+/* páginas administrativas */
 app.get(
   '/admin/lojas',
   verificarAutenticacao,
@@ -164,7 +179,7 @@ app.get(
 );
 
 
-/* rota para obter dados do usuário logado */
+/* retorna dados básicos do usuário logado para o front */
 app.get('/usuario-logado', verificarAutenticacao, (req, res) => {
   res.json({
     id: req.usuario.id,
@@ -183,7 +198,7 @@ app.get(
 );
 
 
-/* servidor */
+/* inicia servidor */
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
   console.log(`servidor rodando em http://localhost:${port}`);

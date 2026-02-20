@@ -202,3 +202,7 @@ CREATE TABLE denuncias (
 
 ALTER TABLE usuarios 
 ADD COLUMN bairro VARCHAR(120) AFTER cep;
+
+ALTER TABLE usuarios 
+ADD COLUMN cidade VARCHAR(120) AFTER bairro,
+ADD COLUMN estado VARCHAR(2) AFTER cidade;

@@ -5,12 +5,22 @@ const verificarAutenticacao = require('./verificarAutenticacao');
 const verificarAdmin = require('./verificarAdmin');
 
 // usuário envia denúncia
-router.post('/', verificarAutenticacao, denunciaController.enviarDenuncia);
+router.post(
+    '/', 
+    verificarAutenticacao,
+     denunciaController.enviarDenuncia);
 
 // admin lista denúncias
-router.get('/admin', verificarAutenticacao, verificarAdmin, denunciaController.listarAdmin);
+router.get(
+    '/admin', 
+    verificarAutenticacao, verificarAdmin, 
+    denunciaController.listarAdmin);
 
 // admin resolve denúncia
-router.put('/:id/resolver', verificarAutenticacao, verificarAdmin, denunciaController.resolverDenuncia);
+router.put(
+    '/:id/resolver', 
+    verificarAutenticacao, 
+    verificarAdmin, 
+    denunciaController.resolverDenuncia);
 
 module.exports = router;
